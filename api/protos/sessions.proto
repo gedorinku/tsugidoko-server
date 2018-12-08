@@ -1,0 +1,45 @@
+syntax = "proto3";
+
+package gedorinku.tsugidoko_server;
+
+option go_package = "github.com/gedorinku/tsugidoko-server/api;api_pb";
+
+
+import "google/api/annotations.proto";
+import "google/protobuf/empty.proto";
+
+service SessionService {
+  rpc GetSession (GetSessionRequest) returns (Session) {
+    option (google.api.http) = {
+      get: "/sessions/{session_id}"
+    };
+  }
+  rpc CreateSession (CreateSessionRequest) returns (Session) {
+    option (google.api.http) = {
+      post: "/sessions"
+      body: "session"
+    };
+  }
+  rpc DeleteSession (DeleteSessionRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      delete: "/sessions/{session_id}"
+    };
+  }
+}
+
+message Session {
+  string session_id = 1;
+  uint32 uesr_id = 2;
+}
+
+message GetSessionRequest {
+  string session_id = 1;
+}
+
+message CreateSessionRequest {
+  Session session = 1;
+}
+
+message DeleteSessionRequest {
+  string session_id = 1;
+}
