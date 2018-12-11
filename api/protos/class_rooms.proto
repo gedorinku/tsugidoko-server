@@ -1,0 +1,69 @@
+syntax = "proto3";
+
+package gedorinku.tsugidoko_server;
+
+option go_package = "github.com/gedorinku/tsugidoko-server/api;api_pb";
+
+
+import "google/api/annotations.proto";
+import "google/protobuf/empty.proto";
+
+service ClassRoomService {
+  rpc ListClassRooms (ListClassRoomsRequest) returns (ListClassRoomsResponse) {
+    option (google.api.http) = {
+      get: "/class_rooms"
+    };
+  }
+  rpc GetClassRoom (GetClassRoomRequest) returns (ClassRoom) {
+    option (google.api.http) = {
+      get: "/class_rooms/{class_room_id}"
+    };
+  }
+  rpc CreateClassRoom (CreateClassRoomRequest) returns (ClassRoom) {
+    option (google.api.http) = {
+      post: "/class_rooms"
+      body: "class_room"
+    };
+  }
+  rpc UpdateClassRoom (UpdateClassRoomRequest) returns (ClassRoom) {
+    option (google.api.http) = {
+      patch: "/class_rooms/{class_room.class_room_id}"
+      body: "class_room"
+    };
+  }
+  rpc DeleteClassRoom (DeleteClassRoomRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      delete: "/class_rooms/{class_room_id}"
+    };
+  }
+}
+
+message ClassRoom {
+  int32 class_room_id = 1;
+  string name = 2;
+  double latitude = 3;
+  double longitude = 4;
+}
+
+message ListClassRoomsRequest {
+}
+
+message ListClassRoomsResponse {
+  repeated ClassRoom class_rooms = 1;
+}
+
+message GetClassRoomRequest {
+  int32 class_room_id = 1;
+}
+
+message CreateClassRoomRequest {
+  ClassRoom class_room = 1;
+}
+
+message UpdateClassRoomRequest {
+  ClassRoom class_room = 1;
+}
+
+message DeleteClassRoomRequest {
+  int32 class_room_id = 1;
+}
