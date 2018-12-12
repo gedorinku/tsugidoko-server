@@ -1,0 +1,186 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "beacons.proto",
+    "version": "version not set"
+  },
+  "schemes": [
+    "http",
+    "https"
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/beacons": {
+      "get": {
+        "operationId": "ListBeacons",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/tsugidoko_serverListBeaconsResponse"
+            }
+          }
+        },
+        "tags": [
+          "BeaconService"
+        ]
+      },
+      "post": {
+        "operationId": "CreateBeacon",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/tsugidoko_serverBeacon"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/tsugidoko_serverBeacon"
+            }
+          }
+        ],
+        "tags": [
+          "BeaconService"
+        ]
+      }
+    },
+    "/beacons/{beacon.bssid}": {
+      "patch": {
+        "operationId": "UpdateBeacon",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/tsugidoko_serverBeacon"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "beacon.bssid",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/tsugidoko_serverBeacon"
+            }
+          }
+        ],
+        "tags": [
+          "BeaconService"
+        ]
+      }
+    },
+    "/beacons/{bssid}": {
+      "get": {
+        "operationId": "GetBeacon",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/tsugidoko_serverBeacon"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "bssid",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "BeaconService"
+        ]
+      },
+      "delete": {
+        "operationId": "DeleteBeacon",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/protobufEmpty"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "bssid",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "BeaconService"
+        ]
+      }
+    }
+  },
+  "definitions": {
+    "protobufEmpty": {
+      "type": "object",
+      "description": "service Foo {\n      rpc Bar(google.protobuf.Empty) returns (google.protobuf.Empty);\n    }\n\nThe JSON representation for `Empty` is empty JSON object `{}`.",
+      "title": "A generic empty message that you can re-use to avoid defining duplicated\nempty messages in your APIs. A typical example is to use it as the request\nor the response type of an API method. For instance:"
+    },
+    "tsugidoko_serverBeacon": {
+      "type": "object",
+      "properties": {
+        "bssid": {
+          "type": "string"
+        },
+        "class_room": {
+          "$ref": "#/definitions/tsugidoko_serverClassRoom"
+        }
+      }
+    },
+    "tsugidoko_serverClassRoom": {
+      "type": "object",
+      "properties": {
+        "class_room_id": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "name": {
+          "type": "string"
+        },
+        "latitude": {
+          "type": "number",
+          "format": "double"
+        },
+        "longitude": {
+          "type": "number",
+          "format": "double"
+        }
+      }
+    },
+    "tsugidoko_serverListBeaconsResponse": {
+      "type": "object",
+      "properties": {
+        "beacons": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/tsugidoko_serverBeacon"
+          }
+        }
+      }
+    }
+  }
+}
