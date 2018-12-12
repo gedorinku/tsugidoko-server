@@ -37,7 +37,8 @@ message GetSessionRequest {
 }
 
 message CreateSessionRequest {
-  Session session = 1;
+  string name = 1;
+  string password = 2;
 }
 
 message DeleteSessionRequest {
