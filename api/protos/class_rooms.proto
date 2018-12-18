@@ -46,6 +46,7 @@ message ClassRoom {
   double latitude = 3;
   double longitude = 4;
   repeated TagCount tag_counts = 5;
+  int32 building_id = 6;
 }
 
 message ListClassRoomsRequest {
