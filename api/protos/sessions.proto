@@ -17,7 +17,7 @@ service SessionService {
   rpc CreateSession (CreateSessionRequest) returns (Session) {
     option (google.api.http) = {
       post: "/sessions"
-      body: "session"
+      body: "*"
     };
   }
   rpc DeleteSession (DeleteSessionRequest) returns (google.protobuf.Empty) {
