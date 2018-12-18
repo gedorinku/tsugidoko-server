@@ -101,6 +101,18 @@
     }
   },
   "definitions": {
+    "tsugidoko_serverTag": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "name": {
+          "type": "string"
+        }
+      }
+    },
     "tsugidoko_serverUser": {
       "type": "object",
       "properties": {
@@ -110,6 +122,12 @@
         },
         "name": {
           "type": "string"
+        },
+        "tags": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/tsugidoko_serverTag"
+          }
         }
       }
     }

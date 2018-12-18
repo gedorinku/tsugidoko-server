@@ -1,0 +1,14 @@
+syntax = "proto3";
+
+package gedorinku.tsugidoko_server;
+
+option go_package = "github.com/gedorinku/tsugidoko-server/api;api_pb";
+
+
+
+import "type/tag.proto";
+
+message TagCount {
+  Tag tag = 1;
+  int32 count = 2;
+}

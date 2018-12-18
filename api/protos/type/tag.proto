@@ -1,0 +1,12 @@
+syntax = "proto3";
+
+package gedorinku.tsugidoko_server;
+
+option go_package = "github.com/gedorinku/tsugidoko-server/api;api_pb";
+
+
+
+message Tag {
+  int32 id = 1;
+  string name = 2;
+}

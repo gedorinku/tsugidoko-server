@@ -8,6 +8,8 @@ option go_package = "github.com/gedorinku/tsugidoko-server/api;api_pb";
 import "google/api/annotations.proto";
 import "google/protobuf/empty.proto";
 
+import "type/tag.proto";
+
 service UserService {
   rpc GetUser (GetUserRequest) returns (User) {
     option (google.api.http) = {
@@ -31,6 +33,7 @@ service UserService {
 message User {
   uint32 user_id = 1;
   string name = 2;
+  repeated Tag tags = 3;
 }
 
 message ListUsersRequest {
