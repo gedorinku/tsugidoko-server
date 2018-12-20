@@ -41,13 +41,6 @@ message User {
   repeated Tag tags = 3;
 }
 
-message ListUsersRequest {
-}
-
-message ListUsersResponse {
-  repeated User users = 1;
-}
-
 message GetCurrentUserRequest {
 }
 
