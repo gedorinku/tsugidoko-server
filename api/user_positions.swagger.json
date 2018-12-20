@@ -57,14 +57,6 @@
     }
   },
   "definitions": {
-    "tsugidoko_serverBeacon": {
-      "type": "object",
-      "properties": {
-        "bssid": {
-          "type": "string"
-        }
-      }
-    },
     "tsugidoko_serverClassRoom": {
       "type": "object",
       "properties": {
@@ -86,7 +78,7 @@
         "tag_counts": {
           "type": "array",
           "items": {
-            "$ref": "#/definitions/tsugidoko_serverTagCount"
+            "$ref": "#/definitions/typeTagCount"
           }
         },
         "building_id": {
@@ -96,32 +88,8 @@
         "beacons": {
           "type": "array",
           "items": {
-            "$ref": "#/definitions/tsugidoko_serverBeacon"
+            "$ref": "#/definitions/typeBeacon"
           }
-        }
-      }
-    },
-    "tsugidoko_serverTag": {
-      "type": "object",
-      "properties": {
-        "id": {
-          "type": "integer",
-          "format": "int32"
-        },
-        "name": {
-          "type": "string"
-        }
-      }
-    },
-    "tsugidoko_serverTagCount": {
-      "type": "object",
-      "properties": {
-        "tag": {
-          "$ref": "#/definitions/tsugidoko_serverTag"
-        },
-        "count": {
-          "type": "integer",
-          "format": "int32"
         }
       }
     },
@@ -147,6 +115,38 @@
         "is_valid": {
           "type": "boolean",
           "format": "boolean"
+        }
+      }
+    },
+    "typeBeacon": {
+      "type": "object",
+      "properties": {
+        "bssid": {
+          "type": "string"
+        }
+      }
+    },
+    "typeTag": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "name": {
+          "type": "string"
+        }
+      }
+    },
+    "typeTagCount": {
+      "type": "object",
+      "properties": {
+        "tag": {
+          "$ref": "#/definitions/typeTag"
+        },
+        "count": {
+          "type": "integer",
+          "format": "int32"
         }
       }
     }

@@ -1,8 +1,8 @@
 syntax = "proto3";
 
-package gedorinku.tsugidoko_server;
+package gedorinku.tsugidoko_server.type;
 
-option go_package = "github.com/gedorinku/tsugidoko-server/api;api_pb";
+option go_package = "github.com/gedorinku/tsugidoko-server/api/type;type_pb";
 
 
 

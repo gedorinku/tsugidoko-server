@@ -143,14 +143,6 @@
       "description": "service Foo {\n      rpc Bar(google.protobuf.Empty) returns (google.protobuf.Empty);\n    }\n\nThe JSON representation for `Empty` is empty JSON object `{}`.",
       "title": "A generic empty message that you can re-use to avoid defining duplicated\nempty messages in your APIs. A typical example is to use it as the request\nor the response type of an API method. For instance:"
     },
-    "tsugidoko_serverBeacon": {
-      "type": "object",
-      "properties": {
-        "bssid": {
-          "type": "string"
-        }
-      }
-    },
     "tsugidoko_serverClassRoom": {
       "type": "object",
       "properties": {
@@ -172,7 +164,7 @@
         "tag_counts": {
           "type": "array",
           "items": {
-            "$ref": "#/definitions/tsugidoko_serverTagCount"
+            "$ref": "#/definitions/typeTagCount"
           }
         },
         "building_id": {
@@ -182,7 +174,7 @@
         "beacons": {
           "type": "array",
           "items": {
-            "$ref": "#/definitions/tsugidoko_serverBeacon"
+            "$ref": "#/definitions/typeBeacon"
           }
         }
       }
@@ -198,7 +190,15 @@
         }
       }
     },
-    "tsugidoko_serverTag": {
+    "typeBeacon": {
+      "type": "object",
+      "properties": {
+        "bssid": {
+          "type": "string"
+        }
+      }
+    },
+    "typeTag": {
       "type": "object",
       "properties": {
         "id": {
@@ -210,11 +210,11 @@
         }
       }
     },
-    "tsugidoko_serverTagCount": {
+    "typeTagCount": {
       "type": "object",
       "properties": {
         "tag": {
-          "$ref": "#/definitions/tsugidoko_serverTag"
+          "$ref": "#/definitions/typeTag"
         },
         "count": {
           "type": "integer",
