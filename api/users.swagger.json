@@ -15,9 +15,23 @@
     "application/json"
   ],
   "paths": {
-    "/users": {
-      "post": {
-        "operationId": "CreateUser",
+    "/user": {
+      "get": {
+        "operationId": "GetCurrentUser",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/tsugidoko_serverUser"
+            }
+          }
+        },
+        "tags": [
+          "UserService"
+        ]
+      },
+      "patch": {
+        "operationId": "UpdateUser",
         "responses": {
           "200": {
             "description": "",
@@ -41,9 +55,9 @@
         ]
       }
     },
-    "/users/{user.user_id}": {
-      "patch": {
-        "operationId": "UpdateUser",
+    "/users": {
+      "post": {
+        "operationId": "CreateUser",
         "responses": {
           "200": {
             "description": "",
@@ -53,13 +67,6 @@
           }
         },
         "parameters": [
-          {
-            "name": "user.user_id",
-            "in": "path",
-            "required": true,
-            "type": "integer",
-            "format": "int64"
-          },
           {
             "name": "body",
             "in": "body",

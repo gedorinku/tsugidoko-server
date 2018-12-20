@@ -11,6 +11,17 @@ import "google/protobuf/empty.proto";
 import "type/tag.proto";
 
 service UserService {
+  rpc GetCurrentUser (GetCurrentUserRequest) returns (User) {
+    option (google.api.http) = {
+      get: "/user"
+    };
+  }
+  rpc UpdateUser (UpdateUserRequest) returns (User) {
+    option (google.api.http) = {
+      patch: "/user"
+      body: "user"
+    };
+  }
   rpc GetUser (GetUserRequest) returns (User) {
     option (google.api.http) = {
       get: "/users/{user_id}"
@@ -19,12 +30,6 @@ service UserService {
   rpc CreateUser (CreateUserRequest) returns (User) {
     option (google.api.http) = {
       post: "/users"
-      body: "user"
-    };
-  }
-  rpc UpdateUser (UpdateUserRequest) returns (User) {
-    option (google.api.http) = {
-      patch: "/users/{user.user_id}"
       body: "user"
     };
   }
@@ -43,14 +48,17 @@ message ListUsersResponse {
   repeated User users = 1;
 }
 
+message GetCurrentUserRequest {
+}
+
+message UpdateUserRequest {
+  User user = 1;
+}
+
 message GetUserRequest {
   uint32 user_id = 1;
 }
 
 message CreateUserRequest {
-  User user = 1;
-}
-
-message UpdateUserRequest {
   User user = 1;
 }

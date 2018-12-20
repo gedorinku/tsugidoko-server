@@ -38,7 +38,7 @@ func (m *User) Reset()         { *m = User{} }
 func (m *User) String() string { return proto.CompactTextString(m) }
 func (*User) ProtoMessage()    {}
 func (*User) Descriptor() ([]byte, []int) {
-	return fileDescriptor_users_fdbf7903eb3445ef, []int{0}
+	return fileDescriptor_users_08d45d5502667ed4, []int{0}
 }
 func (m *User) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_User.Unmarshal(m, b)
@@ -89,7 +89,7 @@ func (m *ListUsersRequest) Reset()         { *m = ListUsersRequest{} }
 func (m *ListUsersRequest) String() string { return proto.CompactTextString(m) }
 func (*ListUsersRequest) ProtoMessage()    {}
 func (*ListUsersRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_users_fdbf7903eb3445ef, []int{1}
+	return fileDescriptor_users_08d45d5502667ed4, []int{1}
 }
 func (m *ListUsersRequest) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_ListUsersRequest.Unmarshal(m, b)
@@ -120,7 +120,7 @@ func (m *ListUsersResponse) Reset()         { *m = ListUsersResponse{} }
 func (m *ListUsersResponse) String() string { return proto.CompactTextString(m) }
 func (*ListUsersResponse) ProtoMessage()    {}
 func (*ListUsersResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_users_fdbf7903eb3445ef, []int{2}
+	return fileDescriptor_users_08d45d5502667ed4, []int{2}
 }
 func (m *ListUsersResponse) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_ListUsersResponse.Unmarshal(m, b)
@@ -147,6 +147,74 @@ func (m *ListUsersResponse) GetUsers() []*User {
 	return nil
 }
 
+type GetCurrentUserRequest struct {
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *GetCurrentUserRequest) Reset()         { *m = GetCurrentUserRequest{} }
+func (m *GetCurrentUserRequest) String() string { return proto.CompactTextString(m) }
+func (*GetCurrentUserRequest) ProtoMessage()    {}
+func (*GetCurrentUserRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_users_08d45d5502667ed4, []int{3}
+}
+func (m *GetCurrentUserRequest) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_GetCurrentUserRequest.Unmarshal(m, b)
+}
+func (m *GetCurrentUserRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_GetCurrentUserRequest.Marshal(b, m, deterministic)
+}
+func (dst *GetCurrentUserRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_GetCurrentUserRequest.Merge(dst, src)
+}
+func (m *GetCurrentUserRequest) XXX_Size() int {
+	return xxx_messageInfo_GetCurrentUserRequest.Size(m)
+}
+func (m *GetCurrentUserRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_GetCurrentUserRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_GetCurrentUserRequest proto.InternalMessageInfo
+
+type UpdateUserRequest struct {
+	User                 *User    `protobuf:"bytes,1,opt,name=user,proto3" json:"user,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *UpdateUserRequest) Reset()         { *m = UpdateUserRequest{} }
+func (m *UpdateUserRequest) String() string { return proto.CompactTextString(m) }
+func (*UpdateUserRequest) ProtoMessage()    {}
+func (*UpdateUserRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_users_08d45d5502667ed4, []int{4}
+}
+func (m *UpdateUserRequest) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_UpdateUserRequest.Unmarshal(m, b)
+}
+func (m *UpdateUserRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_UpdateUserRequest.Marshal(b, m, deterministic)
+}
+func (dst *UpdateUserRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_UpdateUserRequest.Merge(dst, src)
+}
+func (m *UpdateUserRequest) XXX_Size() int {
+	return xxx_messageInfo_UpdateUserRequest.Size(m)
+}
+func (m *UpdateUserRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_UpdateUserRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_UpdateUserRequest proto.InternalMessageInfo
+
+func (m *UpdateUserRequest) GetUser() *User {
+	if m != nil {
+		return m.User
+	}
+	return nil
+}
+
 type GetUserRequest struct {
 	UserId               uint32   `protobuf:"varint,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
@@ -158,7 +226,7 @@ func (m *GetUserRequest) Reset()         { *m = GetUserRequest{} }
 func (m *GetUserRequest) String() string { return proto.CompactTextString(m) }
 func (*GetUserRequest) ProtoMessage()    {}
 func (*GetUserRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_users_fdbf7903eb3445ef, []int{3}
+	return fileDescriptor_users_08d45d5502667ed4, []int{5}
 }
 func (m *GetUserRequest) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_GetUserRequest.Unmarshal(m, b)
@@ -196,7 +264,7 @@ func (m *CreateUserRequest) Reset()         { *m = CreateUserRequest{} }
 func (m *CreateUserRequest) String() string { return proto.CompactTextString(m) }
 func (*CreateUserRequest) ProtoMessage()    {}
 func (*CreateUserRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_users_fdbf7903eb3445ef, []int{4}
+	return fileDescriptor_users_08d45d5502667ed4, []int{6}
 }
 func (m *CreateUserRequest) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_CreateUserRequest.Unmarshal(m, b)
@@ -223,51 +291,14 @@ func (m *CreateUserRequest) GetUser() *User {
 	return nil
 }
 
-type UpdateUserRequest struct {
-	User                 *User    `protobuf:"bytes,1,opt,name=user,proto3" json:"user,omitempty"`
-	XXX_NoUnkeyedLiteral struct{} `json:"-"`
-	XXX_unrecognized     []byte   `json:"-"`
-	XXX_sizecache        int32    `json:"-"`
-}
-
-func (m *UpdateUserRequest) Reset()         { *m = UpdateUserRequest{} }
-func (m *UpdateUserRequest) String() string { return proto.CompactTextString(m) }
-func (*UpdateUserRequest) ProtoMessage()    {}
-func (*UpdateUserRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_users_fdbf7903eb3445ef, []int{5}
-}
-func (m *UpdateUserRequest) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_UpdateUserRequest.Unmarshal(m, b)
-}
-func (m *UpdateUserRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_UpdateUserRequest.Marshal(b, m, deterministic)
-}
-func (dst *UpdateUserRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_UpdateUserRequest.Merge(dst, src)
-}
-func (m *UpdateUserRequest) XXX_Size() int {
-	return xxx_messageInfo_UpdateUserRequest.Size(m)
-}
-func (m *UpdateUserRequest) XXX_DiscardUnknown() {
-	xxx_messageInfo_UpdateUserRequest.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_UpdateUserRequest proto.InternalMessageInfo
-
-func (m *UpdateUserRequest) GetUser() *User {
-	if m != nil {
-		return m.User
-	}
-	return nil
-}
-
 func init() {
 	proto.RegisterType((*User)(nil), "gedorinku.tsugidoko_server.User")
 	proto.RegisterType((*ListUsersRequest)(nil), "gedorinku.tsugidoko_server.ListUsersRequest")
 	proto.RegisterType((*ListUsersResponse)(nil), "gedorinku.tsugidoko_server.ListUsersResponse")
+	proto.RegisterType((*GetCurrentUserRequest)(nil), "gedorinku.tsugidoko_server.GetCurrentUserRequest")
+	proto.RegisterType((*UpdateUserRequest)(nil), "gedorinku.tsugidoko_server.UpdateUserRequest")
 	proto.RegisterType((*GetUserRequest)(nil), "gedorinku.tsugidoko_server.GetUserRequest")
 	proto.RegisterType((*CreateUserRequest)(nil), "gedorinku.tsugidoko_server.CreateUserRequest")
-	proto.RegisterType((*UpdateUserRequest)(nil), "gedorinku.tsugidoko_server.UpdateUserRequest")
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -282,9 +313,10 @@ const _ = grpc.SupportPackageIsVersion4
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
 type UserServiceClient interface {
+	GetCurrentUser(ctx context.Context, in *GetCurrentUserRequest, opts ...grpc.CallOption) (*User, error)
+	UpdateUser(ctx context.Context, in *UpdateUserRequest, opts ...grpc.CallOption) (*User, error)
 	GetUser(ctx context.Context, in *GetUserRequest, opts ...grpc.CallOption) (*User, error)
 	CreateUser(ctx context.Context, in *CreateUserRequest, opts ...grpc.CallOption) (*User, error)
-	UpdateUser(ctx context.Context, in *UpdateUserRequest, opts ...grpc.CallOption) (*User, error)
 }
 
 type userServiceClient struct {
@@ -293,6 +325,24 @@ type userServiceClient struct {
 
 func NewUserServiceClient(cc *grpc.ClientConn) UserServiceClient {
 	return &userServiceClient{cc}
+}
+
+func (c *userServiceClient) GetCurrentUser(ctx context.Context, in *GetCurrentUserRequest, opts ...grpc.CallOption) (*User, error) {
+	out := new(User)
+	err := c.cc.Invoke(ctx, "/gedorinku.tsugidoko_server.UserService/GetCurrentUser", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *userServiceClient) UpdateUser(ctx context.Context, in *UpdateUserRequest, opts ...grpc.CallOption) (*User, error) {
+	out := new(User)
+	err := c.cc.Invoke(ctx, "/gedorinku.tsugidoko_server.UserService/UpdateUser", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
 }
 
 func (c *userServiceClient) GetUser(ctx context.Context, in *GetUserRequest, opts ...grpc.CallOption) (*User, error) {
@@ -313,24 +363,52 @@ func (c *userServiceClient) CreateUser(ctx context.Context, in *CreateUserReques
 	return out, nil
 }
 
-func (c *userServiceClient) UpdateUser(ctx context.Context, in *UpdateUserRequest, opts ...grpc.CallOption) (*User, error) {
-	out := new(User)
-	err := c.cc.Invoke(ctx, "/gedorinku.tsugidoko_server.UserService/UpdateUser", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
 // UserServiceServer is the server API for UserService service.
 type UserServiceServer interface {
+	GetCurrentUser(context.Context, *GetCurrentUserRequest) (*User, error)
+	UpdateUser(context.Context, *UpdateUserRequest) (*User, error)
 	GetUser(context.Context, *GetUserRequest) (*User, error)
 	CreateUser(context.Context, *CreateUserRequest) (*User, error)
-	UpdateUser(context.Context, *UpdateUserRequest) (*User, error)
 }
 
 func RegisterUserServiceServer(s *grpc.Server, srv UserServiceServer) {
 	s.RegisterService(&_UserService_serviceDesc, srv)
+}
+
+func _UserService_GetCurrentUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetCurrentUserRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServiceServer).GetCurrentUser(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/gedorinku.tsugidoko_server.UserService/GetCurrentUser",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServiceServer).GetCurrentUser(ctx, req.(*GetCurrentUserRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _UserService_UpdateUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateUserRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServiceServer).UpdateUser(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/gedorinku.tsugidoko_server.UserService/UpdateUser",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServiceServer).UpdateUser(ctx, req.(*UpdateUserRequest))
+	}
+	return interceptor(ctx, in, info, handler)
 }
 
 func _UserService_GetUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
@@ -369,28 +447,18 @@ func _UserService_CreateUser_Handler(srv interface{}, ctx context.Context, dec f
 	return interceptor(ctx, in, info, handler)
 }
 
-func _UserService_UpdateUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(UpdateUserRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(UserServiceServer).UpdateUser(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/gedorinku.tsugidoko_server.UserService/UpdateUser",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(UserServiceServer).UpdateUser(ctx, req.(*UpdateUserRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 var _UserService_serviceDesc = grpc.ServiceDesc{
 	ServiceName: "gedorinku.tsugidoko_server.UserService",
 	HandlerType: (*UserServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "GetCurrentUser",
+			Handler:    _UserService_GetCurrentUser_Handler,
+		},
+		{
+			MethodName: "UpdateUser",
+			Handler:    _UserService_UpdateUser_Handler,
+		},
 		{
 			MethodName: "GetUser",
 			Handler:    _UserService_GetUser_Handler,
@@ -399,43 +467,41 @@ var _UserService_serviceDesc = grpc.ServiceDesc{
 			MethodName: "CreateUser",
 			Handler:    _UserService_CreateUser_Handler,
 		},
-		{
-			MethodName: "UpdateUser",
-			Handler:    _UserService_UpdateUser_Handler,
-		},
 	},
 	Streams:  []grpc.StreamDesc{},
 	Metadata: "users.proto",
 }
 
-func init() { proto.RegisterFile("users.proto", fileDescriptor_users_fdbf7903eb3445ef) }
+func init() { proto.RegisterFile("users.proto", fileDescriptor_users_08d45d5502667ed4) }
 
-var fileDescriptor_users_fdbf7903eb3445ef = []byte{
-	// 412 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xac, 0x93, 0x41, 0x6f, 0xd3, 0x30,
-	0x18, 0x86, 0x95, 0x2e, 0x74, 0xe2, 0xab, 0xa8, 0x36, 0x0b, 0x44, 0x14, 0x40, 0x44, 0xe1, 0x52,
-	0x90, 0x16, 0xa3, 0x0c, 0x71, 0x80, 0x1b, 0x1c, 0xd0, 0x04, 0xa7, 0xc0, 0x2e, 0x5c, 0x2a, 0x67,
-	0xf9, 0xf0, 0xac, 0xd1, 0xd8, 0xb3, 0x9d, 0x4a, 0x15, 0xe2, 0xd2, 0xbf, 0xc0, 0x4f, 0xe3, 0x2f,
-	0xf0, 0x2b, 0x38, 0x21, 0x3b, 0xa1, 0x2d, 0xaa, 0x1a, 0x7a, 0xd8, 0x2d, 0x5f, 0xbe, 0xd7, 0xcf,
-	0xeb, 0xf7, 0x95, 0x0c, 0xa3, 0xc6, 0xa0, 0x36, 0x99, 0xd2, 0xd2, 0x4a, 0x12, 0x73, 0xac, 0xa4,
-	0x16, 0xf5, 0x55, 0x93, 0x59, 0xd3, 0x70, 0x51, 0xc9, 0x2b, 0x39, 0x35, 0xa8, 0xe7, 0xa8, 0xe3,
-	0x87, 0x5c, 0x4a, 0xfe, 0x15, 0x29, 0x53, 0x82, 0xb2, 0xba, 0x96, 0x96, 0x59, 0x21, 0xeb, 0xee,
-	0x64, 0xfc, 0xa0, 0xdb, 0xfa, 0xa9, 0x6c, 0xbe, 0x50, 0x9c, 0x29, 0xbb, 0xe8, 0x96, 0x63, 0xbb,
-	0x50, 0x48, 0x2d, 0xe3, 0xed, 0x9c, 0x5e, 0x42, 0x78, 0x6e, 0x50, 0x93, 0xfb, 0x70, 0xe8, 0xdc,
-	0xa7, 0xa2, 0x8a, 0x82, 0x24, 0x98, 0xdc, 0x29, 0x86, 0x6e, 0x3c, 0xab, 0x08, 0x81, 0xb0, 0x66,
-	0x33, 0x8c, 0x06, 0x49, 0x30, 0xb9, 0x5d, 0xf8, 0x6f, 0x72, 0x0a, 0xa1, 0x65, 0xdc, 0x44, 0x07,
-	0xc9, 0xc1, 0x64, 0x94, 0x3f, 0xce, 0x76, 0x5f, 0x35, 0xfb, 0xc4, 0x78, 0xe1, 0xc5, 0x29, 0x81,
-	0xa3, 0x0f, 0xc2, 0x58, 0xe7, 0x66, 0x0a, 0xbc, 0x6e, 0xd0, 0xd8, 0xf4, 0x3d, 0x1c, 0x6f, 0xfc,
-	0x33, 0x4a, 0xd6, 0x06, 0xc9, 0x4b, 0xb8, 0xe5, 0x8b, 0x88, 0x02, 0x8f, 0x4f, 0xfa, 0xf0, 0xee,
-	0x64, 0xd1, 0xca, 0xd3, 0xa7, 0x30, 0x7e, 0x87, 0x9e, 0xd5, 0xe1, 0x77, 0x86, 0x4a, 0xcf, 0xe0,
-	0xf8, 0xad, 0x46, 0x66, 0x71, 0x53, 0xfd, 0x02, 0x42, 0xb7, 0xf6, 0xd2, 0x7d, 0x6c, 0xbd, 0xda,
-	0xa1, 0xce, 0x55, 0x75, 0x13, 0xa8, 0xfc, 0xf7, 0x00, 0x46, 0x6e, 0xfc, 0x88, 0x7a, 0x2e, 0x2e,
-	0x90, 0x5c, 0xc3, 0x61, 0x17, 0x88, 0x3c, 0xeb, 0x43, 0xfc, 0x9b, 0x3a, 0xfe, 0xaf, 0x5d, 0x1a,
-	0x2d, 0x7f, 0xfe, 0xfa, 0x31, 0x20, 0xe4, 0x88, 0xfa, 0xe6, 0xe8, 0xb7, 0xae, 0xa5, 0xef, 0xc4,
-	0x00, 0xac, 0x8b, 0x21, 0x27, 0x7d, 0xa4, 0xad, 0x02, 0xf7, 0x30, 0xbe, 0xeb, 0x8d, 0xc7, 0xe9,
-	0xb0, 0x35, 0x7e, 0xe5, 0x73, 0x93, 0x65, 0x00, 0xb0, 0xee, 0xb0, 0xdf, 0x75, 0xab, 0xeb, 0x3d,
-	0x5c, 0x9f, 0x78, 0xd7, 0x47, 0xf9, 0xbd, 0xcd, 0xb8, 0xd9, 0xdf, 0xcc, 0xed, 0x25, 0xde, 0xe4,
-	0x9f, 0x9f, 0x73, 0x61, 0x2f, 0x9b, 0x32, 0xbb, 0x90, 0x33, 0xba, 0x42, 0xd2, 0x15, 0xf2, 0xa4,
-	0x45, 0xba, 0x47, 0xf7, 0x9a, 0x29, 0x31, 0x55, 0x65, 0x39, 0xf4, 0x6f, 0xe8, 0xf4, 0x4f, 0x00,
-	0x00, 0x00, 0xff, 0xff, 0x21, 0xac, 0xd7, 0x18, 0xb9, 0x03, 0x00, 0x00,
+var fileDescriptor_users_08d45d5502667ed4 = []byte{
+	// 439 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xac, 0x93, 0xc1, 0x6e, 0xd3, 0x40,
+	0x10, 0x86, 0x95, 0x26, 0x4d, 0xc4, 0x44, 0x89, 0xda, 0x01, 0x54, 0x2b, 0x20, 0x11, 0xf9, 0x14,
+	0x90, 0xea, 0x05, 0x17, 0x71, 0x80, 0x1b, 0x3d, 0x54, 0x15, 0x9c, 0x0c, 0xbd, 0x70, 0x89, 0xd6,
+	0xf5, 0xb0, 0x5d, 0x95, 0x78, 0xb7, 0xbb, 0xeb, 0x4a, 0x15, 0xe2, 0xc2, 0x2b, 0xf0, 0x68, 0x3c,
+	0x00, 0x17, 0x1e, 0x04, 0xed, 0xda, 0xb4, 0x16, 0x50, 0x37, 0x48, 0xbd, 0x79, 0xbc, 0x3b, 0xff,
+	0x37, 0xff, 0x3f, 0x5a, 0x18, 0x57, 0x96, 0x8c, 0x4d, 0xb4, 0x51, 0x4e, 0xe1, 0x4c, 0x50, 0xa1,
+	0x8c, 0x2c, 0x4f, 0xab, 0xc4, 0xd9, 0x4a, 0xc8, 0x42, 0x9d, 0xaa, 0xa5, 0x25, 0x73, 0x4e, 0x66,
+	0xf6, 0x50, 0x28, 0x25, 0x3e, 0x11, 0xe3, 0x5a, 0x32, 0x5e, 0x96, 0xca, 0x71, 0x27, 0x55, 0xd9,
+	0x74, 0xce, 0x1e, 0x34, 0xa7, 0xa1, 0xca, 0xab, 0x8f, 0x8c, 0x56, 0xda, 0x5d, 0x34, 0x87, 0x53,
+	0x77, 0xa1, 0x89, 0x39, 0x2e, 0xea, 0x3a, 0x3e, 0x81, 0xc1, 0x91, 0x25, 0x83, 0x3b, 0x30, 0xf2,
+	0xf4, 0xa5, 0x2c, 0xa2, 0xde, 0xbc, 0xb7, 0x98, 0x64, 0x43, 0x5f, 0x1e, 0x16, 0x88, 0x30, 0x28,
+	0xf9, 0x8a, 0xa2, 0x8d, 0x79, 0x6f, 0x71, 0x27, 0x0b, 0xdf, 0xb8, 0x07, 0x03, 0xc7, 0x85, 0x8d,
+	0xfa, 0xf3, 0xfe, 0x62, 0x9c, 0x3e, 0x4a, 0xae, 0x1f, 0x35, 0x79, 0xcf, 0x45, 0x16, 0x2e, 0xc7,
+	0x08, 0x5b, 0x6f, 0xa5, 0x75, 0x9e, 0x66, 0x33, 0x3a, 0xab, 0xc8, 0xba, 0xf8, 0x0d, 0x6c, 0xb7,
+	0xfe, 0x59, 0xad, 0x4a, 0x4b, 0xf8, 0x02, 0x36, 0x43, 0x10, 0x51, 0x2f, 0xc8, 0xcf, 0xbb, 0xe4,
+	0x7d, 0x67, 0x56, 0x5f, 0x8f, 0x77, 0xe0, 0xfe, 0x01, 0xb9, 0xfd, 0xca, 0x18, 0x2a, 0x83, 0xe4,
+	0x6f, 0xca, 0x21, 0x6c, 0x1f, 0xe9, 0x82, 0x3b, 0x6a, 0xfd, 0xc4, 0xe7, 0x30, 0xf0, 0x6d, 0xc1,
+	0xed, 0x3a, 0x90, 0x70, 0x3b, 0x7e, 0x0c, 0xd3, 0x03, 0x6a, 0x8b, 0x5f, 0x1b, 0x9c, 0xa7, 0xee,
+	0x1b, 0xba, 0x0d, 0x6a, 0xfa, 0xa3, 0x0f, 0x63, 0x5f, 0xbe, 0x23, 0x73, 0x2e, 0x8f, 0x09, 0x5d,
+	0x98, 0xa2, 0xe5, 0x14, 0x9f, 0x75, 0x29, 0xfd, 0x33, 0x95, 0xd9, 0x8d, 0xf0, 0x78, 0xf2, 0xf5,
+	0xfb, 0xcf, 0x6f, 0x1b, 0x23, 0xdc, 0x64, 0x7e, 0x0a, 0x34, 0x00, 0x57, 0x31, 0xe2, 0x6e, 0x67,
+	0xfb, 0x9f, 0x71, 0xaf, 0x41, 0xbb, 0x1b, 0x68, 0x93, 0xb4, 0xa6, 0xbd, 0x0c, 0xce, 0xf1, 0x0c,
+	0x46, 0x4d, 0xde, 0xf8, 0xe4, 0x06, 0x8b, 0xff, 0x47, 0x8b, 0x02, 0x0d, 0x71, 0x2b, 0xd0, 0x2c,
+	0xfb, 0xdc, 0x2c, 0xf1, 0x0b, 0x5a, 0x80, 0xab, 0xbd, 0x75, 0xdb, 0xfc, 0x6b, 0xbf, 0x6b, 0x80,
+	0xef, 0x05, 0xf0, 0x34, 0x1e, 0xd6, 0xe0, 0xda, 0xe7, 0xeb, 0xf4, 0xc3, 0x53, 0x21, 0xdd, 0x49,
+	0x95, 0x27, 0xc7, 0x6a, 0xc5, 0x2e, 0x35, 0xd8, 0xa5, 0xc6, 0x6e, 0xad, 0xe1, 0x9f, 0xfc, 0x2b,
+	0xae, 0xe5, 0x52, 0xe7, 0xf9, 0x30, 0xbc, 0xe0, 0xbd, 0x5f, 0x01, 0x00, 0x00, 0xff, 0xff, 0xfa,
+	0x7c, 0x0c, 0x96, 0x37, 0x04, 0x00, 0x00,
 }
