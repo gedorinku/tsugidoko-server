@@ -1,0 +1,163 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "user_positions.proto",
+    "version": "version not set"
+  },
+  "schemes": [
+    "http",
+    "https"
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/user_positions": {
+      "get": {
+        "operationId": "ListUserPositions",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/tsugidoko_serverListUserPositionsResponse"
+            }
+          }
+        },
+        "tags": [
+          "UserPositionService"
+        ]
+      },
+      "post": {
+        "operationId": "CreateUserPosition",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/tsugidoko_serverUserPosition"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/tsugidoko_serverUserPosition"
+            }
+          }
+        ],
+        "tags": [
+          "UserPositionService"
+        ]
+      }
+    },
+    "/user_positions/{user_position.user_position_id}": {
+      "patch": {
+        "operationId": "UpdateUserPosition",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/tsugidoko_serverUserPosition"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "user_position.user_position_id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/tsugidoko_serverUserPosition"
+            }
+          }
+        ],
+        "tags": [
+          "UserPositionService"
+        ]
+      }
+    },
+    "/user_positions/{user_position_id}": {
+      "get": {
+        "operationId": "GetUserPosition",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/tsugidoko_serverUserPosition"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "user_position_id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "UserPositionService"
+        ]
+      },
+      "delete": {
+        "operationId": "DeleteUserPosition",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/protobufEmpty"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "user_position_id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "UserPositionService"
+        ]
+      }
+    }
+  },
+  "definitions": {
+    "protobufEmpty": {
+      "type": "object",
+      "description": "service Foo {\n      rpc Bar(google.protobuf.Empty) returns (google.protobuf.Empty);\n    }\n\nThe JSON representation for `Empty` is empty JSON object `{}`.",
+      "title": "A generic empty message that you can re-use to avoid defining duplicated\nempty messages in your APIs. A typical example is to use it as the request\nor the response type of an API method. For instance:"
+    },
+    "tsugidoko_serverListUserPositionsResponse": {
+      "type": "object",
+      "properties": {
+        "user_positions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/tsugidoko_serverUserPosition"
+          }
+        }
+      }
+    },
+    "tsugidoko_serverUserPosition": {
+      "type": "object",
+      "properties": {
+        "user_position_id": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}
