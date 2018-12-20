@@ -8,6 +8,7 @@ option go_package = "github.com/gedorinku/tsugidoko-server/api;api_pb";
 import "google/api/annotations.proto";
 import "google/protobuf/empty.proto";
 
+import "type/beacon.proto";
 import "type/tag_count.proto";
 
 service ClassRoomService {
@@ -47,6 +48,7 @@ message ClassRoom {
   double longitude = 4;
   repeated TagCount tag_counts = 5;
   int32 building_id = 6;
+  repeated Beacon beacons = 7;
 }
 
 message ListClassRoomsRequest {

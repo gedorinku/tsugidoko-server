@@ -15,14 +15,14 @@
     "application/json"
   ],
   "paths": {
-    "/user_positions": {
+    "/user/position": {
       "get": {
-        "operationId": "ListUserPositions",
+        "operationId": "GetUserPosition",
         "responses": {
           "200": {
             "description": "",
             "schema": {
-              "$ref": "#/definitions/tsugidoko_serverListUserPositionsResponse"
+              "$ref": "#/definitions/tsugidoko_serverUserPosition"
             }
           }
         },
@@ -30,33 +30,7 @@
           "UserPositionService"
         ]
       },
-      "post": {
-        "operationId": "CreateUserPosition",
-        "responses": {
-          "200": {
-            "description": "",
-            "schema": {
-              "$ref": "#/definitions/tsugidoko_serverUserPosition"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/tsugidoko_serverUserPosition"
-            }
-          }
-        ],
-        "tags": [
-          "UserPositionService"
-        ]
-      }
-    },
-    "/user_positions/{user_position.user_position_id}": {
-      "patch": {
+      "put": {
         "operationId": "UpdateUserPosition",
         "responses": {
           "200": {
@@ -68,64 +42,12 @@
         },
         "parameters": [
           {
-            "name": "user_position.user_position_id",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
             "name": "body",
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/tsugidoko_serverUserPosition"
+              "$ref": "#/definitions/tsugidoko_serverUpdateUserPositionRequest"
             }
-          }
-        ],
-        "tags": [
-          "UserPositionService"
-        ]
-      }
-    },
-    "/user_positions/{user_position_id}": {
-      "get": {
-        "operationId": "GetUserPosition",
-        "responses": {
-          "200": {
-            "description": "",
-            "schema": {
-              "$ref": "#/definitions/tsugidoko_serverUserPosition"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "user_position_id",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          }
-        ],
-        "tags": [
-          "UserPositionService"
-        ]
-      },
-      "delete": {
-        "operationId": "DeleteUserPosition",
-        "responses": {
-          "200": {
-            "description": "",
-            "schema": {
-              "$ref": "#/definitions/protobufEmpty"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "user_position_id",
-            "in": "path",
-            "required": true,
-            "type": "string"
           }
         ],
         "tags": [
@@ -135,27 +57,96 @@
     }
   },
   "definitions": {
-    "protobufEmpty": {
-      "type": "object",
-      "description": "service Foo {\n      rpc Bar(google.protobuf.Empty) returns (google.protobuf.Empty);\n    }\n\nThe JSON representation for `Empty` is empty JSON object `{}`.",
-      "title": "A generic empty message that you can re-use to avoid defining duplicated\nempty messages in your APIs. A typical example is to use it as the request\nor the response type of an API method. For instance:"
-    },
-    "tsugidoko_serverListUserPositionsResponse": {
+    "tsugidoko_serverBeacon": {
       "type": "object",
       "properties": {
-        "user_positions": {
+        "bssid": {
+          "type": "string"
+        }
+      }
+    },
+    "tsugidoko_serverClassRoom": {
+      "type": "object",
+      "properties": {
+        "class_room_id": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "name": {
+          "type": "string"
+        },
+        "latitude": {
+          "type": "number",
+          "format": "double"
+        },
+        "longitude": {
+          "type": "number",
+          "format": "double"
+        },
+        "tag_counts": {
           "type": "array",
           "items": {
-            "$ref": "#/definitions/tsugidoko_serverUserPosition"
+            "$ref": "#/definitions/tsugidoko_serverTagCount"
           }
+        },
+        "building_id": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "beacons": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/tsugidoko_serverBeacon"
+          }
+        }
+      }
+    },
+    "tsugidoko_serverTag": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "name": {
+          "type": "string"
+        }
+      }
+    },
+    "tsugidoko_serverTagCount": {
+      "type": "object",
+      "properties": {
+        "tag": {
+          "$ref": "#/definitions/tsugidoko_serverTag"
+        },
+        "count": {
+          "type": "integer",
+          "format": "int32"
+        }
+      }
+    },
+    "tsugidoko_serverUpdateUserPositionRequest": {
+      "type": "object",
+      "properties": {
+        "bssid": {
+          "type": "string"
+        },
+        "is_valid": {
+          "type": "boolean",
+          "format": "boolean",
+          "title": "beaconに接続している時にtrueにする"
         }
       }
     },
     "tsugidoko_serverUserPosition": {
       "type": "object",
       "properties": {
-        "user_position_id": {
-          "type": "string"
+        "class_room": {
+          "$ref": "#/definitions/tsugidoko_serverClassRoom"
+        },
+        "is_valid": {
+          "type": "boolean",
+          "format": "boolean"
         }
       }
     }

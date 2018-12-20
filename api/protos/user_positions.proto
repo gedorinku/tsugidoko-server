@@ -8,59 +8,32 @@ option go_package = "github.com/gedorinku/tsugidoko-server/api;api_pb";
 import "google/api/annotations.proto";
 import "google/protobuf/empty.proto";
 
+import "class_rooms.proto";
+
 service UserPositionService {
-  rpc ListUserPositions (ListUserPositionsRequest) returns (ListUserPositionsResponse) {
-    option (google.api.http) = {
-      get: "/user_positions"
-    };
-  }
   rpc GetUserPosition (GetUserPositionRequest) returns (UserPosition) {
     option (google.api.http) = {
-      get: "/user_positions/{user_position_id}"
-    };
-  }
-  rpc CreateUserPosition (CreateUserPositionRequest) returns (UserPosition) {
-    option (google.api.http) = {
-      post: "/user_positions"
-      body: "user_position"
+      get: "/user/position"
     };
   }
   rpc UpdateUserPosition (UpdateUserPositionRequest) returns (UserPosition) {
     option (google.api.http) = {
-      patch: "/user_positions/{user_position.user_position_id}"
-      body: "user_position"
-    };
-  }
-  rpc DeleteUserPosition (DeleteUserPositionRequest) returns (google.protobuf.Empty) {
-    option (google.api.http) = {
-      delete: "/user_positions/{user_position_id}"
+      put: "/user/position"
+      body: "*"
     };
   }
 }
 
 message UserPosition {
-  string user_position_id = 1;
-}
-
-message ListUserPositionsRequest {
-}
-
-message ListUserPositionsResponse {
-  repeated UserPosition user_positions = 1;
+  ClassRoom class_room = 1;
+  bool is_valid = 2;
 }
 
 message GetUserPositionRequest {
-  string user_position_id = 1;
-}
-
-message CreateUserPositionRequest {
-  UserPosition user_position = 1;
 }
 
 message UpdateUserPositionRequest {
-  UserPosition user_position = 1;
-}
-
-message DeleteUserPositionRequest {
-  string user_position_id = 1;
+  string bssid = 1;
+  // beaconに接続している時にtrueにする
+  bool is_valid = 2;
 }
