@@ -1,0 +1,6 @@
+#!/bin/sh
+
+cp sqlboiler.toml.ci sqlboiler.toml
+cp .env.ci .env
+psql -c 'CREATE DATABASE tsugidoko;'
+scripts/setup-db -y
