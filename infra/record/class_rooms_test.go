@@ -568,7 +568,7 @@ func testClassRoomsSelect(t *testing.T) {
 }
 
 var (
-	classRoomDBTypes = map[string]string{`CreatedAt`: `timestamp without time zone`, `ID`: `bigint`, `Latitude`: `double precision`, `Longitude`: `double precision`, `Name`: `character varying`, `UpdatedAt`: `timestamp without time zone`}
+	classRoomDBTypes = map[string]string{`BuildingID`: `integer`, `CreatedAt`: `timestamp without time zone`, `ID`: `bigint`, `Latitude`: `double precision`, `Longitude`: `double precision`, `Name`: `character varying`, `UpdatedAt`: `timestamp without time zone`}
 	_                = bytes.MinRead
 )
 
