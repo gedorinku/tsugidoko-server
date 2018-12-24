@@ -494,6 +494,466 @@ func testUsersInsertWhitelist(t *testing.T) {
 	}
 }
 
+func testUserToManySessions(t *testing.T) {
+	var err error
+	ctx := context.Background()
+	tx := MustTx(boil.BeginTx(ctx, nil))
+	defer func() { _ = tx.Rollback() }()
+
+	var a User
+	var b, c Session
+
+	seed := randomize.NewSeed()
+	if err = randomize.Struct(seed, &a, userDBTypes, true, userColumnsWithDefault...); err != nil {
+		t.Errorf("Unable to randomize User struct: %s", err)
+	}
+
+	if err := a.Insert(ctx, tx, boil.Infer()); err != nil {
+		t.Fatal(err)
+	}
+
+	if err = randomize.Struct(seed, &b, sessionDBTypes, false, sessionColumnsWithDefault...); err != nil {
+		t.Fatal(err)
+	}
+	if err = randomize.Struct(seed, &c, sessionDBTypes, false, sessionColumnsWithDefault...); err != nil {
+		t.Fatal(err)
+	}
+
+	b.UserID = a.ID
+	c.UserID = a.ID
+
+	if err = b.Insert(ctx, tx, boil.Infer()); err != nil {
+		t.Fatal(err)
+	}
+	if err = c.Insert(ctx, tx, boil.Infer()); err != nil {
+		t.Fatal(err)
+	}
+
+	session, err := a.Sessions().All(ctx, tx)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	bFound, cFound := false, false
+	for _, v := range session {
+		if v.UserID == b.UserID {
+			bFound = true
+		}
+		if v.UserID == c.UserID {
+			cFound = true
+		}
+	}
+
+	if !bFound {
+		t.Error("expected to find b")
+	}
+	if !cFound {
+		t.Error("expected to find c")
+	}
+
+	slice := UserSlice{&a}
+	if err = a.L.LoadSessions(ctx, tx, false, (*[]*User)(&slice), nil); err != nil {
+		t.Fatal(err)
+	}
+	if got := len(a.R.Sessions); got != 2 {
+		t.Error("number of eager loaded records wrong, got:", got)
+	}
+
+	a.R.Sessions = nil
+	if err = a.L.LoadSessions(ctx, tx, true, &a, nil); err != nil {
+		t.Fatal(err)
+	}
+	if got := len(a.R.Sessions); got != 2 {
+		t.Error("number of eager loaded records wrong, got:", got)
+	}
+
+	if t.Failed() {
+		t.Logf("%#v", session)
+	}
+}
+
+func testUserToManyUserPositions(t *testing.T) {
+	var err error
+	ctx := context.Background()
+	tx := MustTx(boil.BeginTx(ctx, nil))
+	defer func() { _ = tx.Rollback() }()
+
+	var a User
+	var b, c UserPosition
+
+	seed := randomize.NewSeed()
+	if err = randomize.Struct(seed, &a, userDBTypes, true, userColumnsWithDefault...); err != nil {
+		t.Errorf("Unable to randomize User struct: %s", err)
+	}
+
+	if err := a.Insert(ctx, tx, boil.Infer()); err != nil {
+		t.Fatal(err)
+	}
+
+	if err = randomize.Struct(seed, &b, userPositionDBTypes, false, userPositionColumnsWithDefault...); err != nil {
+		t.Fatal(err)
+	}
+	if err = randomize.Struct(seed, &c, userPositionDBTypes, false, userPositionColumnsWithDefault...); err != nil {
+		t.Fatal(err)
+	}
+
+	b.UserID = a.ID
+	c.UserID = a.ID
+
+	if err = b.Insert(ctx, tx, boil.Infer()); err != nil {
+		t.Fatal(err)
+	}
+	if err = c.Insert(ctx, tx, boil.Infer()); err != nil {
+		t.Fatal(err)
+	}
+
+	userPosition, err := a.UserPositions().All(ctx, tx)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	bFound, cFound := false, false
+	for _, v := range userPosition {
+		if v.UserID == b.UserID {
+			bFound = true
+		}
+		if v.UserID == c.UserID {
+			cFound = true
+		}
+	}
+
+	if !bFound {
+		t.Error("expected to find b")
+	}
+	if !cFound {
+		t.Error("expected to find c")
+	}
+
+	slice := UserSlice{&a}
+	if err = a.L.LoadUserPositions(ctx, tx, false, (*[]*User)(&slice), nil); err != nil {
+		t.Fatal(err)
+	}
+	if got := len(a.R.UserPositions); got != 2 {
+		t.Error("number of eager loaded records wrong, got:", got)
+	}
+
+	a.R.UserPositions = nil
+	if err = a.L.LoadUserPositions(ctx, tx, true, &a, nil); err != nil {
+		t.Fatal(err)
+	}
+	if got := len(a.R.UserPositions); got != 2 {
+		t.Error("number of eager loaded records wrong, got:", got)
+	}
+
+	if t.Failed() {
+		t.Logf("%#v", userPosition)
+	}
+}
+
+func testUserToManyUserTags(t *testing.T) {
+	var err error
+	ctx := context.Background()
+	tx := MustTx(boil.BeginTx(ctx, nil))
+	defer func() { _ = tx.Rollback() }()
+
+	var a User
+	var b, c UserTag
+
+	seed := randomize.NewSeed()
+	if err = randomize.Struct(seed, &a, userDBTypes, true, userColumnsWithDefault...); err != nil {
+		t.Errorf("Unable to randomize User struct: %s", err)
+	}
+
+	if err := a.Insert(ctx, tx, boil.Infer()); err != nil {
+		t.Fatal(err)
+	}
+
+	if err = randomize.Struct(seed, &b, userTagDBTypes, false, userTagColumnsWithDefault...); err != nil {
+		t.Fatal(err)
+	}
+	if err = randomize.Struct(seed, &c, userTagDBTypes, false, userTagColumnsWithDefault...); err != nil {
+		t.Fatal(err)
+	}
+
+	b.UserID = a.ID
+	c.UserID = a.ID
+
+	if err = b.Insert(ctx, tx, boil.Infer()); err != nil {
+		t.Fatal(err)
+	}
+	if err = c.Insert(ctx, tx, boil.Infer()); err != nil {
+		t.Fatal(err)
+	}
+
+	userTag, err := a.UserTags().All(ctx, tx)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	bFound, cFound := false, false
+	for _, v := range userTag {
+		if v.UserID == b.UserID {
+			bFound = true
+		}
+		if v.UserID == c.UserID {
+			cFound = true
+		}
+	}
+
+	if !bFound {
+		t.Error("expected to find b")
+	}
+	if !cFound {
+		t.Error("expected to find c")
+	}
+
+	slice := UserSlice{&a}
+	if err = a.L.LoadUserTags(ctx, tx, false, (*[]*User)(&slice), nil); err != nil {
+		t.Fatal(err)
+	}
+	if got := len(a.R.UserTags); got != 2 {
+		t.Error("number of eager loaded records wrong, got:", got)
+	}
+
+	a.R.UserTags = nil
+	if err = a.L.LoadUserTags(ctx, tx, true, &a, nil); err != nil {
+		t.Fatal(err)
+	}
+	if got := len(a.R.UserTags); got != 2 {
+		t.Error("number of eager loaded records wrong, got:", got)
+	}
+
+	if t.Failed() {
+		t.Logf("%#v", userTag)
+	}
+}
+
+func testUserToManyAddOpSessions(t *testing.T) {
+	var err error
+
+	ctx := context.Background()
+	tx := MustTx(boil.BeginTx(ctx, nil))
+	defer func() { _ = tx.Rollback() }()
+
+	var a User
+	var b, c, d, e Session
+
+	seed := randomize.NewSeed()
+	if err = randomize.Struct(seed, &a, userDBTypes, false, strmangle.SetComplement(userPrimaryKeyColumns, userColumnsWithoutDefault)...); err != nil {
+		t.Fatal(err)
+	}
+	foreigners := []*Session{&b, &c, &d, &e}
+	for _, x := range foreigners {
+		if err = randomize.Struct(seed, x, sessionDBTypes, false, strmangle.SetComplement(sessionPrimaryKeyColumns, sessionColumnsWithoutDefault)...); err != nil {
+			t.Fatal(err)
+		}
+	}
+
+	if err := a.Insert(ctx, tx, boil.Infer()); err != nil {
+		t.Fatal(err)
+	}
+	if err = b.Insert(ctx, tx, boil.Infer()); err != nil {
+		t.Fatal(err)
+	}
+	if err = c.Insert(ctx, tx, boil.Infer()); err != nil {
+		t.Fatal(err)
+	}
+
+	foreignersSplitByInsertion := [][]*Session{
+		{&b, &c},
+		{&d, &e},
+	}
+
+	for i, x := range foreignersSplitByInsertion {
+		err = a.AddSessions(ctx, tx, i != 0, x...)
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		first := x[0]
+		second := x[1]
+
+		if a.ID != first.UserID {
+			t.Error("foreign key was wrong value", a.ID, first.UserID)
+		}
+		if a.ID != second.UserID {
+			t.Error("foreign key was wrong value", a.ID, second.UserID)
+		}
+
+		if first.R.User != &a {
+			t.Error("relationship was not added properly to the foreign slice")
+		}
+		if second.R.User != &a {
+			t.Error("relationship was not added properly to the foreign slice")
+		}
+
+		if a.R.Sessions[i*2] != first {
+			t.Error("relationship struct slice not set to correct value")
+		}
+		if a.R.Sessions[i*2+1] != second {
+			t.Error("relationship struct slice not set to correct value")
+		}
+
+		count, err := a.Sessions().Count(ctx, tx)
+		if err != nil {
+			t.Fatal(err)
+		}
+		if want := int64((i + 1) * 2); count != want {
+			t.Error("want", want, "got", count)
+		}
+	}
+}
+func testUserToManyAddOpUserPositions(t *testing.T) {
+	var err error
+
+	ctx := context.Background()
+	tx := MustTx(boil.BeginTx(ctx, nil))
+	defer func() { _ = tx.Rollback() }()
+
+	var a User
+	var b, c, d, e UserPosition
+
+	seed := randomize.NewSeed()
+	if err = randomize.Struct(seed, &a, userDBTypes, false, strmangle.SetComplement(userPrimaryKeyColumns, userColumnsWithoutDefault)...); err != nil {
+		t.Fatal(err)
+	}
+	foreigners := []*UserPosition{&b, &c, &d, &e}
+	for _, x := range foreigners {
+		if err = randomize.Struct(seed, x, userPositionDBTypes, false, strmangle.SetComplement(userPositionPrimaryKeyColumns, userPositionColumnsWithoutDefault)...); err != nil {
+			t.Fatal(err)
+		}
+	}
+
+	if err := a.Insert(ctx, tx, boil.Infer()); err != nil {
+		t.Fatal(err)
+	}
+	if err = b.Insert(ctx, tx, boil.Infer()); err != nil {
+		t.Fatal(err)
+	}
+	if err = c.Insert(ctx, tx, boil.Infer()); err != nil {
+		t.Fatal(err)
+	}
+
+	foreignersSplitByInsertion := [][]*UserPosition{
+		{&b, &c},
+		{&d, &e},
+	}
+
+	for i, x := range foreignersSplitByInsertion {
+		err = a.AddUserPositions(ctx, tx, i != 0, x...)
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		first := x[0]
+		second := x[1]
+
+		if a.ID != first.UserID {
+			t.Error("foreign key was wrong value", a.ID, first.UserID)
+		}
+		if a.ID != second.UserID {
+			t.Error("foreign key was wrong value", a.ID, second.UserID)
+		}
+
+		if first.R.User != &a {
+			t.Error("relationship was not added properly to the foreign slice")
+		}
+		if second.R.User != &a {
+			t.Error("relationship was not added properly to the foreign slice")
+		}
+
+		if a.R.UserPositions[i*2] != first {
+			t.Error("relationship struct slice not set to correct value")
+		}
+		if a.R.UserPositions[i*2+1] != second {
+			t.Error("relationship struct slice not set to correct value")
+		}
+
+		count, err := a.UserPositions().Count(ctx, tx)
+		if err != nil {
+			t.Fatal(err)
+		}
+		if want := int64((i + 1) * 2); count != want {
+			t.Error("want", want, "got", count)
+		}
+	}
+}
+func testUserToManyAddOpUserTags(t *testing.T) {
+	var err error
+
+	ctx := context.Background()
+	tx := MustTx(boil.BeginTx(ctx, nil))
+	defer func() { _ = tx.Rollback() }()
+
+	var a User
+	var b, c, d, e UserTag
+
+	seed := randomize.NewSeed()
+	if err = randomize.Struct(seed, &a, userDBTypes, false, strmangle.SetComplement(userPrimaryKeyColumns, userColumnsWithoutDefault)...); err != nil {
+		t.Fatal(err)
+	}
+	foreigners := []*UserTag{&b, &c, &d, &e}
+	for _, x := range foreigners {
+		if err = randomize.Struct(seed, x, userTagDBTypes, false, strmangle.SetComplement(userTagPrimaryKeyColumns, userTagColumnsWithoutDefault)...); err != nil {
+			t.Fatal(err)
+		}
+	}
+
+	if err := a.Insert(ctx, tx, boil.Infer()); err != nil {
+		t.Fatal(err)
+	}
+	if err = b.Insert(ctx, tx, boil.Infer()); err != nil {
+		t.Fatal(err)
+	}
+	if err = c.Insert(ctx, tx, boil.Infer()); err != nil {
+		t.Fatal(err)
+	}
+
+	foreignersSplitByInsertion := [][]*UserTag{
+		{&b, &c},
+		{&d, &e},
+	}
+
+	for i, x := range foreignersSplitByInsertion {
+		err = a.AddUserTags(ctx, tx, i != 0, x...)
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		first := x[0]
+		second := x[1]
+
+		if a.ID != first.UserID {
+			t.Error("foreign key was wrong value", a.ID, first.UserID)
+		}
+		if a.ID != second.UserID {
+			t.Error("foreign key was wrong value", a.ID, second.UserID)
+		}
+
+		if first.R.User != &a {
+			t.Error("relationship was not added properly to the foreign slice")
+		}
+		if second.R.User != &a {
+			t.Error("relationship was not added properly to the foreign slice")
+		}
+
+		if a.R.UserTags[i*2] != first {
+			t.Error("relationship struct slice not set to correct value")
+		}
+		if a.R.UserTags[i*2+1] != second {
+			t.Error("relationship struct slice not set to correct value")
+		}
+
+		count, err := a.UserTags().Count(ctx, tx)
+		if err != nil {
+			t.Fatal(err)
+		}
+		if want := int64((i + 1) * 2); count != want {
+			t.Error("want", want, "got", count)
+		}
+	}
+}
+
 func testUsersReload(t *testing.T) {
 	t.Parallel()
 

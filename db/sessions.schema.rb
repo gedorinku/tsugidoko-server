@@ -5,3 +5,6 @@ create_table :sessions, force: :cascade do |t|
 
   t.index [:secret_key], unique: true
 end
+
+# foreign_key: trueとしても外部キー制約がつかなくて謎
+add_foreign_key :sessions, :users

@@ -142,6 +142,11 @@ func TestInsert(t *testing.T) {
 // or deadlocks can occur.
 func TestToOne(t *testing.T) {
 	t.Run("BeaconToClassRoomUsingClassRoom", testBeaconToOneClassRoomUsingClassRoom)
+	t.Run("SessionToUserUsingUser", testSessionToOneUserUsingUser)
+	t.Run("UserPositionToUserUsingUser", testUserPositionToOneUserUsingUser)
+	t.Run("UserPositionToClassRoomUsingClassRoom", testUserPositionToOneClassRoomUsingClassRoom)
+	t.Run("UserTagToUserUsingUser", testUserTagToOneUserUsingUser)
+	t.Run("UserTagToTagUsingTag", testUserTagToOneTagUsingTag)
 }
 
 // TestOneToOne tests cannot be run in parallel
@@ -152,12 +157,22 @@ func TestOneToOne(t *testing.T) {}
 // or deadlocks can occur.
 func TestToMany(t *testing.T) {
 	t.Run("ClassRoomToBeacons", testClassRoomToManyBeacons)
+	t.Run("ClassRoomToUserPositions", testClassRoomToManyUserPositions)
+	t.Run("TagToUserTags", testTagToManyUserTags)
+	t.Run("UserToSessions", testUserToManySessions)
+	t.Run("UserToUserPositions", testUserToManyUserPositions)
+	t.Run("UserToUserTags", testUserToManyUserTags)
 }
 
 // TestToOneSet tests cannot be run in parallel
 // or deadlocks can occur.
 func TestToOneSet(t *testing.T) {
 	t.Run("BeaconToClassRoomUsingBeacons", testBeaconToOneSetOpClassRoomUsingClassRoom)
+	t.Run("SessionToUserUsingSessions", testSessionToOneSetOpUserUsingUser)
+	t.Run("UserPositionToUserUsingUserPositions", testUserPositionToOneSetOpUserUsingUser)
+	t.Run("UserPositionToClassRoomUsingUserPositions", testUserPositionToOneSetOpClassRoomUsingClassRoom)
+	t.Run("UserTagToUserUsingUserTags", testUserTagToOneSetOpUserUsingUser)
+	t.Run("UserTagToTagUsingUserTags", testUserTagToOneSetOpTagUsingTag)
 }
 
 // TestToOneRemove tests cannot be run in parallel
@@ -176,6 +191,11 @@ func TestOneToOneRemove(t *testing.T) {}
 // or deadlocks can occur.
 func TestToManyAdd(t *testing.T) {
 	t.Run("ClassRoomToBeacons", testClassRoomToManyAddOpBeacons)
+	t.Run("ClassRoomToUserPositions", testClassRoomToManyAddOpUserPositions)
+	t.Run("TagToUserTags", testTagToManyAddOpUserTags)
+	t.Run("UserToSessions", testUserToManyAddOpSessions)
+	t.Run("UserToUserPositions", testUserToManyAddOpUserPositions)
+	t.Run("UserToUserTags", testUserToManyAddOpUserTags)
 }
 
 // TestToManySet tests cannot be run in parallel

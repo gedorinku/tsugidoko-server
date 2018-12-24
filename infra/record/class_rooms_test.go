@@ -572,6 +572,84 @@ func testClassRoomToManyBeacons(t *testing.T) {
 	}
 }
 
+func testClassRoomToManyUserPositions(t *testing.T) {
+	var err error
+	ctx := context.Background()
+	tx := MustTx(boil.BeginTx(ctx, nil))
+	defer func() { _ = tx.Rollback() }()
+
+	var a ClassRoom
+	var b, c UserPosition
+
+	seed := randomize.NewSeed()
+	if err = randomize.Struct(seed, &a, classRoomDBTypes, true, classRoomColumnsWithDefault...); err != nil {
+		t.Errorf("Unable to randomize ClassRoom struct: %s", err)
+	}
+
+	if err := a.Insert(ctx, tx, boil.Infer()); err != nil {
+		t.Fatal(err)
+	}
+
+	if err = randomize.Struct(seed, &b, userPositionDBTypes, false, userPositionColumnsWithDefault...); err != nil {
+		t.Fatal(err)
+	}
+	if err = randomize.Struct(seed, &c, userPositionDBTypes, false, userPositionColumnsWithDefault...); err != nil {
+		t.Fatal(err)
+	}
+
+	b.ClassRoomID = a.ID
+	c.ClassRoomID = a.ID
+
+	if err = b.Insert(ctx, tx, boil.Infer()); err != nil {
+		t.Fatal(err)
+	}
+	if err = c.Insert(ctx, tx, boil.Infer()); err != nil {
+		t.Fatal(err)
+	}
+
+	userPosition, err := a.UserPositions().All(ctx, tx)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	bFound, cFound := false, false
+	for _, v := range userPosition {
+		if v.ClassRoomID == b.ClassRoomID {
+			bFound = true
+		}
+		if v.ClassRoomID == c.ClassRoomID {
+			cFound = true
+		}
+	}
+
+	if !bFound {
+		t.Error("expected to find b")
+	}
+	if !cFound {
+		t.Error("expected to find c")
+	}
+
+	slice := ClassRoomSlice{&a}
+	if err = a.L.LoadUserPositions(ctx, tx, false, (*[]*ClassRoom)(&slice), nil); err != nil {
+		t.Fatal(err)
+	}
+	if got := len(a.R.UserPositions); got != 2 {
+		t.Error("number of eager loaded records wrong, got:", got)
+	}
+
+	a.R.UserPositions = nil
+	if err = a.L.LoadUserPositions(ctx, tx, true, &a, nil); err != nil {
+		t.Fatal(err)
+	}
+	if got := len(a.R.UserPositions); got != 2 {
+		t.Error("number of eager loaded records wrong, got:", got)
+	}
+
+	if t.Failed() {
+		t.Logf("%#v", userPosition)
+	}
+}
+
 func testClassRoomToManyAddOpBeacons(t *testing.T) {
 	var err error
 
@@ -639,6 +717,81 @@ func testClassRoomToManyAddOpBeacons(t *testing.T) {
 		}
 
 		count, err := a.Beacons().Count(ctx, tx)
+		if err != nil {
+			t.Fatal(err)
+		}
+		if want := int64((i + 1) * 2); count != want {
+			t.Error("want", want, "got", count)
+		}
+	}
+}
+func testClassRoomToManyAddOpUserPositions(t *testing.T) {
+	var err error
+
+	ctx := context.Background()
+	tx := MustTx(boil.BeginTx(ctx, nil))
+	defer func() { _ = tx.Rollback() }()
+
+	var a ClassRoom
+	var b, c, d, e UserPosition
+
+	seed := randomize.NewSeed()
+	if err = randomize.Struct(seed, &a, classRoomDBTypes, false, strmangle.SetComplement(classRoomPrimaryKeyColumns, classRoomColumnsWithoutDefault)...); err != nil {
+		t.Fatal(err)
+	}
+	foreigners := []*UserPosition{&b, &c, &d, &e}
+	for _, x := range foreigners {
+		if err = randomize.Struct(seed, x, userPositionDBTypes, false, strmangle.SetComplement(userPositionPrimaryKeyColumns, userPositionColumnsWithoutDefault)...); err != nil {
+			t.Fatal(err)
+		}
+	}
+
+	if err := a.Insert(ctx, tx, boil.Infer()); err != nil {
+		t.Fatal(err)
+	}
+	if err = b.Insert(ctx, tx, boil.Infer()); err != nil {
+		t.Fatal(err)
+	}
+	if err = c.Insert(ctx, tx, boil.Infer()); err != nil {
+		t.Fatal(err)
+	}
+
+	foreignersSplitByInsertion := [][]*UserPosition{
+		{&b, &c},
+		{&d, &e},
+	}
+
+	for i, x := range foreignersSplitByInsertion {
+		err = a.AddUserPositions(ctx, tx, i != 0, x...)
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		first := x[0]
+		second := x[1]
+
+		if a.ID != first.ClassRoomID {
+			t.Error("foreign key was wrong value", a.ID, first.ClassRoomID)
+		}
+		if a.ID != second.ClassRoomID {
+			t.Error("foreign key was wrong value", a.ID, second.ClassRoomID)
+		}
+
+		if first.R.ClassRoom != &a {
+			t.Error("relationship was not added properly to the foreign slice")
+		}
+		if second.R.ClassRoom != &a {
+			t.Error("relationship was not added properly to the foreign slice")
+		}
+
+		if a.R.UserPositions[i*2] != first {
+			t.Error("relationship struct slice not set to correct value")
+		}
+		if a.R.UserPositions[i*2+1] != second {
+			t.Error("relationship struct slice not set to correct value")
+		}
+
+		count, err := a.UserPositions().Count(ctx, tx)
 		if err != nil {
 			t.Fatal(err)
 		}

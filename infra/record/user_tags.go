@@ -48,10 +48,17 @@ var UserTagColumns = struct {
 
 // UserTagRels is where relationship names are stored.
 var UserTagRels = struct {
-}{}
+	User string
+	Tag  string
+}{
+	User: "User",
+	Tag:  "Tag",
+}
 
 // userTagR is where relationships are stored.
 type userTagR struct {
+	User *User
+	Tag  *Tag
 }
 
 // NewStruct creates a new relationship struct
@@ -303,6 +310,322 @@ func (q userTagQuery) Exists(ctx context.Context, exec boil.ContextExecutor) (bo
 	}
 
 	return count > 0, nil
+}
+
+// User pointed to by the foreign key.
+func (o *UserTag) User(mods ...qm.QueryMod) userQuery {
+	queryMods := []qm.QueryMod{
+		qm.Where("id=?", o.UserID),
+	}
+
+	queryMods = append(queryMods, mods...)
+
+	query := Users(queryMods...)
+	queries.SetFrom(query.Query, "\"users\"")
+
+	return query
+}
+
+// Tag pointed to by the foreign key.
+func (o *UserTag) Tag(mods ...qm.QueryMod) tagQuery {
+	queryMods := []qm.QueryMod{
+		qm.Where("id=?", o.TagID),
+	}
+
+	queryMods = append(queryMods, mods...)
+
+	query := Tags(queryMods...)
+	queries.SetFrom(query.Query, "\"tags\"")
+
+	return query
+}
+
+// LoadUser allows an eager lookup of values, cached into the
+// loaded structs of the objects. This is for an N-1 relationship.
+func (userTagL) LoadUser(ctx context.Context, e boil.ContextExecutor, singular bool, maybeUserTag interface{}, mods queries.Applicator) error {
+	var slice []*UserTag
+	var object *UserTag
+
+	if singular {
+		object = maybeUserTag.(*UserTag)
+	} else {
+		slice = *maybeUserTag.(*[]*UserTag)
+	}
+
+	args := make([]interface{}, 0, 1)
+	if singular {
+		if object.R == nil {
+			object.R = &userTagR{}
+		}
+		args = append(args, object.UserID)
+
+	} else {
+	Outer:
+		for _, obj := range slice {
+			if obj.R == nil {
+				obj.R = &userTagR{}
+			}
+
+			for _, a := range args {
+				if a == obj.UserID {
+					continue Outer
+				}
+			}
+
+			args = append(args, obj.UserID)
+
+		}
+	}
+
+	query := NewQuery(qm.From(`users`), qm.WhereIn(`id in ?`, args...))
+	if mods != nil {
+		mods.Apply(query)
+	}
+
+	results, err := query.QueryContext(ctx, e)
+	if err != nil {
+		return errors.Wrap(err, "failed to eager load User")
+	}
+
+	var resultSlice []*User
+	if err = queries.Bind(results, &resultSlice); err != nil {
+		return errors.Wrap(err, "failed to bind eager loaded slice User")
+	}
+
+	if err = results.Close(); err != nil {
+		return errors.Wrap(err, "failed to close results of eager load for users")
+	}
+	if err = results.Err(); err != nil {
+		return errors.Wrap(err, "error occurred during iteration of eager loaded relations for users")
+	}
+
+	if len(userTagAfterSelectHooks) != 0 {
+		for _, obj := range resultSlice {
+			if err := obj.doAfterSelectHooks(ctx, e); err != nil {
+				return err
+			}
+		}
+	}
+
+	if len(resultSlice) == 0 {
+		return nil
+	}
+
+	if singular {
+		foreign := resultSlice[0]
+		object.R.User = foreign
+		if foreign.R == nil {
+			foreign.R = &userR{}
+		}
+		foreign.R.UserTags = append(foreign.R.UserTags, object)
+		return nil
+	}
+
+	for _, local := range slice {
+		for _, foreign := range resultSlice {
+			if local.UserID == foreign.ID {
+				local.R.User = foreign
+				if foreign.R == nil {
+					foreign.R = &userR{}
+				}
+				foreign.R.UserTags = append(foreign.R.UserTags, local)
+				break
+			}
+		}
+	}
+
+	return nil
+}
+
+// LoadTag allows an eager lookup of values, cached into the
+// loaded structs of the objects. This is for an N-1 relationship.
+func (userTagL) LoadTag(ctx context.Context, e boil.ContextExecutor, singular bool, maybeUserTag interface{}, mods queries.Applicator) error {
+	var slice []*UserTag
+	var object *UserTag
+
+	if singular {
+		object = maybeUserTag.(*UserTag)
+	} else {
+		slice = *maybeUserTag.(*[]*UserTag)
+	}
+
+	args := make([]interface{}, 0, 1)
+	if singular {
+		if object.R == nil {
+			object.R = &userTagR{}
+		}
+		args = append(args, object.TagID)
+
+	} else {
+	Outer:
+		for _, obj := range slice {
+			if obj.R == nil {
+				obj.R = &userTagR{}
+			}
+
+			for _, a := range args {
+				if a == obj.TagID {
+					continue Outer
+				}
+			}
+
+			args = append(args, obj.TagID)
+
+		}
+	}
+
+	query := NewQuery(qm.From(`tags`), qm.WhereIn(`id in ?`, args...))
+	if mods != nil {
+		mods.Apply(query)
+	}
+
+	results, err := query.QueryContext(ctx, e)
+	if err != nil {
+		return errors.Wrap(err, "failed to eager load Tag")
+	}
+
+	var resultSlice []*Tag
+	if err = queries.Bind(results, &resultSlice); err != nil {
+		return errors.Wrap(err, "failed to bind eager loaded slice Tag")
+	}
+
+	if err = results.Close(); err != nil {
+		return errors.Wrap(err, "failed to close results of eager load for tags")
+	}
+	if err = results.Err(); err != nil {
+		return errors.Wrap(err, "error occurred during iteration of eager loaded relations for tags")
+	}
+
+	if len(userTagAfterSelectHooks) != 0 {
+		for _, obj := range resultSlice {
+			if err := obj.doAfterSelectHooks(ctx, e); err != nil {
+				return err
+			}
+		}
+	}
+
+	if len(resultSlice) == 0 {
+		return nil
+	}
+
+	if singular {
+		foreign := resultSlice[0]
+		object.R.Tag = foreign
+		if foreign.R == nil {
+			foreign.R = &tagR{}
+		}
+		foreign.R.UserTags = append(foreign.R.UserTags, object)
+		return nil
+	}
+
+	for _, local := range slice {
+		for _, foreign := range resultSlice {
+			if local.TagID == foreign.ID {
+				local.R.Tag = foreign
+				if foreign.R == nil {
+					foreign.R = &tagR{}
+				}
+				foreign.R.UserTags = append(foreign.R.UserTags, local)
+				break
+			}
+		}
+	}
+
+	return nil
+}
+
+// SetUser of the userTag to the related item.
+// Sets o.R.User to related.
+// Adds o to related.R.UserTags.
+func (o *UserTag) SetUser(ctx context.Context, exec boil.ContextExecutor, insert bool, related *User) error {
+	var err error
+	if insert {
+		if err = related.Insert(ctx, exec, boil.Infer()); err != nil {
+			return errors.Wrap(err, "failed to insert into foreign table")
+		}
+	}
+
+	updateQuery := fmt.Sprintf(
+		"UPDATE \"user_tags\" SET %s WHERE %s",
+		strmangle.SetParamNames("\"", "\"", 1, []string{"user_id"}),
+		strmangle.WhereClause("\"", "\"", 2, userTagPrimaryKeyColumns),
+	)
+	values := []interface{}{related.ID, o.ID}
+
+	if boil.DebugMode {
+		fmt.Fprintln(boil.DebugWriter, updateQuery)
+		fmt.Fprintln(boil.DebugWriter, values)
+	}
+
+	if _, err = exec.ExecContext(ctx, updateQuery, values...); err != nil {
+		return errors.Wrap(err, "failed to update local table")
+	}
+
+	o.UserID = related.ID
+	if o.R == nil {
+		o.R = &userTagR{
+			User: related,
+		}
+	} else {
+		o.R.User = related
+	}
+
+	if related.R == nil {
+		related.R = &userR{
+			UserTags: UserTagSlice{o},
+		}
+	} else {
+		related.R.UserTags = append(related.R.UserTags, o)
+	}
+
+	return nil
+}
+
+// SetTag of the userTag to the related item.
+// Sets o.R.Tag to related.
+// Adds o to related.R.UserTags.
+func (o *UserTag) SetTag(ctx context.Context, exec boil.ContextExecutor, insert bool, related *Tag) error {
+	var err error
+	if insert {
+		if err = related.Insert(ctx, exec, boil.Infer()); err != nil {
+			return errors.Wrap(err, "failed to insert into foreign table")
+		}
+	}
+
+	updateQuery := fmt.Sprintf(
+		"UPDATE \"user_tags\" SET %s WHERE %s",
+		strmangle.SetParamNames("\"", "\"", 1, []string{"tag_id"}),
+		strmangle.WhereClause("\"", "\"", 2, userTagPrimaryKeyColumns),
+	)
+	values := []interface{}{related.ID, o.ID}
+
+	if boil.DebugMode {
+		fmt.Fprintln(boil.DebugWriter, updateQuery)
+		fmt.Fprintln(boil.DebugWriter, values)
+	}
+
+	if _, err = exec.ExecContext(ctx, updateQuery, values...); err != nil {
+		return errors.Wrap(err, "failed to update local table")
+	}
+
+	o.TagID = related.ID
+	if o.R == nil {
+		o.R = &userTagR{
+			Tag: related,
+		}
+	} else {
+		o.R.Tag = related
+	}
+
+	if related.R == nil {
+		related.R = &tagR{
+			UserTags: UserTagSlice{o},
+		}
+	} else {
+		related.R.UserTags = append(related.R.UserTags, o)
+	}
+
+	return nil
 }
 
 // UserTags retrieves all the records using an executor.
