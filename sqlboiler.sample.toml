@@ -1,0 +1,10 @@
+pkgname="record"
+output="infra/record"
+debug=true
+
+[psql]
+  dbname = "tsugidoko"
+  host   = "localhost"
+  port   = 5432
+  user   = "postgres"
+  pass   = ""
