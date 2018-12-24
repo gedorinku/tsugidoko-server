@@ -15,6 +15,7 @@ func TestParent(t *testing.T) {
 	t.Run("ClassRooms", testClassRooms)
 	t.Run("Sessions", testSessions)
 	t.Run("Tags", testTags)
+	t.Run("UserPositions", testUserPositions)
 	t.Run("UserTags", testUserTags)
 	t.Run("Users", testUsers)
 }
@@ -23,6 +24,7 @@ func TestDelete(t *testing.T) {
 	t.Run("ClassRooms", testClassRoomsDelete)
 	t.Run("Sessions", testSessionsDelete)
 	t.Run("Tags", testTagsDelete)
+	t.Run("UserPositions", testUserPositionsDelete)
 	t.Run("UserTags", testUserTagsDelete)
 	t.Run("Users", testUsersDelete)
 }
@@ -31,6 +33,7 @@ func TestQueryDeleteAll(t *testing.T) {
 	t.Run("ClassRooms", testClassRoomsQueryDeleteAll)
 	t.Run("Sessions", testSessionsQueryDeleteAll)
 	t.Run("Tags", testTagsQueryDeleteAll)
+	t.Run("UserPositions", testUserPositionsQueryDeleteAll)
 	t.Run("UserTags", testUserTagsQueryDeleteAll)
 	t.Run("Users", testUsersQueryDeleteAll)
 }
@@ -39,6 +42,7 @@ func TestSliceDeleteAll(t *testing.T) {
 	t.Run("ClassRooms", testClassRoomsSliceDeleteAll)
 	t.Run("Sessions", testSessionsSliceDeleteAll)
 	t.Run("Tags", testTagsSliceDeleteAll)
+	t.Run("UserPositions", testUserPositionsSliceDeleteAll)
 	t.Run("UserTags", testUserTagsSliceDeleteAll)
 	t.Run("Users", testUsersSliceDeleteAll)
 }
@@ -47,6 +51,7 @@ func TestExists(t *testing.T) {
 	t.Run("ClassRooms", testClassRoomsExists)
 	t.Run("Sessions", testSessionsExists)
 	t.Run("Tags", testTagsExists)
+	t.Run("UserPositions", testUserPositionsExists)
 	t.Run("UserTags", testUserTagsExists)
 	t.Run("Users", testUsersExists)
 }
@@ -55,6 +60,7 @@ func TestFind(t *testing.T) {
 	t.Run("ClassRooms", testClassRoomsFind)
 	t.Run("Sessions", testSessionsFind)
 	t.Run("Tags", testTagsFind)
+	t.Run("UserPositions", testUserPositionsFind)
 	t.Run("UserTags", testUserTagsFind)
 	t.Run("Users", testUsersFind)
 }
@@ -63,6 +69,7 @@ func TestBind(t *testing.T) {
 	t.Run("ClassRooms", testClassRoomsBind)
 	t.Run("Sessions", testSessionsBind)
 	t.Run("Tags", testTagsBind)
+	t.Run("UserPositions", testUserPositionsBind)
 	t.Run("UserTags", testUserTagsBind)
 	t.Run("Users", testUsersBind)
 }
@@ -71,6 +78,7 @@ func TestOne(t *testing.T) {
 	t.Run("ClassRooms", testClassRoomsOne)
 	t.Run("Sessions", testSessionsOne)
 	t.Run("Tags", testTagsOne)
+	t.Run("UserPositions", testUserPositionsOne)
 	t.Run("UserTags", testUserTagsOne)
 	t.Run("Users", testUsersOne)
 }
@@ -79,6 +87,7 @@ func TestAll(t *testing.T) {
 	t.Run("ClassRooms", testClassRoomsAll)
 	t.Run("Sessions", testSessionsAll)
 	t.Run("Tags", testTagsAll)
+	t.Run("UserPositions", testUserPositionsAll)
 	t.Run("UserTags", testUserTagsAll)
 	t.Run("Users", testUsersAll)
 }
@@ -87,6 +96,7 @@ func TestCount(t *testing.T) {
 	t.Run("ClassRooms", testClassRoomsCount)
 	t.Run("Sessions", testSessionsCount)
 	t.Run("Tags", testTagsCount)
+	t.Run("UserPositions", testUserPositionsCount)
 	t.Run("UserTags", testUserTagsCount)
 	t.Run("Users", testUsersCount)
 }
@@ -95,6 +105,7 @@ func TestHooks(t *testing.T) {
 	t.Run("ClassRooms", testClassRoomsHooks)
 	t.Run("Sessions", testSessionsHooks)
 	t.Run("Tags", testTagsHooks)
+	t.Run("UserPositions", testUserPositionsHooks)
 	t.Run("UserTags", testUserTagsHooks)
 	t.Run("Users", testUsersHooks)
 }
@@ -106,6 +117,8 @@ func TestInsert(t *testing.T) {
 	t.Run("Sessions", testSessionsInsertWhitelist)
 	t.Run("Tags", testTagsInsert)
 	t.Run("Tags", testTagsInsertWhitelist)
+	t.Run("UserPositions", testUserPositionsInsert)
+	t.Run("UserPositions", testUserPositionsInsertWhitelist)
 	t.Run("UserTags", testUserTagsInsert)
 	t.Run("UserTags", testUserTagsInsertWhitelist)
 	t.Run("Users", testUsersInsert)
@@ -156,6 +169,7 @@ func TestReload(t *testing.T) {
 	t.Run("ClassRooms", testClassRoomsReload)
 	t.Run("Sessions", testSessionsReload)
 	t.Run("Tags", testTagsReload)
+	t.Run("UserPositions", testUserPositionsReload)
 	t.Run("UserTags", testUserTagsReload)
 	t.Run("Users", testUsersReload)
 }
@@ -164,6 +178,7 @@ func TestReloadAll(t *testing.T) {
 	t.Run("ClassRooms", testClassRoomsReloadAll)
 	t.Run("Sessions", testSessionsReloadAll)
 	t.Run("Tags", testTagsReloadAll)
+	t.Run("UserPositions", testUserPositionsReloadAll)
 	t.Run("UserTags", testUserTagsReloadAll)
 	t.Run("Users", testUsersReloadAll)
 }
@@ -172,6 +187,7 @@ func TestSelect(t *testing.T) {
 	t.Run("ClassRooms", testClassRoomsSelect)
 	t.Run("Sessions", testSessionsSelect)
 	t.Run("Tags", testTagsSelect)
+	t.Run("UserPositions", testUserPositionsSelect)
 	t.Run("UserTags", testUserTagsSelect)
 	t.Run("Users", testUsersSelect)
 }
@@ -180,6 +196,7 @@ func TestUpdate(t *testing.T) {
 	t.Run("ClassRooms", testClassRoomsUpdate)
 	t.Run("Sessions", testSessionsUpdate)
 	t.Run("Tags", testTagsUpdate)
+	t.Run("UserPositions", testUserPositionsUpdate)
 	t.Run("UserTags", testUserTagsUpdate)
 	t.Run("Users", testUsersUpdate)
 }
@@ -188,6 +205,7 @@ func TestSliceUpdateAll(t *testing.T) {
 	t.Run("ClassRooms", testClassRoomsSliceUpdateAll)
 	t.Run("Sessions", testSessionsSliceUpdateAll)
 	t.Run("Tags", testTagsSliceUpdateAll)
+	t.Run("UserPositions", testUserPositionsSliceUpdateAll)
 	t.Run("UserTags", testUserTagsSliceUpdateAll)
 	t.Run("Users", testUsersSliceUpdateAll)
 }

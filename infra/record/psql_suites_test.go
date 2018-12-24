@@ -12,6 +12,8 @@ func TestUpsert(t *testing.T) {
 
 	t.Run("Tags", testTagsUpsert)
 
+	t.Run("UserPositions", testUserPositionsUpsert)
+
 	t.Run("UserTags", testUserTagsUpsert)
 
 	t.Run("Users", testUsersUpsert)

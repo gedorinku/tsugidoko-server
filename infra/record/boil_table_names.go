@@ -4,15 +4,17 @@
 package record
 
 var TableNames = struct {
-	ClassRooms string
-	Sessions   string
-	Tags       string
-	UserTags   string
-	Users      string
+	ClassRooms    string
+	Sessions      string
+	Tags          string
+	UserPositions string
+	UserTags      string
+	Users         string
 }{
-	ClassRooms: "class_rooms",
-	Sessions:   "sessions",
-	Tags:       "tags",
-	UserTags:   "user_tags",
-	Users:      "users",
+	ClassRooms:    "class_rooms",
+	Sessions:      "sessions",
+	Tags:          "tags",
+	UserPositions: "user_positions",
+	UserTags:      "user_tags",
+	Users:         "users",
 }
