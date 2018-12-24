@@ -1,0 +1,2 @@
+require 'users.schema.rb'
+require 'sessions.schema.rb'
