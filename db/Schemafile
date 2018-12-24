@@ -1,2 +1,4 @@
 require 'users.schema.rb'
 require 'sessions.schema.rb'
+require 'tags.schema.rb'
+require 'user_tags.schema.rb'

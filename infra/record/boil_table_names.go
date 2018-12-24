@@ -5,8 +5,12 @@ package record
 
 var TableNames = struct {
 	Sessions string
+	Tags     string
+	UserTags string
 	Users    string
 }{
 	Sessions: "sessions",
+	Tags:     "tags",
+	UserTags: "user_tags",
 	Users:    "users",
 }

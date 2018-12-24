@@ -244,6 +244,28 @@
   version = "v1"
 
 [[projects]]
+  digest = "1:a1839c8ed232871032f50a03a7005fea6e4bbedcc5d7191d0dae653bcd716137"
+  name = "github.com/kisielk/errcheck"
+  packages = [
+    ".",
+    "internal/errcheck",
+  ]
+  pruneopts = ""
+  revision = "55d8f507faff4d6eddd0c41a3e713e2567fca4e5"
+  version = "v1.1.0"
+
+[[projects]]
+  digest = "1:765270f95ea68ad2150f6143eb8b9c0c17b038a7e2255b46580674471af00e27"
+  name = "github.com/kisielk/gotool"
+  packages = [
+    ".",
+    "internal/load",
+  ]
+  pruneopts = ""
+  revision = "80517062f582ea3340cd4baf70e86d539ae7d84d"
+  version = "v1.0.0"
+
+[[projects]]
   digest = "1:29145d7af4adafd72a79df5e41456ac9e232d5a28c1cd4dacf3ff008a217fc10"
   name = "github.com/lib/pq"
   packages = [
@@ -421,17 +443,6 @@
   revision = "e7201282ae8da26cd97aed2e516f75c0bd91bb93"
 
 [[projects]]
-  digest = "1:3610e24260db9be91620fb8f3958c2048cc8856b10037112b2d279cb0b550c1b"
-  name = "github.com/volatiletech/null"
-  packages = [
-    ".",
-    "convert",
-  ]
-  pruneopts = ""
-  revision = "0681ee3b5e046ac8bfbbd3999e79d3905e96972f"
-  version = "v8.0.0"
-
-[[projects]]
   digest = "1:4b803d6e4d2eae3c745a5063e82fbc14eca88945da36814f6b677cebf19fb088"
   name = "github.com/volatiletech/sqlboiler"
   packages = [
@@ -582,9 +593,21 @@
   name = "golang.org/x/tools"
   packages = [
     "go/ast/astutil",
+    "go/buildutil",
+    "go/callgraph",
+    "go/callgraph/cha",
+    "go/callgraph/rta",
     "go/gcexportdata",
+    "go/internal/cgo",
     "go/internal/gcimporter",
+    "go/loader",
+    "go/packages",
+    "go/ssa",
+    "go/ssa/ssautil",
     "go/types/typeutil",
+    "internal/fastwalk",
+    "internal/gopathwalk",
+    "internal/semver",
   ]
   pruneopts = ""
   revision = "e5f3ab76ea4b26ebea349e4994ee72d38250c9b0"
@@ -661,12 +684,47 @@
   version = "v2.2.2"
 
 [[projects]]
+  digest = "1:8735ec8c19cf427368d9d9d419d268ecc95ba8b0db9594d50d566803bd59f341"
+  name = "honnef.co/go/tools"
+  packages = [
+    "callgraph",
+    "callgraph/static",
+    "cmd/megacheck",
+    "deprecated",
+    "functions",
+    "internal/sharedcheck",
+    "lint",
+    "lint/lintutil",
+    "simple",
+    "ssa",
+    "ssa/ssautil",
+    "staticcheck",
+    "staticcheck/vrp",
+    "unused",
+    "version",
+  ]
+  pruneopts = ""
+  revision = "d73ab98e7c39fdcf9ba65062e43d34310f198353"
+  version = "2017.2.2"
+
+[[projects]]
   branch = "master"
   digest = "1:bea542e853f98bfcc80ecbe8fe0f32bc52c97664102aacdd7dca676354ef2faa"
   name = "k8s.io/utils"
   packages = ["exec"]
   pruneopts = ""
   revision = "0d26856f57b32ec3398579285e5c8a2bfe8c5243"
+
+[[projects]]
+  branch = "master"
+  digest = "1:42ea531bd0ffee70aeb1c46ce951ed4c18ba7bfb541773b378b66efbc9c52964"
+  name = "mvdan.cc/unparam"
+  packages = [
+    ".",
+    "check",
+  ]
+  pruneopts = ""
+  revision = "68701730a1d7cb7ec4085dda7cb976d03f6d1ebf"
 
 [solve-meta]
   analyzer-name = "dep"
@@ -689,7 +747,6 @@
     "github.com/lib/pq",
     "github.com/pkg/errors",
     "github.com/spf13/viper",
-    "github.com/volatiletech/null",
     "github.com/volatiletech/sqlboiler/boil",
     "github.com/volatiletech/sqlboiler/drivers",
     "github.com/volatiletech/sqlboiler/drivers/sqlboiler-psql/driver",
