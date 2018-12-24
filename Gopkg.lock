@@ -25,6 +25,14 @@
   revision = "0ca9ea5df5451ffdf184b4428c902747c2c11cd7"
 
 [[projects]]
+  digest = "1:660175e70abad3868119f2c29f43339608d7d3b93c8eb178b812ed330be6c07b"
+  name = "github.com/gofrs/uuid"
+  packages = ["."]
+  pruneopts = ""
+  revision = "7077aa61129615a0d7f45c49101cd011ab221c27"
+  version = "v3.1.2"
+
+[[projects]]
   digest = "1:107b233e45174dbab5b1324201d092ea9448e58243ab9f039e4c0f332e121e3a"
   name = "github.com/golang/glog"
   packages = ["."]
@@ -228,6 +236,14 @@
   revision = "04140366298a54a039076d798123ffa108fff46c"
 
 [[projects]]
+  digest = "1:2786f06eed161f2d37c797e9edfe40edeb836e9511dc1216cba6caac0f105079"
+  name = "github.com/kat-co/vala"
+  packages = ["."]
+  pruneopts = ""
+  revision = "bfe9b50e828ad56312e486cbf4165ff1ac3a9bae"
+  version = "v1"
+
+[[projects]]
   digest = "1:a1839c8ed232871032f50a03a7005fea6e4bbedcc5d7191d0dae653bcd716137"
   name = "github.com/kisielk/errcheck"
   packages = [
@@ -247,6 +263,17 @@
   ]
   pruneopts = ""
   revision = "80517062f582ea3340cd4baf70e86d539ae7d84d"
+  version = "v1.0.0"
+
+[[projects]]
+  digest = "1:29145d7af4adafd72a79df5e41456ac9e232d5a28c1cd4dacf3ff008a217fc10"
+  name = "github.com/lib/pq"
+  packages = [
+    ".",
+    "oid",
+  ]
+  pruneopts = ""
+  revision = "4ded0e9383f75c197b3a2aaa6d590ac52df6fd79"
   version = "v1.0.0"
 
 [[projects]]
@@ -406,6 +433,31 @@
   packages = ["."]
   pruneopts = ""
   revision = "548a7d7a8ee8fcb3d013fae6acf857da56165975"
+
+[[projects]]
+  branch = "master"
+  digest = "1:bb57d77118b8ecb69550dfcb4c5980ea5e6ba91bed4d80f82180449a679322f3"
+  name = "github.com/volatiletech/inflect"
+  packages = ["."]
+  pruneopts = ""
+  revision = "e7201282ae8da26cd97aed2e516f75c0bd91bb93"
+
+[[projects]]
+  digest = "1:4b803d6e4d2eae3c745a5063e82fbc14eca88945da36814f6b677cebf19fb088"
+  name = "github.com/volatiletech/sqlboiler"
+  packages = [
+    "boil",
+    "drivers",
+    "drivers/sqlboiler-psql/driver",
+    "importers",
+    "queries",
+    "queries/qm",
+    "randomize",
+    "strmangle",
+  ]
+  pruneopts = ""
+  revision = "4dea9a5f77e3ec6090ad455df3d408e47e077700"
+  version = "v3.1.0"
 
 [[projects]]
   digest = "1:b4705584c29a326cbdcc0aa6952bfe3a2753a08e607e617c7d10c947adece2de"
@@ -691,6 +743,17 @@
     "github.com/izumin5210/grapi/cmd/grapi-gen-service",
     "github.com/izumin5210/grapi/cmd/grapi-gen-type",
     "github.com/izumin5210/grapi/pkg/grapiserver",
+    "github.com/kat-co/vala",
+    "github.com/lib/pq",
+    "github.com/pkg/errors",
+    "github.com/spf13/viper",
+    "github.com/volatiletech/sqlboiler/boil",
+    "github.com/volatiletech/sqlboiler/drivers",
+    "github.com/volatiletech/sqlboiler/drivers/sqlboiler-psql/driver",
+    "github.com/volatiletech/sqlboiler/queries",
+    "github.com/volatiletech/sqlboiler/queries/qm",
+    "github.com/volatiletech/sqlboiler/randomize",
+    "github.com/volatiletech/sqlboiler/strmangle",
     "golang.org/x/net/context",
     "google.golang.org/genproto/googleapis/api/annotations",
     "google.golang.org/grpc",
