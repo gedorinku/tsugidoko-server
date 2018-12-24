@@ -1,0 +1,37 @@
+version: "3"
+
+services:
+  tsugidoko:
+    image: gedorinku/tsugidoko-server:latest
+    restart: always
+    volumes:
+      - ./sqlboiler.toml:/sqlboiler.toml
+    env_file:
+      - ./.env
+    depends_on:
+      - pg
+    logging:
+      options:
+        max-size: 5m
+        max-file: "10"
+    ports:
+      - "3001:3001"
+
+  pg:
+    image: postgres:11.1-alpine
+    hostname: pg
+    environment:
+      POSTGRES_DB: ""
+    restart: always
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    logging:
+      options:
+        max-size: 5m
+        max-file: "10"
+    ports:
+      - "5432:5432"
+
+volumes:
+  db-data:
+    driver: local
