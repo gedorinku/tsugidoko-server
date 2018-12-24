@@ -6,6 +6,8 @@ package record
 import "testing"
 
 func TestUpsert(t *testing.T) {
+	t.Run("ClassRooms", testClassRoomsUpsert)
+
 	t.Run("Sessions", testSessionsUpsert)
 
 	t.Run("Tags", testTagsUpsert)
