@@ -12,6 +12,7 @@ import "testing"
 // It does NOT run each operation group in parallel.
 // Separating the tests thusly grants avoidance of Postgres deadlocks.
 func TestParent(t *testing.T) {
+	t.Run("Beacons", testBeacons)
 	t.Run("ClassRooms", testClassRooms)
 	t.Run("Sessions", testSessions)
 	t.Run("Tags", testTags)
@@ -21,6 +22,7 @@ func TestParent(t *testing.T) {
 }
 
 func TestDelete(t *testing.T) {
+	t.Run("Beacons", testBeaconsDelete)
 	t.Run("ClassRooms", testClassRoomsDelete)
 	t.Run("Sessions", testSessionsDelete)
 	t.Run("Tags", testTagsDelete)
@@ -30,6 +32,7 @@ func TestDelete(t *testing.T) {
 }
 
 func TestQueryDeleteAll(t *testing.T) {
+	t.Run("Beacons", testBeaconsQueryDeleteAll)
 	t.Run("ClassRooms", testClassRoomsQueryDeleteAll)
 	t.Run("Sessions", testSessionsQueryDeleteAll)
 	t.Run("Tags", testTagsQueryDeleteAll)
@@ -39,6 +42,7 @@ func TestQueryDeleteAll(t *testing.T) {
 }
 
 func TestSliceDeleteAll(t *testing.T) {
+	t.Run("Beacons", testBeaconsSliceDeleteAll)
 	t.Run("ClassRooms", testClassRoomsSliceDeleteAll)
 	t.Run("Sessions", testSessionsSliceDeleteAll)
 	t.Run("Tags", testTagsSliceDeleteAll)
@@ -48,6 +52,7 @@ func TestSliceDeleteAll(t *testing.T) {
 }
 
 func TestExists(t *testing.T) {
+	t.Run("Beacons", testBeaconsExists)
 	t.Run("ClassRooms", testClassRoomsExists)
 	t.Run("Sessions", testSessionsExists)
 	t.Run("Tags", testTagsExists)
@@ -57,6 +62,7 @@ func TestExists(t *testing.T) {
 }
 
 func TestFind(t *testing.T) {
+	t.Run("Beacons", testBeaconsFind)
 	t.Run("ClassRooms", testClassRoomsFind)
 	t.Run("Sessions", testSessionsFind)
 	t.Run("Tags", testTagsFind)
@@ -66,6 +72,7 @@ func TestFind(t *testing.T) {
 }
 
 func TestBind(t *testing.T) {
+	t.Run("Beacons", testBeaconsBind)
 	t.Run("ClassRooms", testClassRoomsBind)
 	t.Run("Sessions", testSessionsBind)
 	t.Run("Tags", testTagsBind)
@@ -75,6 +82,7 @@ func TestBind(t *testing.T) {
 }
 
 func TestOne(t *testing.T) {
+	t.Run("Beacons", testBeaconsOne)
 	t.Run("ClassRooms", testClassRoomsOne)
 	t.Run("Sessions", testSessionsOne)
 	t.Run("Tags", testTagsOne)
@@ -84,6 +92,7 @@ func TestOne(t *testing.T) {
 }
 
 func TestAll(t *testing.T) {
+	t.Run("Beacons", testBeaconsAll)
 	t.Run("ClassRooms", testClassRoomsAll)
 	t.Run("Sessions", testSessionsAll)
 	t.Run("Tags", testTagsAll)
@@ -93,6 +102,7 @@ func TestAll(t *testing.T) {
 }
 
 func TestCount(t *testing.T) {
+	t.Run("Beacons", testBeaconsCount)
 	t.Run("ClassRooms", testClassRoomsCount)
 	t.Run("Sessions", testSessionsCount)
 	t.Run("Tags", testTagsCount)
@@ -102,6 +112,7 @@ func TestCount(t *testing.T) {
 }
 
 func TestHooks(t *testing.T) {
+	t.Run("Beacons", testBeaconsHooks)
 	t.Run("ClassRooms", testClassRoomsHooks)
 	t.Run("Sessions", testSessionsHooks)
 	t.Run("Tags", testTagsHooks)
@@ -111,6 +122,8 @@ func TestHooks(t *testing.T) {
 }
 
 func TestInsert(t *testing.T) {
+	t.Run("Beacons", testBeaconsInsert)
+	t.Run("Beacons", testBeaconsInsertWhitelist)
 	t.Run("ClassRooms", testClassRoomsInsert)
 	t.Run("ClassRooms", testClassRoomsInsertWhitelist)
 	t.Run("Sessions", testSessionsInsert)
@@ -127,7 +140,9 @@ func TestInsert(t *testing.T) {
 
 // TestToOne tests cannot be run in parallel
 // or deadlocks can occur.
-func TestToOne(t *testing.T) {}
+func TestToOne(t *testing.T) {
+	t.Run("BeaconToClassRoomUsingClassRoom", testBeaconToOneClassRoomUsingClassRoom)
+}
 
 // TestOneToOne tests cannot be run in parallel
 // or deadlocks can occur.
@@ -135,11 +150,15 @@ func TestOneToOne(t *testing.T) {}
 
 // TestToMany tests cannot be run in parallel
 // or deadlocks can occur.
-func TestToMany(t *testing.T) {}
+func TestToMany(t *testing.T) {
+	t.Run("ClassRoomToBeacons", testClassRoomToManyBeacons)
+}
 
 // TestToOneSet tests cannot be run in parallel
 // or deadlocks can occur.
-func TestToOneSet(t *testing.T) {}
+func TestToOneSet(t *testing.T) {
+	t.Run("BeaconToClassRoomUsingBeacons", testBeaconToOneSetOpClassRoomUsingClassRoom)
+}
 
 // TestToOneRemove tests cannot be run in parallel
 // or deadlocks can occur.
@@ -155,7 +174,9 @@ func TestOneToOneRemove(t *testing.T) {}
 
 // TestToManyAdd tests cannot be run in parallel
 // or deadlocks can occur.
-func TestToManyAdd(t *testing.T) {}
+func TestToManyAdd(t *testing.T) {
+	t.Run("ClassRoomToBeacons", testClassRoomToManyAddOpBeacons)
+}
 
 // TestToManySet tests cannot be run in parallel
 // or deadlocks can occur.
@@ -166,6 +187,7 @@ func TestToManySet(t *testing.T) {}
 func TestToManyRemove(t *testing.T) {}
 
 func TestReload(t *testing.T) {
+	t.Run("Beacons", testBeaconsReload)
 	t.Run("ClassRooms", testClassRoomsReload)
 	t.Run("Sessions", testSessionsReload)
 	t.Run("Tags", testTagsReload)
@@ -175,6 +197,7 @@ func TestReload(t *testing.T) {
 }
 
 func TestReloadAll(t *testing.T) {
+	t.Run("Beacons", testBeaconsReloadAll)
 	t.Run("ClassRooms", testClassRoomsReloadAll)
 	t.Run("Sessions", testSessionsReloadAll)
 	t.Run("Tags", testTagsReloadAll)
@@ -184,6 +207,7 @@ func TestReloadAll(t *testing.T) {
 }
 
 func TestSelect(t *testing.T) {
+	t.Run("Beacons", testBeaconsSelect)
 	t.Run("ClassRooms", testClassRoomsSelect)
 	t.Run("Sessions", testSessionsSelect)
 	t.Run("Tags", testTagsSelect)
@@ -193,6 +217,7 @@ func TestSelect(t *testing.T) {
 }
 
 func TestUpdate(t *testing.T) {
+	t.Run("Beacons", testBeaconsUpdate)
 	t.Run("ClassRooms", testClassRoomsUpdate)
 	t.Run("Sessions", testSessionsUpdate)
 	t.Run("Tags", testTagsUpdate)
@@ -202,6 +227,7 @@ func TestUpdate(t *testing.T) {
 }
 
 func TestSliceUpdateAll(t *testing.T) {
+	t.Run("Beacons", testBeaconsSliceUpdateAll)
 	t.Run("ClassRooms", testClassRoomsSliceUpdateAll)
 	t.Run("Sessions", testSessionsSliceUpdateAll)
 	t.Run("Tags", testTagsSliceUpdateAll)
