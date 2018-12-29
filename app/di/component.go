@@ -9,12 +9,14 @@ import (
 
 	"github.com/gedorinku/tsugidoko-server/app/config"
 	"github.com/gedorinku/tsugidoko-server/store"
+	sessionstore "github.com/gedorinku/tsugidoko-server/store/session"
 	userstore "github.com/gedorinku/tsugidoko-server/store/user"
 )
 
 // StoreComponent is an interface of stores
 type StoreComponent interface {
 	UserStore(ctx context.Context) store.UserStore
+	SessionStore(ctx context.Context) store.SessionStore
 }
 
 // NewStoreComponent creates new store component
@@ -35,6 +37,10 @@ type storeComponentImpl struct {
 
 func (s *storeComponentImpl) UserStore(ctx context.Context) store.UserStore {
 	return userstore.NewUserStore(ctx, s.db)
+}
+
+func (s *storeComponentImpl) SessionStore(ctx context.Context) store.SessionStore {
+	return sessionstore.NewSessionStore(ctx, s.db)
 }
 
 func connectRDB(cfg *config.Config) (*sql.DB, error) {

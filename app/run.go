@@ -23,6 +23,7 @@ func Run() error {
 		grapiserver.WithDefaultLogger(),
 		grapiserver.WithServers(
 			server.NewUserServiceServer(store),
+			server.NewSessionServiceServer(store),
 		),
 	)
 	return s.Serve()
