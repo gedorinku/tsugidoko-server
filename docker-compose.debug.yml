@@ -6,7 +6,7 @@ services:
     restart: always
     volumes:
       - ./sqlboiler.toml:/sqlboiler.toml
-      - /tmp/tsugidoko.sock:/go/src/github.com/gedorinku/tsugidoko-server/server.sock
+      - /tmp/tsugidoko.sock:/go/src/github.com/gedorinku/tsugidoko-server/tmp/server.sock
     env_file:
       - ./.env
     depends_on:
