@@ -4,8 +4,6 @@ services:
   tsugidoko:
     image: gedorinku/tsugidoko-server:latest
     restart: always
-    volumes:
-      - /tmp/tsugidoko.sock:/tmp/server.sock
     env_file:
       - ./.env
     depends_on:
