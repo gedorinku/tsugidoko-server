@@ -4,7 +4,7 @@ import (
 	"context"
 	"crypto/rand"
 	"database/sql"
-	"encoding/base64"
+	"encoding/base32"
 
 	"github.com/pkg/errors"
 	"github.com/volatiletech/sqlboiler/boil"
@@ -75,5 +75,6 @@ func generateSecretKey() (string, error) {
 		return "", errors.WithStack(err)
 	}
 
-	return base64.RawURLEncoding.EncodeToString(key), nil
+	enc := base32.StdEncoding.WithPadding(base32.NoPadding)
+	return enc.EncodeToString(key), nil
 }
