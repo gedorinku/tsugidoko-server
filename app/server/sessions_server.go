@@ -23,10 +23,6 @@ func NewSessionServiceServer() SessionServiceServer {
 type sessionServiceServerImpl struct {
 }
 
-func (s *sessionServiceServerImpl) GetSession(context.Context, *api_pb.GetSessionRequest) (*api_pb.Session, error) {
-	panic("not implemented")
-}
-
 func (s *sessionServiceServerImpl) CreateSession(context.Context, *api_pb.CreateSessionRequest) (*api_pb.Session, error) {
 	panic("not implemented")
 }

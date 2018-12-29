@@ -9,11 +9,6 @@ import "google/api/annotations.proto";
 import "google/protobuf/empty.proto";
 
 service SessionService {
-  rpc GetSession (GetSessionRequest) returns (Session) {
-    option (google.api.http) = {
-      get: "/sessions/{session_id}"
-    };
-  }
   rpc CreateSession (CreateSessionRequest) returns (Session) {
     option (google.api.http) = {
       post: "/sessions"
@@ -30,10 +25,6 @@ service SessionService {
 message Session {
   string session_id = 1;
   uint32 uesr_id = 2;
-}
-
-message GetSessionRequest {
-  string session_id = 1;
 }
 
 message CreateSessionRequest {
