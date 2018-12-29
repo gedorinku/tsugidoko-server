@@ -7,8 +7,8 @@ import (
 
 // UserStore provides user data
 type UserStore interface {
-	ListUsers() ([]record.User, error)
+	ListUsers() ([]*record.User, error)
 	GetUser(userID model.UserID) (*record.User, error)
-	CreateUser(user *record.User) error
+	CreateUser(name, password string) (*record.User, error)
 	UpdateUser(user *record.User) error
 }
