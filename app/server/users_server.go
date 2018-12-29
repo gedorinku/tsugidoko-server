@@ -6,6 +6,7 @@ import (
 
 	"github.com/izumin5210/grapi/pkg/grapiserver"
 	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/grpclog"
 	"google.golang.org/grpc/status"
 
 	api_pb "github.com/gedorinku/tsugidoko-server/api"
@@ -53,6 +54,7 @@ func (s *userServiceServerImpl) CreateUser(ctx context.Context, req *api_pb.Crea
 	store := s.UserStore(ctx)
 	u, err := store.CreateUser(name, req.GetPassword())
 	if err != nil {
+		grpclog.Error(err)
 		return nil, err
 	}
 	return userToResponse(u), nil
