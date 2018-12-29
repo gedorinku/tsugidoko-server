@@ -30,7 +30,7 @@ service UserService {
   rpc CreateUser (CreateUserRequest) returns (User) {
     option (google.api.http) = {
       post: "/users"
-      body: "user"
+      body: "*"
     };
   }
 }
@@ -53,5 +53,6 @@ message GetUserRequest {
 }
 
 message CreateUserRequest {
-  User user = 1;
+  string name = 1;
+  string password = 2;
 }

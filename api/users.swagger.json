@@ -72,7 +72,7 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/tsugidoko_serverUser"
+              "$ref": "#/definitions/tsugidoko_serverCreateUserRequest"
             }
           }
         ],
@@ -108,6 +108,17 @@
     }
   },
   "definitions": {
+    "tsugidoko_serverCreateUserRequest": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "password": {
+          "type": "string"
+        }
+      }
+    },
     "tsugidoko_serverUser": {
       "type": "object",
       "properties": {

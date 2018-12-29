@@ -3,6 +3,7 @@ package app
 import (
 	"github.com/gedorinku/tsugidoko-server/app/config"
 	"github.com/gedorinku/tsugidoko-server/app/di"
+	"github.com/gedorinku/tsugidoko-server/app/server"
 	"github.com/izumin5210/grapi/pkg/grapiserver"
 )
 
@@ -13,7 +14,7 @@ func Run() error {
 		return err
 	}
 
-	_, err = di.NewStoreComponent(cfg)
+	store, err = di.NewStoreComponent(cfg)
 	if err != nil {
 		return err
 	}
@@ -21,7 +22,7 @@ func Run() error {
 	s := grapiserver.New(
 		grapiserver.WithDefaultLogger(),
 		grapiserver.WithServers(
-		// TODO
+			server.NewUserServiceServer(store),
 		),
 	)
 	return s.Serve()
