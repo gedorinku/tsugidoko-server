@@ -15,7 +15,7 @@ services:
         max-size: 5m
         max-file: "10"
     ports:
-      - "3001:3001"
+      - "3001:3000"
 
   pg:
     image: postgres:11.1-alpine
