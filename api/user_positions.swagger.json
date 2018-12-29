@@ -90,6 +90,10 @@
           "items": {
             "$ref": "#/definitions/typeBeacon"
           }
+        },
+        "floor": {
+          "type": "integer",
+          "format": "int32"
         }
       }
     },
