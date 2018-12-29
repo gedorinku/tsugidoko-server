@@ -33,6 +33,18 @@ func NewSessionStore(ctx context.Context, db *sql.DB) store.SessionStore {
 	}
 }
 
+func (s *sessionStoreImpl) GetSession(secretKey string) (*record.Session, error) {
+	session, err := record.Sessions(qm.Where("secret_key = ?", secretKey)).One(s.ctx, s.db)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return nil, err
+		}
+		return nil, errors.WithStack(err)
+	}
+
+	return session, nil
+}
+
 func (s *sessionStoreImpl) CreateSession(name, password string) (*record.Session, error) {
 	u, err := record.Users(qm.Where("name = ?", name)).One(s.ctx, s.db)
 	if err != nil {
@@ -64,8 +76,12 @@ func (s *sessionStoreImpl) CreateSession(name, password string) (*record.Session
 	return session, nil
 }
 
-func (s *sessionStoreImpl) DeleteSession(secretKey string) error {
-	panic("not implemented")
+func (s *sessionStoreImpl) DeleteSession(session *record.Session) error {
+	_, err := session.Delete(s.ctx, s.db)
+	if err != nil {
+		return errors.WithStack(err)
+	}
+	return nil
 }
 
 func generateSecretKey() (string, error) {

@@ -13,6 +13,7 @@ var (
 
 // SessionStore provides user data
 type SessionStore interface {
+	GetSession(secretKey string) (*record.Session, error)
 	CreateSession(name, password string) (*record.Session, error)
-	DeleteSession(secretKey string) error
+	DeleteSession(session *record.Session) error
 }

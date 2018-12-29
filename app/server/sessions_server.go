@@ -3,19 +3,17 @@ package server
 import (
 	"context"
 
-	"github.com/gedorinku/tsugidoko-server/infra/record"
-
-	"google.golang.org/grpc/grpclog"
-
-	"github.com/gedorinku/tsugidoko-server/store"
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/status"
-
 	"github.com/golang/protobuf/ptypes/empty"
 	"github.com/izumin5210/grapi/pkg/grapiserver"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/grpclog"
+	"google.golang.org/grpc/status"
 
 	api_pb "github.com/gedorinku/tsugidoko-server/api"
 	"github.com/gedorinku/tsugidoko-server/app/di"
+	"github.com/gedorinku/tsugidoko-server/app/interceptor"
+	"github.com/gedorinku/tsugidoko-server/infra/record"
+	"github.com/gedorinku/tsugidoko-server/store"
 )
 
 // SessionServiceServer is a composite interface of api_pb.SessionServiceServer and grapiserver.Server.
@@ -49,8 +47,20 @@ func (s *sessionServiceServerImpl) CreateSession(ctx context.Context, req *api_p
 	return sessionToResponse(session), nil
 }
 
-func (s *sessionServiceServerImpl) DeleteSession(context.Context, *api_pb.DeleteSessionRequest) (*empty.Empty, error) {
-	panic("not implemented")
+func (s *sessionServiceServerImpl) DeleteSession(ctx context.Context, req *api_pb.DeleteSessionRequest) (*empty.Empty, error) {
+	session, ok := interceptor.GetCurrentSession(ctx)
+	if !ok {
+		return nil, ErrInvalidSession
+	}
+
+	ss := s.SessionStore(ctx)
+	err := ss.DeleteSession(session)
+	if err != nil {
+		grpclog.Error(err)
+		return nil, err
+	}
+
+	return &empty.Empty{}, nil
 }
 
 func sessionToResponse(session *record.Session) *api_pb.Session {
