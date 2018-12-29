@@ -16,6 +16,20 @@
   ],
   "paths": {
     "/sessions": {
+      "delete": {
+        "operationId": "DeleteSession",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/protobufEmpty"
+            }
+          }
+        },
+        "tags": [
+          "SessionService"
+        ]
+      },
       "post": {
         "operationId": "CreateSession",
         "responses": {
@@ -34,52 +48,6 @@
             "schema": {
               "$ref": "#/definitions/tsugidoko_serverCreateSessionRequest"
             }
-          }
-        ],
-        "tags": [
-          "SessionService"
-        ]
-      }
-    },
-    "/sessions/{session_id}": {
-      "get": {
-        "operationId": "GetSession",
-        "responses": {
-          "200": {
-            "description": "",
-            "schema": {
-              "$ref": "#/definitions/tsugidoko_serverSession"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "session_id",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          }
-        ],
-        "tags": [
-          "SessionService"
-        ]
-      },
-      "delete": {
-        "operationId": "DeleteSession",
-        "responses": {
-          "200": {
-            "description": "",
-            "schema": {
-              "$ref": "#/definitions/protobufEmpty"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "session_id",
-            "in": "path",
-            "required": true,
-            "type": "string"
           }
         ],
         "tags": [

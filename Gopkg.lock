@@ -236,6 +236,14 @@
   revision = "04140366298a54a039076d798123ffa108fff46c"
 
 [[projects]]
+  digest = "1:7df5a9695a743c3e1626b28bb8741602c8c15527e1efaeaec48ab2ff9a23f74c"
+  name = "github.com/joho/godotenv"
+  packages = ["."]
+  pruneopts = ""
+  revision = "23d116af351c84513e1946b527c88823e476be13"
+  version = "v1.3.0"
+
+[[projects]]
   digest = "1:2786f06eed161f2d37c797e9edfe40edeb836e9511dc1216cba6caac0f105079"
   name = "github.com/kat-co/vala"
   packages = ["."]
@@ -244,26 +252,12 @@
   version = "v1"
 
 [[projects]]
-  digest = "1:a1839c8ed232871032f50a03a7005fea6e4bbedcc5d7191d0dae653bcd716137"
-  name = "github.com/kisielk/errcheck"
-  packages = [
-    ".",
-    "internal/errcheck",
-  ]
+  digest = "1:b60a24f942c7031ece6c48bcab0b683c7d3d6aa9fd17e21459d9ae604da258fa"
+  name = "github.com/kelseyhightower/envconfig"
+  packages = ["."]
   pruneopts = ""
-  revision = "55d8f507faff4d6eddd0c41a3e713e2567fca4e5"
-  version = "v1.1.0"
-
-[[projects]]
-  digest = "1:765270f95ea68ad2150f6143eb8b9c0c17b038a7e2255b46580674471af00e27"
-  name = "github.com/kisielk/gotool"
-  packages = [
-    ".",
-    "internal/load",
-  ]
-  pruneopts = ""
-  revision = "80517062f582ea3340cd4baf70e86d539ae7d84d"
-  version = "v1.0.0"
+  revision = "f611eb38b3875cc3bd991ca91c51d06446afa14c"
+  version = "v1.3.0"
 
 [[projects]]
   digest = "1:29145d7af4adafd72a79df5e41456ac9e232d5a28c1cd4dacf3ff008a217fc10"
@@ -416,15 +410,15 @@
   version = "v1.2.1"
 
 [[projects]]
-  digest = "1:59f47ee1fbb31dc3d4df3fdc000fa4e4d001752dacddbba8169c149763e4ef2e"
+  digest = "1:2bd64bb95e9caa2d93e3efa8980d4d9d71dfcd0d7b94f57dfc737e8f28029ef6"
   name = "github.com/srvc/wraperr"
   packages = [
     ".",
     "cmd/wraperr",
   ]
   pruneopts = ""
-  revision = "f6aeb1dc7dbd5421be3f411578f512eb6f6d3e07"
-  version = "v0.2.0"
+  revision = "d96e660b51e4f1520597bdd720fa3649d08cf2d0"
+  version = "v0.1.1"
 
 [[projects]]
   branch = "master"
@@ -502,7 +496,11 @@
   branch = "master"
   digest = "1:887074c37fcefc2f49b5ae9c6f9f36107341aec23185613d0e9f1ee81db7f94a"
   name = "golang.org/x/crypto"
-  packages = ["ssh/terminal"]
+  packages = [
+    "bcrypt",
+    "blowfish",
+    "ssh/terminal",
+  ]
   pruneopts = ""
   revision = "505ab145d0a99da450461ae2c1a9f6cd10d1f447"
 
@@ -593,17 +591,10 @@
   name = "golang.org/x/tools"
   packages = [
     "go/ast/astutil",
-    "go/buildutil",
-    "go/callgraph",
-    "go/callgraph/cha",
-    "go/callgraph/rta",
     "go/gcexportdata",
     "go/internal/cgo",
     "go/internal/gcimporter",
-    "go/loader",
     "go/packages",
-    "go/ssa",
-    "go/ssa/ssautil",
     "go/types/typeutil",
     "internal/fastwalk",
     "internal/gopathwalk",
@@ -684,47 +675,12 @@
   version = "v2.2.2"
 
 [[projects]]
-  digest = "1:8735ec8c19cf427368d9d9d419d268ecc95ba8b0db9594d50d566803bd59f341"
-  name = "honnef.co/go/tools"
-  packages = [
-    "callgraph",
-    "callgraph/static",
-    "cmd/megacheck",
-    "deprecated",
-    "functions",
-    "internal/sharedcheck",
-    "lint",
-    "lint/lintutil",
-    "simple",
-    "ssa",
-    "ssa/ssautil",
-    "staticcheck",
-    "staticcheck/vrp",
-    "unused",
-    "version",
-  ]
-  pruneopts = ""
-  revision = "d73ab98e7c39fdcf9ba65062e43d34310f198353"
-  version = "2017.2.2"
-
-[[projects]]
   branch = "master"
   digest = "1:bea542e853f98bfcc80ecbe8fe0f32bc52c97664102aacdd7dca676354ef2faa"
   name = "k8s.io/utils"
   packages = ["exec"]
   pruneopts = ""
   revision = "0d26856f57b32ec3398579285e5c8a2bfe8c5243"
-
-[[projects]]
-  branch = "master"
-  digest = "1:42ea531bd0ffee70aeb1c46ce951ed4c18ba7bfb541773b378b66efbc9c52964"
-  name = "mvdan.cc/unparam"
-  packages = [
-    ".",
-    "check",
-  ]
-  pruneopts = ""
-  revision = "68701730a1d7cb7ec4085dda7cb976d03f6d1ebf"
 
 [solve-meta]
   analyzer-name = "dep"
@@ -743,7 +699,9 @@
     "github.com/izumin5210/grapi/cmd/grapi-gen-service",
     "github.com/izumin5210/grapi/cmd/grapi-gen-type",
     "github.com/izumin5210/grapi/pkg/grapiserver",
+    "github.com/joho/godotenv",
     "github.com/kat-co/vala",
+    "github.com/kelseyhightower/envconfig",
     "github.com/lib/pq",
     "github.com/pkg/errors",
     "github.com/spf13/viper",
@@ -754,11 +712,13 @@
     "github.com/volatiletech/sqlboiler/queries/qm",
     "github.com/volatiletech/sqlboiler/randomize",
     "github.com/volatiletech/sqlboiler/strmangle",
+    "golang.org/x/crypto/bcrypt",
     "golang.org/x/net/context",
     "google.golang.org/genproto/googleapis/api/annotations",
     "google.golang.org/grpc",
     "google.golang.org/grpc/codes",
     "google.golang.org/grpc/grpclog",
+    "google.golang.org/grpc/metadata",
     "google.golang.org/grpc/status",
   ]
   solver-name = "gps-cdcl"
