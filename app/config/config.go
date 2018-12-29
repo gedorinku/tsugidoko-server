@@ -8,7 +8,7 @@ import (
 
 // Config represents app config
 type Config struct {
-	DataSourceName string `envconfig:"data_source_name" required:"true"`
+	DataBaseURL string `envconfig:"database_url" required:"true"`
 	DebugLog       bool   `envconfig:"debug_log"`
 }
 
