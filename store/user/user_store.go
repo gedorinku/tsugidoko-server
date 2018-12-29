@@ -53,12 +53,12 @@ func (s *userStoreImpl) CreateUser(name, password string) (*record.User, error) 
 		Name:           name,
 		PasswordDigest: string(d),
 	}
-	err = u.Insert(s.ctx, s.db, boil.Whitelist("name"))
+	err = u.Insert(s.ctx, s.db, boil.Infer())
 	if err != nil {
 		return nil, errors.WithStack(err)
 	}
 
-	return nil, nil
+	return u, nil
 }
 
 func (s *userStoreImpl) UpdateUser(user *record.User) error {
