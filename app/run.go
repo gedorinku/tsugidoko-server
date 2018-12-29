@@ -14,7 +14,7 @@ func Run() error {
 		return err
 	}
 
-	store, err = di.NewStoreComponent(cfg)
+	store, err := di.NewStoreComponent(cfg)
 	if err != nil {
 		return err
 	}

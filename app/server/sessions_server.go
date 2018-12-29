@@ -5,8 +5,6 @@ import (
 
 	"github.com/golang/protobuf/ptypes/empty"
 	"github.com/izumin5210/grapi/pkg/grapiserver"
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/status"
 
 	api_pb "github.com/gedorinku/tsugidoko-server/api"
 )
@@ -25,27 +23,14 @@ func NewSessionServiceServer() SessionServiceServer {
 type sessionServiceServerImpl struct {
 }
 
-func (s *sessionServiceServerImpl) ListSessions(ctx context.Context, req *api_pb.ListSessionsRequest) (*api_pb.ListSessionsResponse, error) {
-	// TODO: Not yet implemented.
-	return nil, status.Error(codes.Unimplemented, "TODO: You should implement it!")
+func (s *sessionServiceServerImpl) GetSession(context.Context, *api_pb.GetSessionRequest) (*api_pb.Session, error) {
+	panic("not implemented")
 }
 
-func (s *sessionServiceServerImpl) GetSession(ctx context.Context, req *api_pb.GetSessionRequest) (*api_pb.Session, error) {
-	// TODO: Not yet implemented.
-	return nil, status.Error(codes.Unimplemented, "TODO: You should implement it!")
+func (s *sessionServiceServerImpl) CreateSession(context.Context, *api_pb.CreateSessionRequest) (*api_pb.Session, error) {
+	panic("not implemented")
 }
 
-func (s *sessionServiceServerImpl) CreateSession(ctx context.Context, req *api_pb.CreateSessionRequest) (*api_pb.Session, error) {
-	// TODO: Not yet implemented.
-	return nil, status.Error(codes.Unimplemented, "TODO: You should implement it!")
-}
-
-func (s *sessionServiceServerImpl) UpdateSession(ctx context.Context, req *api_pb.UpdateSessionRequest) (*api_pb.Session, error) {
-	// TODO: Not yet implemented.
-	return nil, status.Error(codes.Unimplemented, "TODO: You should implement it!")
-}
-
-func (s *sessionServiceServerImpl) DeleteSession(ctx context.Context, req *api_pb.DeleteSessionRequest) (*empty.Empty, error) {
-	// TODO: Not yet implemented.
-	return nil, status.Error(codes.Unimplemented, "TODO: You should implement it!")
+func (s *sessionServiceServerImpl) DeleteSession(context.Context, *api_pb.DeleteSessionRequest) (*empty.Empty, error) {
+	panic("not implemented")
 }
