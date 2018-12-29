@@ -17,7 +17,7 @@ service SessionService {
   }
   rpc DeleteSession (DeleteSessionRequest) returns (google.protobuf.Empty) {
     option (google.api.http) = {
-      delete: "/sessions/{session_id}"
+      delete: "/sessions"
     };
   }
 }
@@ -33,5 +33,4 @@ message CreateSessionRequest {
 }
 
 message DeleteSessionRequest {
-  string session_id = 1;
 }
