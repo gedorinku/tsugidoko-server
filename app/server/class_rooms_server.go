@@ -48,8 +48,17 @@ func (s *classRoomServiceServerImpl) ListClassRooms(ctx context.Context, req *ap
 }
 
 func (s *classRoomServiceServerImpl) GetClassRoom(ctx context.Context, req *api_pb.GetClassRoomRequest) (*api_pb.ClassRoom, error) {
-	// TODO: Not yet implemented.
-	return nil, status.Error(codes.Unimplemented, "TODO: You should implement it!")
+	cs := s.ClassRoomStore(ctx)
+	room, err := cs.GetClassRoom(int64(req.ClassRoomId))
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return nil, status.Error(codes.NotFound, "Class room not found")
+		}
+		grpclog.Error(err)
+		return nil, err
+	}
+
+	return classRoomToResponse(room), nil
 }
 
 func (s *classRoomServiceServerImpl) CreateClassRoom(ctx context.Context, req *api_pb.CreateClassRoomRequest) (*api_pb.ClassRoom, error) {
