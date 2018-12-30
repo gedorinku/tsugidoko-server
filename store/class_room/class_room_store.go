@@ -27,7 +27,7 @@ func NewClassRoomStore(ctx context.Context, db *sql.DB) store.ClassRoomStore {
 func (s *classRoomStoreImpl) ListClassRoom() ([]*record.ClassRoom, error) {
 	mods := []qm.QueryMod{
 		qm.Load(record.ClassRoomRels.Beacons),
-		qm.Load(record.ClassRoomRels.ClassRoomTags),
+		qm.Load(record.ClassRoomRels.ClassRoomTags + "." + record.ClassRoomTagRels.Tag),
 	}
 	res, err := record.ClassRooms(mods...).All(s.ctx, s.db)
 	if err != nil {
@@ -43,7 +43,7 @@ func (s *classRoomStoreImpl) ListClassRoom() ([]*record.ClassRoom, error) {
 func (s *classRoomStoreImpl) GetClassRoom(classRoomID int64) (*record.ClassRoom, error) {
 	mods := []qm.QueryMod{
 		qm.Load(record.ClassRoomRels.Beacons),
-		qm.Load(record.ClassRoomRels.ClassRoomTags),
+		qm.Load(record.ClassRoomRels.ClassRoomTags + "." + record.ClassRoomTagRels.Tag),
 		qm.Where("id = ?", classRoomID),
 	}
 	res, err := record.ClassRooms(mods...).One(s.ctx, s.db)
