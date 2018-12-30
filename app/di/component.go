@@ -9,6 +9,7 @@ import (
 
 	"github.com/gedorinku/tsugidoko-server/app/config"
 	"github.com/gedorinku/tsugidoko-server/store"
+	classroomstore "github.com/gedorinku/tsugidoko-server/store/class_room"
 	sessionstore "github.com/gedorinku/tsugidoko-server/store/session"
 	userstore "github.com/gedorinku/tsugidoko-server/store/user"
 )
@@ -17,6 +18,7 @@ import (
 type StoreComponent interface {
 	UserStore(ctx context.Context) store.UserStore
 	SessionStore(ctx context.Context) store.SessionStore
+	ClassRoomStore(ctx context.Context) store.ClassRoomStore
 }
 
 // NewStoreComponent creates new store component
@@ -41,6 +43,10 @@ func (s *storeComponentImpl) UserStore(ctx context.Context) store.UserStore {
 
 func (s *storeComponentImpl) SessionStore(ctx context.Context) store.SessionStore {
 	return sessionstore.NewSessionStore(ctx, s.db)
+}
+
+func (s *storeComponentImpl) ClassRoomStore(ctx context.Context) store.ClassRoomStore {
+	return classroomstore.NewClassRoomStore(ctx, s.db)
 }
 
 func connectRDB(cfg *config.Config) (*sql.DB, error) {

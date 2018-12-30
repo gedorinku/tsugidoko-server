@@ -58,15 +58,18 @@ var ClassRoomColumns = struct {
 // ClassRoomRels is where relationship names are stored.
 var ClassRoomRels = struct {
 	Beacons       string
+	ClassRoomTags string
 	UserPositions string
 }{
 	Beacons:       "Beacons",
+	ClassRoomTags: "ClassRoomTags",
 	UserPositions: "UserPositions",
 }
 
 // classRoomR is where relationships are stored.
 type classRoomR struct {
 	Beacons       BeaconSlice
+	ClassRoomTags ClassRoomTagSlice
 	UserPositions UserPositionSlice
 }
 
@@ -342,6 +345,27 @@ func (o *ClassRoom) Beacons(mods ...qm.QueryMod) beaconQuery {
 	return query
 }
 
+// ClassRoomTags retrieves all the class_room_tag's ClassRoomTags with an executor.
+func (o *ClassRoom) ClassRoomTags(mods ...qm.QueryMod) classRoomTagQuery {
+	var queryMods []qm.QueryMod
+	if len(mods) != 0 {
+		queryMods = append(queryMods, mods...)
+	}
+
+	queryMods = append(queryMods,
+		qm.Where("\"class_room_tags\".\"class_room_id\"=?", o.ID),
+	)
+
+	query := ClassRoomTags(queryMods...)
+	queries.SetFrom(query.Query, "\"class_room_tags\"")
+
+	if len(queries.GetSelect(query.Query)) == 0 {
+		queries.SetSelect(query.Query, []string{"\"class_room_tags\".*"})
+	}
+
+	return query
+}
+
 // UserPositions retrieves all the user_position's UserPositions with an executor.
 func (o *ClassRoom) UserPositions(mods ...qm.QueryMod) userPositionQuery {
 	var queryMods []qm.QueryMod
@@ -444,6 +468,97 @@ func (classRoomL) LoadBeacons(ctx context.Context, e boil.ContextExecutor, singu
 				local.R.Beacons = append(local.R.Beacons, foreign)
 				if foreign.R == nil {
 					foreign.R = &beaconR{}
+				}
+				foreign.R.ClassRoom = local
+				break
+			}
+		}
+	}
+
+	return nil
+}
+
+// LoadClassRoomTags allows an eager lookup of values, cached into the
+// loaded structs of the objects. This is for a 1-M or N-M relationship.
+func (classRoomL) LoadClassRoomTags(ctx context.Context, e boil.ContextExecutor, singular bool, maybeClassRoom interface{}, mods queries.Applicator) error {
+	var slice []*ClassRoom
+	var object *ClassRoom
+
+	if singular {
+		object = maybeClassRoom.(*ClassRoom)
+	} else {
+		slice = *maybeClassRoom.(*[]*ClassRoom)
+	}
+
+	args := make([]interface{}, 0, 1)
+	if singular {
+		if object.R == nil {
+			object.R = &classRoomR{}
+		}
+		args = append(args, object.ID)
+	} else {
+	Outer:
+		for _, obj := range slice {
+			if obj.R == nil {
+				obj.R = &classRoomR{}
+			}
+
+			for _, a := range args {
+				if a == obj.ID {
+					continue Outer
+				}
+			}
+
+			args = append(args, obj.ID)
+		}
+	}
+
+	query := NewQuery(qm.From(`class_room_tags`), qm.WhereIn(`class_room_id in ?`, args...))
+	if mods != nil {
+		mods.Apply(query)
+	}
+
+	results, err := query.QueryContext(ctx, e)
+	if err != nil {
+		return errors.Wrap(err, "failed to eager load class_room_tags")
+	}
+
+	var resultSlice []*ClassRoomTag
+	if err = queries.Bind(results, &resultSlice); err != nil {
+		return errors.Wrap(err, "failed to bind eager loaded slice class_room_tags")
+	}
+
+	if err = results.Close(); err != nil {
+		return errors.Wrap(err, "failed to close results in eager load on class_room_tags")
+	}
+	if err = results.Err(); err != nil {
+		return errors.Wrap(err, "error occurred during iteration of eager loaded relations for class_room_tags")
+	}
+
+	if len(classRoomTagAfterSelectHooks) != 0 {
+		for _, obj := range resultSlice {
+			if err := obj.doAfterSelectHooks(ctx, e); err != nil {
+				return err
+			}
+		}
+	}
+	if singular {
+		object.R.ClassRoomTags = resultSlice
+		for _, foreign := range resultSlice {
+			if foreign.R == nil {
+				foreign.R = &classRoomTagR{}
+			}
+			foreign.R.ClassRoom = object
+		}
+		return nil
+	}
+
+	for _, foreign := range resultSlice {
+		for _, local := range slice {
+			if local.ID == foreign.ClassRoomID {
+				local.R.ClassRoomTags = append(local.R.ClassRoomTags, foreign)
+				if foreign.R == nil {
+					foreign.R = &classRoomTagR{}
 				}
 				foreign.R.ClassRoom = local
 				break
@@ -589,6 +704,59 @@ func (o *ClassRoom) AddBeacons(ctx context.Context, exec boil.ContextExecutor, i
 	for _, rel := range related {
 		if rel.R == nil {
 			rel.R = &beaconR{
+				ClassRoom: o,
+			}
+		} else {
+			rel.R.ClassRoom = o
+		}
+	}
+	return nil
+}
+
+// AddClassRoomTags adds the given related objects to the existing relationships
+// of the class_room, optionally inserting them as new records.
+// Appends related to o.R.ClassRoomTags.
+// Sets related.R.ClassRoom appropriately.
+func (o *ClassRoom) AddClassRoomTags(ctx context.Context, exec boil.ContextExecutor, insert bool, related ...*ClassRoomTag) error {
+	var err error
+	for _, rel := range related {
+		if insert {
+			rel.ClassRoomID = o.ID
+			if err = rel.Insert(ctx, exec, boil.Infer()); err != nil {
+				return errors.Wrap(err, "failed to insert into foreign table")
+			}
+		} else {
+			updateQuery := fmt.Sprintf(
+				"UPDATE \"class_room_tags\" SET %s WHERE %s",
+				strmangle.SetParamNames("\"", "\"", 1, []string{"class_room_id"}),
+				strmangle.WhereClause("\"", "\"", 2, classRoomTagPrimaryKeyColumns),
+			)
+			values := []interface{}{o.ID, rel.ID}
+
+			if boil.DebugMode {
+				fmt.Fprintln(boil.DebugWriter, updateQuery)
+				fmt.Fprintln(boil.DebugWriter, values)
+			}
+
+			if _, err = exec.ExecContext(ctx, updateQuery, values...); err != nil {
+				return errors.Wrap(err, "failed to update foreign table")
+			}
+
+			rel.ClassRoomID = o.ID
+		}
+	}
+
+	if o.R == nil {
+		o.R = &classRoomR{
+			ClassRoomTags: related,
+		}
+	} else {
+		o.R.ClassRoomTags = append(o.R.ClassRoomTags, related...)
+	}
+
+	for _, rel := range related {
+		if rel.R == nil {
+			rel.R = &classRoomTagR{
 				ClassRoom: o,
 			}
 		} else {
