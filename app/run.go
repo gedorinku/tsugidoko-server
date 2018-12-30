@@ -2,6 +2,7 @@ package app
 
 import (
 	"github.com/izumin5210/grapi/pkg/grapiserver"
+	"github.com/volatiletech/sqlboiler/boil"
 
 	"github.com/gedorinku/tsugidoko-server/app/config"
 	"github.com/gedorinku/tsugidoko-server/app/di"
@@ -15,6 +16,8 @@ func Run() error {
 	if err != nil {
 		return err
 	}
+
+	boil.DebugMode = cfg.DebugLog
 
 	store, err := di.NewStoreComponent(cfg)
 	if err != nil {
