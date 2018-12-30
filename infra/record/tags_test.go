@@ -494,6 +494,84 @@ func testTagsInsertWhitelist(t *testing.T) {
 	}
 }
 
+func testTagToManyClassRoomTags(t *testing.T) {
+	var err error
+	ctx := context.Background()
+	tx := MustTx(boil.BeginTx(ctx, nil))
+	defer func() { _ = tx.Rollback() }()
+
+	var a Tag
+	var b, c ClassRoomTag
+
+	seed := randomize.NewSeed()
+	if err = randomize.Struct(seed, &a, tagDBTypes, true, tagColumnsWithDefault...); err != nil {
+		t.Errorf("Unable to randomize Tag struct: %s", err)
+	}
+
+	if err := a.Insert(ctx, tx, boil.Infer()); err != nil {
+		t.Fatal(err)
+	}
+
+	if err = randomize.Struct(seed, &b, classRoomTagDBTypes, false, classRoomTagColumnsWithDefault...); err != nil {
+		t.Fatal(err)
+	}
+	if err = randomize.Struct(seed, &c, classRoomTagDBTypes, false, classRoomTagColumnsWithDefault...); err != nil {
+		t.Fatal(err)
+	}
+
+	b.TagID = a.ID
+	c.TagID = a.ID
+
+	if err = b.Insert(ctx, tx, boil.Infer()); err != nil {
+		t.Fatal(err)
+	}
+	if err = c.Insert(ctx, tx, boil.Infer()); err != nil {
+		t.Fatal(err)
+	}
+
+	classRoomTag, err := a.ClassRoomTags().All(ctx, tx)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	bFound, cFound := false, false
+	for _, v := range classRoomTag {
+		if v.TagID == b.TagID {
+			bFound = true
+		}
+		if v.TagID == c.TagID {
+			cFound = true
+		}
+	}
+
+	if !bFound {
+		t.Error("expected to find b")
+	}
+	if !cFound {
+		t.Error("expected to find c")
+	}
+
+	slice := TagSlice{&a}
+	if err = a.L.LoadClassRoomTags(ctx, tx, false, (*[]*Tag)(&slice), nil); err != nil {
+		t.Fatal(err)
+	}
+	if got := len(a.R.ClassRoomTags); got != 2 {
+		t.Error("number of eager loaded records wrong, got:", got)
+	}
+
+	a.R.ClassRoomTags = nil
+	if err = a.L.LoadClassRoomTags(ctx, tx, true, &a, nil); err != nil {
+		t.Fatal(err)
+	}
+	if got := len(a.R.ClassRoomTags); got != 2 {
+		t.Error("number of eager loaded records wrong, got:", got)
+	}
+
+	if t.Failed() {
+		t.Logf("%#v", classRoomTag)
+	}
+}
+
 func testTagToManyUserTags(t *testing.T) {
 	var err error
 	ctx := context.Background()
@@ -572,6 +650,81 @@ func testTagToManyUserTags(t *testing.T) {
 	}
 }
 
+func testTagToManyAddOpClassRoomTags(t *testing.T) {
+	var err error
+
+	ctx := context.Background()
+	tx := MustTx(boil.BeginTx(ctx, nil))
+	defer func() { _ = tx.Rollback() }()
+
+	var a Tag
+	var b, c, d, e ClassRoomTag
+
+	seed := randomize.NewSeed()
+	if err = randomize.Struct(seed, &a, tagDBTypes, false, strmangle.SetComplement(tagPrimaryKeyColumns, tagColumnsWithoutDefault)...); err != nil {
+		t.Fatal(err)
+	}
+	foreigners := []*ClassRoomTag{&b, &c, &d, &e}
+	for _, x := range foreigners {
+		if err = randomize.Struct(seed, x, classRoomTagDBTypes, false, strmangle.SetComplement(classRoomTagPrimaryKeyColumns, classRoomTagColumnsWithoutDefault)...); err != nil {
+			t.Fatal(err)
+		}
+	}
+
+	if err := a.Insert(ctx, tx, boil.Infer()); err != nil {
+		t.Fatal(err)
+	}
+	if err = b.Insert(ctx, tx, boil.Infer()); err != nil {
+		t.Fatal(err)
+	}
+	if err = c.Insert(ctx, tx, boil.Infer()); err != nil {
+		t.Fatal(err)
+	}
+
+	foreignersSplitByInsertion := [][]*ClassRoomTag{
+		{&b, &c},
+		{&d, &e},
+	}
+
+	for i, x := range foreignersSplitByInsertion {
+		err = a.AddClassRoomTags(ctx, tx, i != 0, x...)
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		first := x[0]
+		second := x[1]
+
+		if a.ID != first.TagID {
+			t.Error("foreign key was wrong value", a.ID, first.TagID)
+		}
+		if a.ID != second.TagID {
+			t.Error("foreign key was wrong value", a.ID, second.TagID)
+		}
+
+		if first.R.Tag != &a {
+			t.Error("relationship was not added properly to the foreign slice")
+		}
+		if second.R.Tag != &a {
+			t.Error("relationship was not added properly to the foreign slice")
+		}
+
+		if a.R.ClassRoomTags[i*2] != first {
+			t.Error("relationship struct slice not set to correct value")
+		}
+		if a.R.ClassRoomTags[i*2+1] != second {
+			t.Error("relationship struct slice not set to correct value")
+		}
+
+		count, err := a.ClassRoomTags().Count(ctx, tx)
+		if err != nil {
+			t.Fatal(err)
+		}
+		if want := int64((i + 1) * 2); count != want {
+			t.Error("want", want, "got", count)
+		}
+	}
+}
 func testTagToManyAddOpUserTags(t *testing.T) {
 	var err error
 
