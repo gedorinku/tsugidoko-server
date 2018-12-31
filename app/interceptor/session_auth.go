@@ -32,10 +32,13 @@ var (
 type currentSessionKey struct{}
 
 // GetCurrentSession returns the current session from context
-func GetCurrentSession(ctx context.Context) (s *record.Session, ok bool) {
+func GetCurrentSession(ctx context.Context) *record.Session {
 	v := ctx.Value(currentSessionKey{})
-	s, ok = v.(*record.Session)
-	return
+	s, ok := v.(*record.Session)
+	if !ok {
+		return nil
+	}
+	return s
 }
 
 // Authorizator provide the authorization interceptor

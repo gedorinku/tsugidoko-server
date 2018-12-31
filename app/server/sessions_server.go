@@ -48,8 +48,8 @@ func (s *sessionServiceServerImpl) CreateSession(ctx context.Context, req *api_p
 }
 
 func (s *sessionServiceServerImpl) DeleteSession(ctx context.Context, req *api_pb.DeleteSessionRequest) (*empty.Empty, error) {
-	session, ok := interceptor.GetCurrentSession(ctx)
-	if !ok {
+	session := interceptor.GetCurrentSession(ctx)
+	if session == nil {
 		return nil, ErrInvalidSession
 	}
 

@@ -35,6 +35,7 @@ func Run() error {
 			server.NewUserServiceServer(store),
 			server.NewSessionServiceServer(store),
 			server.NewClassRoomServiceServer(store),
+			server.NewUserPositionServiceServer(store),
 		),
 		grapiserver.WithGrpcAddr("tcp", ":4000"),
 	)
