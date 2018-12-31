@@ -3,10 +3,12 @@ package userpositionstore
 import (
 	"context"
 	"database/sql"
+	"strconv"
+	"strings"
 
-	"github.com/lib/pq"
 	"github.com/pkg/errors"
 	"github.com/volatiletech/sqlboiler/boil"
+	"github.com/volatiletech/sqlboiler/queries"
 	"github.com/volatiletech/sqlboiler/queries/qm"
 
 	"github.com/gedorinku/tsugidoko-server/infra/record"
@@ -120,7 +122,7 @@ func (s *userPositionStoreImpl) UpdateUserPosition(userID model.UserID, bssid st
 
 func (s *userPositionStoreImpl) userTagIDs(exec boil.ContextExecutor, userID model.UserID) ([]int64, error) {
 	mods := []qm.QueryMod{
-		qm.Select(record.UserTagColumns.UserID),
+		qm.Select(record.UserTagColumns.TagID),
 		qm.Where("user_id = ?", userID),
 	}
 	tags, err := record.UserTags(mods...).All(s.ctx, exec)
@@ -136,18 +138,23 @@ func (s *userPositionStoreImpl) userTagIDs(exec boil.ContextExecutor, userID mod
 	return ids, nil
 }
 
-func (s *userPositionStoreImpl) updateClassRoomTags(tx *sql.Tx, classRoomID int64, tagIDs []int64, diff int64) error {
+func (s *userPositionStoreImpl) updateClassRoomTags(exec boil.ContextExecutor, classRoomID int64, tagIDs []int64, diff int64) error {
 	if len(tagIDs) == 0 {
 		return nil
 	}
 
-	q := "UPDATE class_room_tags SET count = count + ? " +
-		"WHERE class_room_id = ? AND tag_id = ANY(?)"
-	stmt, err := tx.PrepareContext(s.ctx, q)
-	if err != nil {
-		return errors.WithStack(err)
+	builder := strings.Builder{}
+	builder.Grow(len(",$10") * len(tagIDs))
+	for i := 4; i <= 2+len(tagIDs); i++ {
+		builder.WriteString(",$" + strconv.Itoa(i))
 	}
-	_, err = stmt.ExecContext(s.ctx, q, diff, classRoomID, pq.Array(tagIDs))
+	q := "UPDATE class_room_tags SET count = count + $1 WHERE class_room_id = $2 AND tag_id in ($3" + builder.String() + ")"
+	args := make([]interface{}, 0, len(tagIDs)+2)
+	args = append(args, diff, classRoomID)
+	for _, id := range tagIDs {
+		args = append(args, id)
+	}
+	_, err := queries.Raw(q, args...).ExecContext(s.ctx, exec)
 	if err != nil && err != sql.ErrNoRows {
 		return errors.WithStack(err)
 	}
