@@ -5,6 +5,7 @@ import (
 	"database/sql"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/pkg/errors"
 	"github.com/volatiletech/sqlboiler/boil"
@@ -145,12 +146,12 @@ func (s *userPositionStoreImpl) updateClassRoomTags(exec boil.ContextExecutor, c
 
 	builder := strings.Builder{}
 	builder.Grow(len(",$10") * len(tagIDs))
-	for i := 4; i <= 2+len(tagIDs); i++ {
+	for i := 5; i <= 3+len(tagIDs); i++ {
 		builder.WriteString(",$" + strconv.Itoa(i))
 	}
-	q := "UPDATE class_room_tags SET count = count + $1 WHERE class_room_id = $2 AND tag_id in ($3" + builder.String() + ")"
-	args := make([]interface{}, 0, len(tagIDs)+2)
-	args = append(args, diff, classRoomID)
+	q := "UPDATE class_room_tags SET count = count + $1, updated_at = $2 WHERE class_room_id = $3 AND tag_id in ($4" + builder.String() + ")"
+	args := make([]interface{}, 0, len(tagIDs)+3)
+	args = append(args, diff, time.Now().In(boil.GetLocation()), classRoomID)
 	for _, id := range tagIDs {
 		args = append(args, id)
 	}
