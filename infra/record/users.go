@@ -48,20 +48,20 @@ var UserColumns = struct {
 
 // UserRels is where relationship names are stored.
 var UserRels = struct {
-	Sessions      string
-	UserPositions string
-	UserTags      string
+	UserPosition string
+	Sessions     string
+	UserTags     string
 }{
-	Sessions:      "Sessions",
-	UserPositions: "UserPositions",
-	UserTags:      "UserTags",
+	UserPosition: "UserPosition",
+	Sessions:     "Sessions",
+	UserTags:     "UserTags",
 }
 
 // userR is where relationships are stored.
 type userR struct {
-	Sessions      SessionSlice
-	UserPositions UserPositionSlice
-	UserTags      UserTagSlice
+	UserPosition *UserPosition
+	Sessions     SessionSlice
+	UserTags     UserTagSlice
 }
 
 // NewStruct creates a new relationship struct
@@ -315,6 +315,20 @@ func (q userQuery) Exists(ctx context.Context, exec boil.ContextExecutor) (bool,
 	return count > 0, nil
 }
 
+// UserPosition pointed to by the foreign key.
+func (o *User) UserPosition(mods ...qm.QueryMod) userPositionQuery {
+	queryMods := []qm.QueryMod{
+		qm.Where("user_id=?", o.ID),
+	}
+
+	queryMods = append(queryMods, mods...)
+
+	query := UserPositions(queryMods...)
+	queries.SetFrom(query.Query, "\"user_positions\"")
+
+	return query
+}
+
 // Sessions retrieves all the session's Sessions with an executor.
 func (o *User) Sessions(mods ...qm.QueryMod) sessionQuery {
 	var queryMods []qm.QueryMod
@@ -331,27 +345,6 @@ func (o *User) Sessions(mods ...qm.QueryMod) sessionQuery {
 
 	if len(queries.GetSelect(query.Query)) == 0 {
 		queries.SetSelect(query.Query, []string{"\"sessions\".*"})
-	}
-
-	return query
-}
-
-// UserPositions retrieves all the user_position's UserPositions with an executor.
-func (o *User) UserPositions(mods ...qm.QueryMod) userPositionQuery {
-	var queryMods []qm.QueryMod
-	if len(mods) != 0 {
-		queryMods = append(queryMods, mods...)
-	}
-
-	queryMods = append(queryMods,
-		qm.Where("\"user_positions\".\"user_id\"=?", o.ID),
-	)
-
-	query := UserPositions(queryMods...)
-	queries.SetFrom(query.Query, "\"user_positions\"")
-
-	if len(queries.GetSelect(query.Query)) == 0 {
-		queries.SetSelect(query.Query, []string{"\"user_positions\".*"})
 	}
 
 	return query
@@ -376,6 +369,100 @@ func (o *User) UserTags(mods ...qm.QueryMod) userTagQuery {
 	}
 
 	return query
+}
+
+// LoadUserPosition allows an eager lookup of values, cached into the
+// loaded structs of the objects. This is for a 1-1 relationship.
+func (userL) LoadUserPosition(ctx context.Context, e boil.ContextExecutor, singular bool, maybeUser interface{}, mods queries.Applicator) error {
+	var slice []*User
+	var object *User
+
+	if singular {
+		object = maybeUser.(*User)
+	} else {
+		slice = *maybeUser.(*[]*User)
+	}
+
+	args := make([]interface{}, 0, 1)
+	if singular {
+		if object.R == nil {
+			object.R = &userR{}
+		}
+		args = append(args, object.ID)
+	} else {
+	Outer:
+		for _, obj := range slice {
+			if obj.R == nil {
+				obj.R = &userR{}
+			}
+
+			for _, a := range args {
+				if a == obj.ID {
+					continue Outer
+				}
+			}
+
+			args = append(args, obj.ID)
+		}
+	}
+
+	query := NewQuery(qm.From(`user_positions`), qm.WhereIn(`user_id in ?`, args...))
+	if mods != nil {
+		mods.Apply(query)
+	}
+
+	results, err := query.QueryContext(ctx, e)
+	if err != nil {
+		return errors.Wrap(err, "failed to eager load UserPosition")
+	}
+
+	var resultSlice []*UserPosition
+	if err = queries.Bind(results, &resultSlice); err != nil {
+		return errors.Wrap(err, "failed to bind eager loaded slice UserPosition")
+	}
+
+	if err = results.Close(); err != nil {
+		return errors.Wrap(err, "failed to close results of eager load for user_positions")
+	}
+	if err = results.Err(); err != nil {
+		return errors.Wrap(err, "error occurred during iteration of eager loaded relations for user_positions")
+	}
+
+	if len(userAfterSelectHooks) != 0 {
+		for _, obj := range resultSlice {
+			if err := obj.doAfterSelectHooks(ctx, e); err != nil {
+				return err
+			}
+		}
+	}
+
+	if len(resultSlice) == 0 {
+		return nil
+	}
+
+	if singular {
+		foreign := resultSlice[0]
+		object.R.UserPosition = foreign
+		if foreign.R == nil {
+			foreign.R = &userPositionR{}
+		}
+		foreign.R.User = object
+	}
+
+	for _, local := range slice {
+		for _, foreign := range resultSlice {
+			if local.ID == foreign.UserID {
+				local.R.UserPosition = foreign
+				if foreign.R == nil {
+					foreign.R = &userPositionR{}
+				}
+				foreign.R.User = local
+				break
+			}
+		}
+	}
+
+	return nil
 }
 
 // LoadSessions allows an eager lookup of values, cached into the
@@ -459,97 +546,6 @@ func (userL) LoadSessions(ctx context.Context, e boil.ContextExecutor, singular 
 				local.R.Sessions = append(local.R.Sessions, foreign)
 				if foreign.R == nil {
 					foreign.R = &sessionR{}
-				}
-				foreign.R.User = local
-				break
-			}
-		}
-	}
-
-	return nil
-}
-
-// LoadUserPositions allows an eager lookup of values, cached into the
-// loaded structs of the objects. This is for a 1-M or N-M relationship.
-func (userL) LoadUserPositions(ctx context.Context, e boil.ContextExecutor, singular bool, maybeUser interface{}, mods queries.Applicator) error {
-	var slice []*User
-	var object *User
-
-	if singular {
-		object = maybeUser.(*User)
-	} else {
-		slice = *maybeUser.(*[]*User)
-	}
-
-	args := make([]interface{}, 0, 1)
-	if singular {
-		if object.R == nil {
-			object.R = &userR{}
-		}
-		args = append(args, object.ID)
-	} else {
-	Outer:
-		for _, obj := range slice {
-			if obj.R == nil {
-				obj.R = &userR{}
-			}
-
-			for _, a := range args {
-				if a == obj.ID {
-					continue Outer
-				}
-			}
-
-			args = append(args, obj.ID)
-		}
-	}
-
-	query := NewQuery(qm.From(`user_positions`), qm.WhereIn(`user_id in ?`, args...))
-	if mods != nil {
-		mods.Apply(query)
-	}
-
-	results, err := query.QueryContext(ctx, e)
-	if err != nil {
-		return errors.Wrap(err, "failed to eager load user_positions")
-	}
-
-	var resultSlice []*UserPosition
-	if err = queries.Bind(results, &resultSlice); err != nil {
-		return errors.Wrap(err, "failed to bind eager loaded slice user_positions")
-	}
-
-	if err = results.Close(); err != nil {
-		return errors.Wrap(err, "failed to close results in eager load on user_positions")
-	}
-	if err = results.Err(); err != nil {
-		return errors.Wrap(err, "error occurred during iteration of eager loaded relations for user_positions")
-	}
-
-	if len(userPositionAfterSelectHooks) != 0 {
-		for _, obj := range resultSlice {
-			if err := obj.doAfterSelectHooks(ctx, e); err != nil {
-				return err
-			}
-		}
-	}
-	if singular {
-		object.R.UserPositions = resultSlice
-		for _, foreign := range resultSlice {
-			if foreign.R == nil {
-				foreign.R = &userPositionR{}
-			}
-			foreign.R.User = object
-		}
-		return nil
-	}
-
-	for _, foreign := range resultSlice {
-		for _, local := range slice {
-			if local.ID == foreign.UserID {
-				local.R.UserPositions = append(local.R.UserPositions, foreign)
-				if foreign.R == nil {
-					foreign.R = &userPositionR{}
 				}
 				foreign.R.User = local
 				break
@@ -651,6 +647,57 @@ func (userL) LoadUserTags(ctx context.Context, e boil.ContextExecutor, singular 
 	return nil
 }
 
+// SetUserPosition of the user to the related item.
+// Sets o.R.UserPosition to related.
+// Adds o to related.R.User.
+func (o *User) SetUserPosition(ctx context.Context, exec boil.ContextExecutor, insert bool, related *UserPosition) error {
+	var err error
+
+	if insert {
+		related.UserID = o.ID
+
+		if err = related.Insert(ctx, exec, boil.Infer()); err != nil {
+			return errors.Wrap(err, "failed to insert into foreign table")
+		}
+	} else {
+		updateQuery := fmt.Sprintf(
+			"UPDATE \"user_positions\" SET %s WHERE %s",
+			strmangle.SetParamNames("\"", "\"", 1, []string{"user_id"}),
+			strmangle.WhereClause("\"", "\"", 2, userPositionPrimaryKeyColumns),
+		)
+		values := []interface{}{o.ID, related.ID}
+
+		if boil.DebugMode {
+			fmt.Fprintln(boil.DebugWriter, updateQuery)
+			fmt.Fprintln(boil.DebugWriter, values)
+		}
+
+		if _, err = exec.ExecContext(ctx, updateQuery, values...); err != nil {
+			return errors.Wrap(err, "failed to update foreign table")
+		}
+
+		related.UserID = o.ID
+
+	}
+
+	if o.R == nil {
+		o.R = &userR{
+			UserPosition: related,
+		}
+	} else {
+		o.R.UserPosition = related
+	}
+
+	if related.R == nil {
+		related.R = &userPositionR{
+			User: o,
+		}
+	} else {
+		related.R.User = o
+	}
+	return nil
+}
+
 // AddSessions adds the given related objects to the existing relationships
 // of the user, optionally inserting them as new records.
 // Appends related to o.R.Sessions.
@@ -695,59 +742,6 @@ func (o *User) AddSessions(ctx context.Context, exec boil.ContextExecutor, inser
 	for _, rel := range related {
 		if rel.R == nil {
 			rel.R = &sessionR{
-				User: o,
-			}
-		} else {
-			rel.R.User = o
-		}
-	}
-	return nil
-}
-
-// AddUserPositions adds the given related objects to the existing relationships
-// of the user, optionally inserting them as new records.
-// Appends related to o.R.UserPositions.
-// Sets related.R.User appropriately.
-func (o *User) AddUserPositions(ctx context.Context, exec boil.ContextExecutor, insert bool, related ...*UserPosition) error {
-	var err error
-	for _, rel := range related {
-		if insert {
-			rel.UserID = o.ID
-			if err = rel.Insert(ctx, exec, boil.Infer()); err != nil {
-				return errors.Wrap(err, "failed to insert into foreign table")
-			}
-		} else {
-			updateQuery := fmt.Sprintf(
-				"UPDATE \"user_positions\" SET %s WHERE %s",
-				strmangle.SetParamNames("\"", "\"", 1, []string{"user_id"}),
-				strmangle.WhereClause("\"", "\"", 2, userPositionPrimaryKeyColumns),
-			)
-			values := []interface{}{o.ID, rel.ID}
-
-			if boil.DebugMode {
-				fmt.Fprintln(boil.DebugWriter, updateQuery)
-				fmt.Fprintln(boil.DebugWriter, values)
-			}
-
-			if _, err = exec.ExecContext(ctx, updateQuery, values...); err != nil {
-				return errors.Wrap(err, "failed to update foreign table")
-			}
-
-			rel.UserID = o.ID
-		}
-	}
-
-	if o.R == nil {
-		o.R = &userR{
-			UserPositions: related,
-		}
-	} else {
-		o.R.UserPositions = append(o.R.UserPositions, related...)
-	}
-
-	for _, rel := range related {
-		if rel.R == nil {
-			rel.R = &userPositionR{
 				User: o,
 			}
 		} else {
