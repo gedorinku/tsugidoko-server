@@ -158,15 +158,17 @@ func TestToOne(t *testing.T) {
 	t.Run("ClassRoomTagToClassRoomUsingClassRoom", testClassRoomTagToOneClassRoomUsingClassRoom)
 	t.Run("ClassRoomTagToTagUsingTag", testClassRoomTagToOneTagUsingTag)
 	t.Run("SessionToUserUsingUser", testSessionToOneUserUsingUser)
-	t.Run("UserPositionToUserUsingUser", testUserPositionToOneUserUsingUser)
 	t.Run("UserPositionToClassRoomUsingClassRoom", testUserPositionToOneClassRoomUsingClassRoom)
+	t.Run("UserPositionToUserUsingUser", testUserPositionToOneUserUsingUser)
 	t.Run("UserTagToUserUsingUser", testUserTagToOneUserUsingUser)
 	t.Run("UserTagToTagUsingTag", testUserTagToOneTagUsingTag)
 }
 
 // TestOneToOne tests cannot be run in parallel
 // or deadlocks can occur.
-func TestOneToOne(t *testing.T) {}
+func TestOneToOne(t *testing.T) {
+	t.Run("UserToUserPositionUsingUserPosition", testUserOneToOneUserPositionUsingUserPosition)
+}
 
 // TestToMany tests cannot be run in parallel
 // or deadlocks can occur.
@@ -177,7 +179,6 @@ func TestToMany(t *testing.T) {
 	t.Run("TagToClassRoomTags", testTagToManyClassRoomTags)
 	t.Run("TagToUserTags", testTagToManyUserTags)
 	t.Run("UserToSessions", testUserToManySessions)
-	t.Run("UserToUserPositions", testUserToManyUserPositions)
 	t.Run("UserToUserTags", testUserToManyUserTags)
 }
 
@@ -188,8 +189,8 @@ func TestToOneSet(t *testing.T) {
 	t.Run("ClassRoomTagToClassRoomUsingClassRoomTags", testClassRoomTagToOneSetOpClassRoomUsingClassRoom)
 	t.Run("ClassRoomTagToTagUsingClassRoomTags", testClassRoomTagToOneSetOpTagUsingTag)
 	t.Run("SessionToUserUsingSessions", testSessionToOneSetOpUserUsingUser)
-	t.Run("UserPositionToUserUsingUserPositions", testUserPositionToOneSetOpUserUsingUser)
 	t.Run("UserPositionToClassRoomUsingUserPositions", testUserPositionToOneSetOpClassRoomUsingClassRoom)
+	t.Run("UserPositionToUserUsingUserPosition", testUserPositionToOneSetOpUserUsingUser)
 	t.Run("UserTagToUserUsingUserTags", testUserTagToOneSetOpUserUsingUser)
 	t.Run("UserTagToTagUsingUserTags", testUserTagToOneSetOpTagUsingTag)
 }
@@ -200,7 +201,9 @@ func TestToOneRemove(t *testing.T) {}
 
 // TestOneToOneSet tests cannot be run in parallel
 // or deadlocks can occur.
-func TestOneToOneSet(t *testing.T) {}
+func TestOneToOneSet(t *testing.T) {
+	t.Run("UserToUserPositionUsingUserPosition", testUserOneToOneSetOpUserPositionUsingUserPosition)
+}
 
 // TestOneToOneRemove tests cannot be run in parallel
 // or deadlocks can occur.
@@ -215,7 +218,6 @@ func TestToManyAdd(t *testing.T) {
 	t.Run("TagToClassRoomTags", testTagToManyAddOpClassRoomTags)
 	t.Run("TagToUserTags", testTagToManyAddOpUserTags)
 	t.Run("UserToSessions", testUserToManyAddOpSessions)
-	t.Run("UserToUserPositions", testUserToManyAddOpUserPositions)
 	t.Run("UserToUserTags", testUserToManyAddOpUserTags)
 }
 

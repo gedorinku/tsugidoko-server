@@ -1,6 +1,8 @@
 package app
 
 import (
+	"context"
+
 	"github.com/izumin5210/grapi/pkg/grapiserver"
 	"github.com/volatiletech/sqlboiler/boil"
 
@@ -24,6 +26,11 @@ func Run() error {
 		return err
 	}
 
+	err = store.UserPositionStore(context.Background()).ResetUserPosition()
+	if err != nil {
+		return err
+	}
+
 	authorizator := interceptor.NewAuthorizator(store)
 
 	s := grapiserver.New(
@@ -35,6 +42,7 @@ func Run() error {
 			server.NewUserServiceServer(store),
 			server.NewSessionServiceServer(store),
 			server.NewClassRoomServiceServer(store),
+			server.NewUserPositionServiceServer(store),
 		),
 		grapiserver.WithGrpcAddr("tcp", ":4000"),
 	)
