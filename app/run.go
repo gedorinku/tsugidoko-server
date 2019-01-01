@@ -1,6 +1,8 @@
 package app
 
 import (
+	"context"
+
 	"github.com/izumin5210/grapi/pkg/grapiserver"
 	"github.com/volatiletech/sqlboiler/boil"
 
@@ -20,6 +22,11 @@ func Run() error {
 	boil.DebugMode = cfg.DebugLog
 
 	store, err := di.NewStoreComponent(cfg)
+	if err != nil {
+		return err
+	}
+
+	err = store.UserPositionStore(context.Background()).ResetUserPosition()
 	if err != nil {
 		return err
 	}

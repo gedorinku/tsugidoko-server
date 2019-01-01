@@ -162,3 +162,39 @@ func (s *userPositionStoreImpl) updateClassRoomTags(exec boil.ContextExecutor, c
 
 	return nil
 }
+
+func (s *userPositionStoreImpl) ResetUserPosition() error {
+	_, err := record.ClassRoomTags().DeleteAll(s.ctx, s.db)
+	if err != nil && err != sql.ErrNoRows {
+		return errors.WithStack(err)
+	}
+
+	_, err = record.UserPositions().DeleteAll(s.ctx, s.db)
+	if err != nil && err != sql.ErrNoRows {
+		return errors.WithStack(err)
+	}
+
+	rooms, err := record.ClassRooms(qm.Select("id")).All(s.ctx, s.db)
+	if err != nil && err != sql.ErrNoRows {
+		return errors.WithStack(err)
+	}
+	tags, err := record.Tags(qm.Select("id")).All(s.ctx, s.db)
+	if err != nil && err != sql.ErrNoRows {
+		return errors.WithStack(err)
+	}
+
+	for _, r := range rooms {
+		for _, t := range tags {
+			rt := &record.ClassRoomTag{
+				ClassRoomID: r.ID,
+				TagID:       t.ID,
+			}
+			err = rt.Insert(s.ctx, s.db, boil.Infer())
+			if err != nil {
+				return errors.WithStack(err)
+			}
+		}
+	}
+
+	return nil
+}
