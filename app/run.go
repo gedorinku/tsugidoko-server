@@ -36,6 +36,7 @@ func Run() error {
 	s := grapiserver.New(
 		grapiserver.WithDefaultLogger(),
 		grapiserver.WithGrpcServerUnaryInterceptors(
+			interceptor.ErrorHandlerUnaryServerInterceptor(),
 			authorizator.UnaryServerInterceptor(),
 		),
 		grapiserver.WithServers(
