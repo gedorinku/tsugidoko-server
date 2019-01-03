@@ -28,7 +28,7 @@ func NewUserStore(ctx context.Context, db *sql.DB) store.UserStore {
 }
 
 func (s *userStoreImpl) ListUsers() ([]*record.User, error) {
-	res, err := record.Users().All(s.ctx, s.db)
+	res, err := record.Users(qm.Load("UserTags.Tag")).All(s.ctx, s.db)
 	if err != nil {
 		return nil, errors.WithStack(err)
 	}
@@ -36,7 +36,7 @@ func (s *userStoreImpl) ListUsers() ([]*record.User, error) {
 }
 
 func (s *userStoreImpl) GetUser(userID model.UserID) (*record.User, error) {
-	u, err := record.Users(qm.Where("id = ?", userID)).One(s.ctx, s.db)
+	u, err := record.Users(qm.Load("UserTags.Tag"), qm.Where("id = ?", userID)).One(s.ctx, s.db)
 	if err != nil {
 		return nil, errors.WithStack(err)
 	}

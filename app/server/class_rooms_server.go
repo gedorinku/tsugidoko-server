@@ -129,10 +129,3 @@ func classRoomTagsToResponse(roomTags []*record.ClassRoomTag) []*type_pb.TagCoun
 
 	return resp
 }
-
-func tagToResponse(tag *record.Tag) *type_pb.Tag {
-	return &type_pb.Tag{
-		Id:   int32(tag.ID),
-		Name: tag.Name,
-	}
-}
