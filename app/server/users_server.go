@@ -10,8 +10,11 @@ import (
 	"google.golang.org/grpc/status"
 
 	api_pb "github.com/gedorinku/tsugidoko-server/api"
+	type_pb "github.com/gedorinku/tsugidoko-server/api/type"
 	"github.com/gedorinku/tsugidoko-server/app/di"
+	"github.com/gedorinku/tsugidoko-server/app/interceptor"
 	"github.com/gedorinku/tsugidoko-server/infra/record"
+	"github.com/gedorinku/tsugidoko-server/model"
 )
 
 // UserServiceServer is a composite interface of api_pb.UserServiceServer and grapiserver.Server.
@@ -34,7 +37,19 @@ type userServiceServerImpl struct {
 }
 
 func (s *userServiceServerImpl) GetCurrentUser(ctx context.Context, req *api_pb.GetCurrentUserRequest) (*api_pb.User, error) {
-	panic("not implemented")
+	session := interceptor.GetCurrentSession(ctx)
+	if session == nil {
+		return nil, ErrInvalidSession
+	}
+
+	us := s.UserStore(ctx)
+	u, err := us.GetUser(model.UserID(session.UserID))
+	if err != nil {
+		grpclog.Error(err)
+		return nil, err
+	}
+
+	return userToResponse(u), nil
 }
 
 func (s *userServiceServerImpl) UpdateUser(ctx context.Context, req *api_pb.UpdateUserRequest) (*api_pb.User, error) {
@@ -61,9 +76,25 @@ func (s *userServiceServerImpl) CreateUser(ctx context.Context, req *api_pb.Crea
 }
 
 func userToResponse(user *record.User) *api_pb.User {
-	// TODO user tags
 	return &api_pb.User{
 		UserId: uint32(user.ID),
 		Name:   user.Name,
+		Tags:   userTagsToResponse(user.R.UserTags),
+	}
+}
+
+func userTagsToResponse(userTags []*record.UserTag) []*type_pb.Tag {
+	resp := make([]*type_pb.Tag, 0, len(userTags))
+	for _, t := range userTags {
+		resp = append(resp, userTagToResponse(t))
+	}
+	return resp
+}
+
+func userTagToResponse(userTag *record.UserTag) *type_pb.Tag {
+	t := userTag.R.Tag
+	return &type_pb.Tag{
+		Id:   int32(t.ID),
+		Name: t.Name,
 	}
 }
