@@ -50,6 +50,8 @@ message ClassRoom {
   int32 building_id = 6;
   repeated type.Beacon beacons = 7;
   int32 floor = 8;
+  double local_x = 9;
+  double local_y = 10;
 }
 
 message ListClassRoomsRequest {

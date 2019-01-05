@@ -97,6 +97,8 @@ func classRoomToResponse(room *record.ClassRoom) *api_pb.ClassRoom {
 		BuildingId:  int32(room.BuildingID),
 		Beacons:     beaconsToResponse(room.R.Beacons),
 		Floor:       int32(room.Floor),
+		LocalX:      room.LocalX,
+		LocalY:      room.LocalY,
 	}
 
 	return resp

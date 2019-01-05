@@ -180,6 +180,14 @@
         "floor": {
           "type": "integer",
           "format": "int32"
+        },
+        "local_x": {
+          "type": "number",
+          "format": "double"
+        },
+        "local_y": {
+          "type": "number",
+          "format": "double"
         }
       }
     },
