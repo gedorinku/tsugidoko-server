@@ -76,10 +76,14 @@ func (s *userServiceServerImpl) CreateUser(ctx context.Context, req *api_pb.Crea
 }
 
 func userToResponse(user *record.User) *api_pb.User {
+	var tags []*type_pb.Tag
+	if user.R != nil {
+		tags = userTagsToResponse(user.R.UserTags)
+	}
 	return &api_pb.User{
 		UserId: uint32(user.ID),
 		Name:   user.Name,
-		Tags:   userTagsToResponse(user.R.UserTags),
+		Tags:   tags,
 	}
 }
 
