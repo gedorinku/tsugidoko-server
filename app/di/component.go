@@ -56,7 +56,7 @@ func (s *storeComponentImpl) UserPositionStore(ctx context.Context) store.UserPo
 }
 
 func connectRDB(cfg *config.Config) (*sql.DB, error) {
-	db, err := sql.Open("postgres", cfg.DataBaseURL)
+	db, err := sql.Open("postgres", cfg.DataSourceName)
 	if err != nil {
 		return nil, errors.Wrap(err, "faild to connect db")
 	}
