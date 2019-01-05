@@ -30,6 +30,8 @@ type ClassRoom struct {
 	UpdatedAt  time.Time `boil:"updated_at" json:"updated_at" toml:"updated_at" yaml:"updated_at"`
 	BuildingID int       `boil:"building_id" json:"building_id" toml:"building_id" yaml:"building_id"`
 	Floor      int       `boil:"floor" json:"floor" toml:"floor" yaml:"floor"`
+	LocalX     float64   `boil:"local_x" json:"local_x" toml:"local_x" yaml:"local_x"`
+	LocalY     float64   `boil:"local_y" json:"local_y" toml:"local_y" yaml:"local_y"`
 
 	R *classRoomR `boil:"-" json:"-" toml:"-" yaml:"-"`
 	L classRoomL  `boil:"-" json:"-" toml:"-" yaml:"-"`
@@ -44,6 +46,8 @@ var ClassRoomColumns = struct {
 	UpdatedAt  string
 	BuildingID string
 	Floor      string
+	LocalX     string
+	LocalY     string
 }{
 	ID:         "id",
 	Name:       "name",
@@ -53,6 +57,8 @@ var ClassRoomColumns = struct {
 	UpdatedAt:  "updated_at",
 	BuildingID: "building_id",
 	Floor:      "floor",
+	LocalX:     "local_x",
+	LocalY:     "local_y",
 }
 
 // ClassRoomRels is where relationship names are stored.
@@ -82,9 +88,9 @@ func (*classRoomR) NewStruct() *classRoomR {
 type classRoomL struct{}
 
 var (
-	classRoomColumns               = []string{"id", "name", "latitude", "longitude", "created_at", "updated_at", "building_id", "floor"}
+	classRoomColumns               = []string{"id", "name", "latitude", "longitude", "created_at", "updated_at", "building_id", "floor", "local_x", "local_y"}
 	classRoomColumnsWithoutDefault = []string{"name", "latitude", "longitude", "created_at", "updated_at", "building_id", "floor"}
-	classRoomColumnsWithDefault    = []string{"id"}
+	classRoomColumnsWithDefault    = []string{"id", "local_x", "local_y"}
 	classRoomPrimaryKeyColumns     = []string{"id"}
 )
 
