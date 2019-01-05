@@ -3,6 +3,7 @@ package app
 import (
 	"context"
 
+	"github.com/grpc-ecosystem/grpc-gateway/runtime"
 	"github.com/izumin5210/grapi/pkg/grapiserver"
 	"github.com/volatiletech/sqlboiler/boil"
 
@@ -35,6 +36,9 @@ func Run() error {
 
 	s := grapiserver.New(
 		grapiserver.WithDefaultLogger(),
+		grapiserver.WithGatewayMuxOptions(
+			runtime.WithMarshalerOption(runtime.MIMEWildcard, &runtime.JSONPb{OrigName: true, EmitDefaults: true}),
+		),
 		grapiserver.WithGrpcServerUnaryInterceptors(
 			interceptor.ErrorHandlerUnaryServerInterceptor(),
 			authorizator.UnaryServerInterceptor(),
