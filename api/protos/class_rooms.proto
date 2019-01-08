@@ -55,6 +55,7 @@ message ClassRoom {
 }
 
 message ListClassRoomsRequest {
+  repeated int32 tag_ids = 1;
 }
 
 message ListClassRoomsResponse {
