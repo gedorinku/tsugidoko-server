@@ -44,11 +44,14 @@ func (s *classRoomStoreImpl) ListClassRoom(tagIDs []int64) ([]*record.ClassRoom,
 	return res, nil
 }
 
-func (s *classRoomStoreImpl) GetClassRoom(classRoomID int64) (*record.ClassRoom, error) {
+func (s *classRoomStoreImpl) GetClassRoom(classRoomID int64, tagIDs []int64) (*record.ClassRoom, error) {
 	mods := []qm.QueryMod{
 		qm.Load(record.ClassRoomRels.Beacons),
-		qm.Load(record.ClassRoomRels.ClassRoomTags + "." + record.ClassRoomTagRels.Tag),
 		qm.Where("id = ?", classRoomID),
+	}
+	if 0 < len(tagIDs) {
+		q := qm.WhereIn("tags.id in ?", conv.Int64SliceToAbstractSlice(tagIDs)...)
+		mods = append(mods, qm.Load(record.ClassRoomRels.ClassRoomTags+"."+record.ClassRoomTagRels.Tag, q))
 	}
 	res, err := record.ClassRooms(mods...).One(s.ctx, s.db)
 	if err != nil {

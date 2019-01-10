@@ -7,5 +7,5 @@ import (
 // ClassRoomStore provides class room data
 type ClassRoomStore interface {
 	ListClassRoom(tagIDs []int64) ([]*record.ClassRoom, error)
-	GetClassRoom(classRoomID int64) (*record.ClassRoom, error)
+	GetClassRoom(classRoomID int64, tagIDs []int64) (*record.ClassRoom, error)
 }
