@@ -55,6 +55,7 @@ message ClassRoom {
 }
 
 message ListClassRoomsRequest {
+  repeated int32 tag_ids = 1;
 }
 
 message ListClassRoomsResponse {
@@ -63,6 +64,7 @@ message ListClassRoomsResponse {
 
 message GetClassRoomRequest {
   int32 class_room_id = 1;
+  repeated int32 tag_ids = 2;
 }
 
 message CreateClassRoomRequest {

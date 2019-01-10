@@ -7,6 +7,7 @@ import (
 	"github.com/pkg/errors"
 	"github.com/volatiletech/sqlboiler/queries/qm"
 
+	"github.com/gedorinku/tsugidoko-server/app/conv"
 	"github.com/gedorinku/tsugidoko-server/infra/record"
 	"github.com/gedorinku/tsugidoko-server/store"
 )
@@ -24,10 +25,13 @@ func NewClassRoomStore(ctx context.Context, db *sql.DB) store.ClassRoomStore {
 	}
 }
 
-func (s *classRoomStoreImpl) ListClassRoom() ([]*record.ClassRoom, error) {
+func (s *classRoomStoreImpl) ListClassRoom(tagIDs []int64) ([]*record.ClassRoom, error) {
 	mods := []qm.QueryMod{
 		qm.Load(record.ClassRoomRels.Beacons),
-		qm.Load(record.ClassRoomRels.ClassRoomTags + "." + record.ClassRoomTagRels.Tag),
+	}
+	if 0 < len(tagIDs) {
+		q := qm.WhereIn("tags.id in ?", conv.Int64SliceToAbstractSlice(tagIDs)...)
+		mods = append(mods, qm.Load(record.ClassRoomRels.ClassRoomTags+"."+record.ClassRoomTagRels.Tag, q))
 	}
 	res, err := record.ClassRooms(mods...).All(s.ctx, s.db)
 	if err != nil {
@@ -40,11 +44,14 @@ func (s *classRoomStoreImpl) ListClassRoom() ([]*record.ClassRoom, error) {
 	return res, nil
 }
 
-func (s *classRoomStoreImpl) GetClassRoom(classRoomID int64) (*record.ClassRoom, error) {
+func (s *classRoomStoreImpl) GetClassRoom(classRoomID int64, tagIDs []int64) (*record.ClassRoom, error) {
 	mods := []qm.QueryMod{
 		qm.Load(record.ClassRoomRels.Beacons),
-		qm.Load(record.ClassRoomRels.ClassRoomTags + "." + record.ClassRoomTagRels.Tag),
 		qm.Where("id = ?", classRoomID),
+	}
+	if 0 < len(tagIDs) {
+		q := qm.WhereIn("tags.id in ?", conv.Int64SliceToAbstractSlice(tagIDs)...)
+		mods = append(mods, qm.Load(record.ClassRoomRels.ClassRoomTags+"."+record.ClassRoomTagRels.Tag, q))
 	}
 	res, err := record.ClassRooms(mods...).One(s.ctx, s.db)
 	if err != nil {
