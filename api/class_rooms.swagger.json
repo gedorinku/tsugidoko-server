@@ -118,6 +118,16 @@
             "required": true,
             "type": "integer",
             "format": "int32"
+          },
+          {
+            "name": "tag_ids",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "format": "int32"
+            }
           }
         ],
         "tags": [
