@@ -12,6 +12,7 @@ import (
 
 	api_pb "github.com/gedorinku/tsugidoko-server/api"
 	type_pb "github.com/gedorinku/tsugidoko-server/api/type"
+	"github.com/gedorinku/tsugidoko-server/app/conv"
 	"github.com/gedorinku/tsugidoko-server/app/di"
 	"github.com/gedorinku/tsugidoko-server/infra/record"
 )
@@ -35,7 +36,7 @@ type classRoomServiceServerImpl struct {
 
 func (s *classRoomServiceServerImpl) ListClassRooms(ctx context.Context, req *api_pb.ListClassRoomsRequest) (*api_pb.ListClassRoomsResponse, error) {
 	cs := s.ClassRoomStore(ctx)
-	rooms, err := cs.ListClassRoom()
+	rooms, err := cs.ListClassRoom(conv.Int32SliceToInt64Slice(req.GetTagIds()))
 	if err != nil {
 		if err == sql.ErrNoRows {
 			return classRoomsToResponse(nil), nil
@@ -93,12 +94,14 @@ func classRoomToResponse(room *record.ClassRoom) *api_pb.ClassRoom {
 		Name:        room.Name,
 		Latitude:    room.Latitude,
 		Longitude:   room.Longitude,
-		TagCounts:   classRoomTagsToResponse(room.R.ClassRoomTags),
 		BuildingId:  int32(room.BuildingID),
-		Beacons:     beaconsToResponse(room.R.Beacons),
 		Floor:       int32(room.Floor),
 		LocalX:      room.LocalX,
 		LocalY:      room.LocalY,
+	}
+	if room.R != nil {
+		resp.TagCounts = classRoomTagsToResponse(room.R.ClassRoomTags)
+		resp.Beacons = beaconsToResponse(room.R.Beacons)
 	}
 
 	return resp
@@ -122,6 +125,9 @@ func beaconToResponse(beacon *record.Beacon) *type_pb.Beacon {
 func classRoomTagsToResponse(roomTags []*record.ClassRoomTag) []*type_pb.TagCount {
 	resp := make([]*type_pb.TagCount, 0, len(roomTags))
 	for _, rt := range roomTags {
+		if rt.R == nil || rt.R.Tag == nil {
+			continue
+		}
 		tc := &type_pb.TagCount{
 			Tag:   tagToResponse(rt.R.Tag),
 			Count: int32(rt.Count),
