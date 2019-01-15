@@ -8,6 +8,8 @@ import "testing"
 func TestUpsert(t *testing.T) {
 	t.Run("Beacons", testBeaconsUpsert)
 
+	t.Run("Buildings", testBuildingsUpsert)
+
 	t.Run("ClassRoomTags", testClassRoomTagsUpsert)
 
 	t.Run("ClassRooms", testClassRoomsUpsert)

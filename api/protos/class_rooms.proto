@@ -9,6 +9,7 @@ import "google/api/annotations.proto";
 import "google/protobuf/empty.proto";
 
 import "type/beacon.proto";
+import "type/building.proto";
 import "type/tag_count.proto";
 
 service ClassRoomService {
@@ -44,14 +45,12 @@ service ClassRoomService {
 message ClassRoom {
   int32 class_room_id = 1;
   string name = 2;
-  double latitude = 3;
-  double longitude = 4;
   repeated type.TagCount tag_counts = 5;
-  int32 building_id = 6;
   repeated type.Beacon beacons = 7;
   int32 floor = 8;
   double local_x = 9;
   double local_y = 10;
+  type.Building building = 11;
 }
 
 message ListClassRoomsRequest {

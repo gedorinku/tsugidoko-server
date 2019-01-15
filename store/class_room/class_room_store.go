@@ -26,9 +26,7 @@ func NewClassRoomStore(ctx context.Context, db *sql.DB) store.ClassRoomStore {
 }
 
 func (s *classRoomStoreImpl) ListClassRoom(tagIDs []int64) ([]*record.ClassRoom, error) {
-	mods := []qm.QueryMod{
-		qm.Load(record.ClassRoomRels.Beacons),
-	}
+	mods := s.loadQueries()
 	if 0 < len(tagIDs) {
 		q := qm.WhereIn("tags.id in ?", conv.Int64SliceToAbstractSlice(tagIDs)...)
 		mods = append(mods, qm.Load(record.ClassRoomRels.ClassRoomTags+"."+record.ClassRoomTagRels.Tag, q))
@@ -45,10 +43,8 @@ func (s *classRoomStoreImpl) ListClassRoom(tagIDs []int64) ([]*record.ClassRoom,
 }
 
 func (s *classRoomStoreImpl) GetClassRoom(classRoomID int64, tagIDs []int64) (*record.ClassRoom, error) {
-	mods := []qm.QueryMod{
-		qm.Load(record.ClassRoomRels.Beacons),
-		qm.Where("id = ?", classRoomID),
-	}
+	mods := s.loadQueries()
+	mods = append(mods, qm.Where("id = ?", classRoomID))
 	if 0 < len(tagIDs) {
 		q := qm.WhereIn("tags.id in ?", conv.Int64SliceToAbstractSlice(tagIDs)...)
 		mods = append(mods, qm.Load(record.ClassRoomRels.ClassRoomTags+"."+record.ClassRoomTagRels.Tag, q))
@@ -62,4 +58,11 @@ func (s *classRoomStoreImpl) GetClassRoom(classRoomID int64, tagIDs []int64) (*r
 	}
 
 	return res, nil
+}
+
+func (s *classRoomStoreImpl) loadQueries() []qm.QueryMod {
+	return []qm.QueryMod{
+		qm.Load(record.ClassRoomRels.Beacons),
+		qm.Load(record.ClassRoomRels.Building),
+	}
 }

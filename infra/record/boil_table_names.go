@@ -5,6 +5,7 @@ package record
 
 var TableNames = struct {
 	Beacons       string
+	Buildings     string
 	ClassRoomTags string
 	ClassRooms    string
 	Sessions      string
@@ -14,6 +15,7 @@ var TableNames = struct {
 	Users         string
 }{
 	Beacons:       "beacons",
+	Buildings:     "buildings",
 	ClassRoomTags: "class_room_tags",
 	ClassRooms:    "class_rooms",
 	Sessions:      "sessions",

@@ -953,6 +953,165 @@ func testClassRoomToManyAddOpUserPositions(t *testing.T) {
 		}
 	}
 }
+func testClassRoomToOneBuildingUsingBuilding(t *testing.T) {
+	ctx := context.Background()
+	tx := MustTx(boil.BeginTx(ctx, nil))
+	defer func() { _ = tx.Rollback() }()
+
+	var local ClassRoom
+	var foreign Building
+
+	seed := randomize.NewSeed()
+	if err := randomize.Struct(seed, &local, classRoomDBTypes, true, classRoomColumnsWithDefault...); err != nil {
+		t.Errorf("Unable to randomize ClassRoom struct: %s", err)
+	}
+	if err := randomize.Struct(seed, &foreign, buildingDBTypes, false, buildingColumnsWithDefault...); err != nil {
+		t.Errorf("Unable to randomize Building struct: %s", err)
+	}
+
+	if err := foreign.Insert(ctx, tx, boil.Infer()); err != nil {
+		t.Fatal(err)
+	}
+
+	queries.Assign(&local.BuildingID, foreign.ID)
+	if err := local.Insert(ctx, tx, boil.Infer()); err != nil {
+		t.Fatal(err)
+	}
+
+	check, err := local.Building().One(ctx, tx)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if !queries.Equal(check.ID, foreign.ID) {
+		t.Errorf("want: %v, got %v", foreign.ID, check.ID)
+	}
+
+	slice := ClassRoomSlice{&local}
+	if err = local.L.LoadBuilding(ctx, tx, false, (*[]*ClassRoom)(&slice), nil); err != nil {
+		t.Fatal(err)
+	}
+	if local.R.Building == nil {
+		t.Error("struct should have been eager loaded")
+	}
+
+	local.R.Building = nil
+	if err = local.L.LoadBuilding(ctx, tx, true, &local, nil); err != nil {
+		t.Fatal(err)
+	}
+	if local.R.Building == nil {
+		t.Error("struct should have been eager loaded")
+	}
+}
+
+func testClassRoomToOneSetOpBuildingUsingBuilding(t *testing.T) {
+	var err error
+
+	ctx := context.Background()
+	tx := MustTx(boil.BeginTx(ctx, nil))
+	defer func() { _ = tx.Rollback() }()
+
+	var a ClassRoom
+	var b, c Building
+
+	seed := randomize.NewSeed()
+	if err = randomize.Struct(seed, &a, classRoomDBTypes, false, strmangle.SetComplement(classRoomPrimaryKeyColumns, classRoomColumnsWithoutDefault)...); err != nil {
+		t.Fatal(err)
+	}
+	if err = randomize.Struct(seed, &b, buildingDBTypes, false, strmangle.SetComplement(buildingPrimaryKeyColumns, buildingColumnsWithoutDefault)...); err != nil {
+		t.Fatal(err)
+	}
+	if err = randomize.Struct(seed, &c, buildingDBTypes, false, strmangle.SetComplement(buildingPrimaryKeyColumns, buildingColumnsWithoutDefault)...); err != nil {
+		t.Fatal(err)
+	}
+
+	if err := a.Insert(ctx, tx, boil.Infer()); err != nil {
+		t.Fatal(err)
+	}
+	if err = b.Insert(ctx, tx, boil.Infer()); err != nil {
+		t.Fatal(err)
+	}
+
+	for i, x := range []*Building{&b, &c} {
+		err = a.SetBuilding(ctx, tx, i != 0, x)
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		if a.R.Building != x {
+			t.Error("relationship struct not set to correct value")
+		}
+
+		if x.R.ClassRooms[0] != &a {
+			t.Error("failed to append to foreign relationship struct")
+		}
+		if !queries.Equal(a.BuildingID, x.ID) {
+			t.Error("foreign key was wrong value", a.BuildingID)
+		}
+
+		zero := reflect.Zero(reflect.TypeOf(a.BuildingID))
+		reflect.Indirect(reflect.ValueOf(&a.BuildingID)).Set(zero)
+
+		if err = a.Reload(ctx, tx); err != nil {
+			t.Fatal("failed to reload", err)
+		}
+
+		if !queries.Equal(a.BuildingID, x.ID) {
+			t.Error("foreign key was wrong value", a.BuildingID, x.ID)
+		}
+	}
+}
+
+func testClassRoomToOneRemoveOpBuildingUsingBuilding(t *testing.T) {
+	var err error
+
+	ctx := context.Background()
+	tx := MustTx(boil.BeginTx(ctx, nil))
+	defer func() { _ = tx.Rollback() }()
+
+	var a ClassRoom
+	var b Building
+
+	seed := randomize.NewSeed()
+	if err = randomize.Struct(seed, &a, classRoomDBTypes, false, strmangle.SetComplement(classRoomPrimaryKeyColumns, classRoomColumnsWithoutDefault)...); err != nil {
+		t.Fatal(err)
+	}
+	if err = randomize.Struct(seed, &b, buildingDBTypes, false, strmangle.SetComplement(buildingPrimaryKeyColumns, buildingColumnsWithoutDefault)...); err != nil {
+		t.Fatal(err)
+	}
+
+	if err = a.Insert(ctx, tx, boil.Infer()); err != nil {
+		t.Fatal(err)
+	}
+
+	if err = a.SetBuilding(ctx, tx, true, &b); err != nil {
+		t.Fatal(err)
+	}
+
+	if err = a.RemoveBuilding(ctx, tx, &b); err != nil {
+		t.Error("failed to remove relationship")
+	}
+
+	count, err := a.Building().Count(ctx, tx)
+	if err != nil {
+		t.Error(err)
+	}
+	if count != 0 {
+		t.Error("want no relationships remaining")
+	}
+
+	if a.R.Building != nil {
+		t.Error("R struct entry should be nil")
+	}
+
+	if !queries.IsValuerNil(a.BuildingID) {
+		t.Error("foreign key value should be nil")
+	}
+
+	if len(b.R.ClassRooms) != 0 {
+		t.Error("failed to remove a from b's relationships")
+	}
+}
 
 func testClassRoomsReload(t *testing.T) {
 	t.Parallel()
@@ -1028,7 +1187,7 @@ func testClassRoomsSelect(t *testing.T) {
 }
 
 var (
-	classRoomDBTypes = map[string]string{`BuildingID`: `integer`, `CreatedAt`: `timestamp without time zone`, `Floor`: `integer`, `ID`: `bigint`, `Latitude`: `double precision`, `LocalX`: `double precision`, `LocalY`: `double precision`, `Longitude`: `double precision`, `Name`: `character varying`, `UpdatedAt`: `timestamp without time zone`}
+	classRoomDBTypes = map[string]string{`BuildingID`: `bigint`, `CreatedAt`: `timestamp without time zone`, `Floor`: `integer`, `ID`: `bigint`, `Latitude`: `double precision`, `LocalX`: `double precision`, `LocalY`: `double precision`, `Longitude`: `double precision`, `Name`: `character varying`, `UpdatedAt`: `timestamp without time zone`}
 	_                = bytes.MinRead
 )
 
