@@ -67,23 +67,11 @@
         "name": {
           "type": "string"
         },
-        "latitude": {
-          "type": "number",
-          "format": "double"
-        },
-        "longitude": {
-          "type": "number",
-          "format": "double"
-        },
         "tag_counts": {
           "type": "array",
           "items": {
             "$ref": "#/definitions/typeTagCount"
           }
-        },
-        "building_id": {
-          "type": "integer",
-          "format": "int32"
         },
         "beacons": {
           "type": "array",
@@ -102,6 +90,9 @@
         "local_y": {
           "type": "number",
           "format": "double"
+        },
+        "building": {
+          "$ref": "#/definitions/typeBuilding"
         }
       }
     },
@@ -135,6 +126,26 @@
       "properties": {
         "bssid": {
           "type": "string"
+        }
+      }
+    },
+    "typeBuilding": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "name": {
+          "type": "string"
+        },
+        "latitude": {
+          "type": "number",
+          "format": "double"
+        },
+        "longitude": {
+          "type": "number",
+          "format": "double"
         }
       }
     },
