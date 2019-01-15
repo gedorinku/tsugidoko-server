@@ -13,6 +13,7 @@ import "testing"
 // Separating the tests thusly grants avoidance of Postgres deadlocks.
 func TestParent(t *testing.T) {
 	t.Run("Beacons", testBeacons)
+	t.Run("Buildings", testBuildings)
 	t.Run("ClassRoomTags", testClassRoomTags)
 	t.Run("ClassRooms", testClassRooms)
 	t.Run("Sessions", testSessions)
@@ -24,6 +25,7 @@ func TestParent(t *testing.T) {
 
 func TestDelete(t *testing.T) {
 	t.Run("Beacons", testBeaconsDelete)
+	t.Run("Buildings", testBuildingsDelete)
 	t.Run("ClassRoomTags", testClassRoomTagsDelete)
 	t.Run("ClassRooms", testClassRoomsDelete)
 	t.Run("Sessions", testSessionsDelete)
@@ -35,6 +37,7 @@ func TestDelete(t *testing.T) {
 
 func TestQueryDeleteAll(t *testing.T) {
 	t.Run("Beacons", testBeaconsQueryDeleteAll)
+	t.Run("Buildings", testBuildingsQueryDeleteAll)
 	t.Run("ClassRoomTags", testClassRoomTagsQueryDeleteAll)
 	t.Run("ClassRooms", testClassRoomsQueryDeleteAll)
 	t.Run("Sessions", testSessionsQueryDeleteAll)
@@ -46,6 +49,7 @@ func TestQueryDeleteAll(t *testing.T) {
 
 func TestSliceDeleteAll(t *testing.T) {
 	t.Run("Beacons", testBeaconsSliceDeleteAll)
+	t.Run("Buildings", testBuildingsSliceDeleteAll)
 	t.Run("ClassRoomTags", testClassRoomTagsSliceDeleteAll)
 	t.Run("ClassRooms", testClassRoomsSliceDeleteAll)
 	t.Run("Sessions", testSessionsSliceDeleteAll)
@@ -57,6 +61,7 @@ func TestSliceDeleteAll(t *testing.T) {
 
 func TestExists(t *testing.T) {
 	t.Run("Beacons", testBeaconsExists)
+	t.Run("Buildings", testBuildingsExists)
 	t.Run("ClassRoomTags", testClassRoomTagsExists)
 	t.Run("ClassRooms", testClassRoomsExists)
 	t.Run("Sessions", testSessionsExists)
@@ -68,6 +73,7 @@ func TestExists(t *testing.T) {
 
 func TestFind(t *testing.T) {
 	t.Run("Beacons", testBeaconsFind)
+	t.Run("Buildings", testBuildingsFind)
 	t.Run("ClassRoomTags", testClassRoomTagsFind)
 	t.Run("ClassRooms", testClassRoomsFind)
 	t.Run("Sessions", testSessionsFind)
@@ -79,6 +85,7 @@ func TestFind(t *testing.T) {
 
 func TestBind(t *testing.T) {
 	t.Run("Beacons", testBeaconsBind)
+	t.Run("Buildings", testBuildingsBind)
 	t.Run("ClassRoomTags", testClassRoomTagsBind)
 	t.Run("ClassRooms", testClassRoomsBind)
 	t.Run("Sessions", testSessionsBind)
@@ -90,6 +97,7 @@ func TestBind(t *testing.T) {
 
 func TestOne(t *testing.T) {
 	t.Run("Beacons", testBeaconsOne)
+	t.Run("Buildings", testBuildingsOne)
 	t.Run("ClassRoomTags", testClassRoomTagsOne)
 	t.Run("ClassRooms", testClassRoomsOne)
 	t.Run("Sessions", testSessionsOne)
@@ -101,6 +109,7 @@ func TestOne(t *testing.T) {
 
 func TestAll(t *testing.T) {
 	t.Run("Beacons", testBeaconsAll)
+	t.Run("Buildings", testBuildingsAll)
 	t.Run("ClassRoomTags", testClassRoomTagsAll)
 	t.Run("ClassRooms", testClassRoomsAll)
 	t.Run("Sessions", testSessionsAll)
@@ -112,6 +121,7 @@ func TestAll(t *testing.T) {
 
 func TestCount(t *testing.T) {
 	t.Run("Beacons", testBeaconsCount)
+	t.Run("Buildings", testBuildingsCount)
 	t.Run("ClassRoomTags", testClassRoomTagsCount)
 	t.Run("ClassRooms", testClassRoomsCount)
 	t.Run("Sessions", testSessionsCount)
@@ -123,6 +133,7 @@ func TestCount(t *testing.T) {
 
 func TestHooks(t *testing.T) {
 	t.Run("Beacons", testBeaconsHooks)
+	t.Run("Buildings", testBuildingsHooks)
 	t.Run("ClassRoomTags", testClassRoomTagsHooks)
 	t.Run("ClassRooms", testClassRoomsHooks)
 	t.Run("Sessions", testSessionsHooks)
@@ -135,6 +146,8 @@ func TestHooks(t *testing.T) {
 func TestInsert(t *testing.T) {
 	t.Run("Beacons", testBeaconsInsert)
 	t.Run("Beacons", testBeaconsInsertWhitelist)
+	t.Run("Buildings", testBuildingsInsert)
+	t.Run("Buildings", testBuildingsInsertWhitelist)
 	t.Run("ClassRoomTags", testClassRoomTagsInsert)
 	t.Run("ClassRoomTags", testClassRoomTagsInsertWhitelist)
 	t.Run("ClassRooms", testClassRoomsInsert)
@@ -231,6 +244,7 @@ func TestToManyRemove(t *testing.T) {}
 
 func TestReload(t *testing.T) {
 	t.Run("Beacons", testBeaconsReload)
+	t.Run("Buildings", testBuildingsReload)
 	t.Run("ClassRoomTags", testClassRoomTagsReload)
 	t.Run("ClassRooms", testClassRoomsReload)
 	t.Run("Sessions", testSessionsReload)
@@ -242,6 +256,7 @@ func TestReload(t *testing.T) {
 
 func TestReloadAll(t *testing.T) {
 	t.Run("Beacons", testBeaconsReloadAll)
+	t.Run("Buildings", testBuildingsReloadAll)
 	t.Run("ClassRoomTags", testClassRoomTagsReloadAll)
 	t.Run("ClassRooms", testClassRoomsReloadAll)
 	t.Run("Sessions", testSessionsReloadAll)
@@ -253,6 +268,7 @@ func TestReloadAll(t *testing.T) {
 
 func TestSelect(t *testing.T) {
 	t.Run("Beacons", testBeaconsSelect)
+	t.Run("Buildings", testBuildingsSelect)
 	t.Run("ClassRoomTags", testClassRoomTagsSelect)
 	t.Run("ClassRooms", testClassRoomsSelect)
 	t.Run("Sessions", testSessionsSelect)
@@ -264,6 +280,7 @@ func TestSelect(t *testing.T) {
 
 func TestUpdate(t *testing.T) {
 	t.Run("Beacons", testBeaconsUpdate)
+	t.Run("Buildings", testBuildingsUpdate)
 	t.Run("ClassRoomTags", testClassRoomTagsUpdate)
 	t.Run("ClassRooms", testClassRoomsUpdate)
 	t.Run("Sessions", testSessionsUpdate)
@@ -275,6 +292,7 @@ func TestUpdate(t *testing.T) {
 
 func TestSliceUpdateAll(t *testing.T) {
 	t.Run("Beacons", testBeaconsSliceUpdateAll)
+	t.Run("Buildings", testBuildingsSliceUpdateAll)
 	t.Run("ClassRoomTags", testClassRoomTagsSliceUpdateAll)
 	t.Run("ClassRooms", testClassRoomsSliceUpdateAll)
 	t.Run("Sessions", testSessionsSliceUpdateAll)
