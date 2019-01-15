@@ -92,19 +92,29 @@ func classRoomToResponse(room *record.ClassRoom) *api_pb.ClassRoom {
 	resp := &api_pb.ClassRoom{
 		ClassRoomId: int32(room.ID),
 		Name:        room.Name,
-		Latitude:    room.Latitude,
-		Longitude:   room.Longitude,
-		BuildingId:  int32(room.BuildingID),
 		Floor:       int32(room.Floor),
 		LocalX:      room.LocalX,
 		LocalY:      room.LocalY,
 	}
-	if room.R != nil {
-		resp.TagCounts = classRoomTagsToResponse(room.R.ClassRoomTags)
-		resp.Beacons = beaconsToResponse(room.R.Beacons)
+	if r := room.R; r != nil {
+		resp.TagCounts = classRoomTagsToResponse(r.ClassRoomTags)
+		resp.Beacons = beaconsToResponse(r.Beacons)
+		resp.Building = buildingToResponse(r.Building)
 	}
 
 	return resp
+}
+
+func buildingToResponse(building *record.Building) *type_pb.Building {
+	if building == nil {
+		return nil
+	}
+	return &type_pb.Building{
+		Id:        int32(building.ID),
+		Name:      building.Name,
+		Latitude:  building.Latitude,
+		Longitude: building.Longitude,
+	}
 }
 
 func beaconsToResponse(beacons []*record.Beacon) []*type_pb.Beacon {
