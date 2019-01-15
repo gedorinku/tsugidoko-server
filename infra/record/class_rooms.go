@@ -64,10 +64,12 @@ var ClassRoomColumns = struct {
 
 // ClassRoomRels is where relationship names are stored.
 var ClassRoomRels = struct {
+	Building      string
 	Beacons       string
 	ClassRoomTags string
 	UserPositions string
 }{
+	Building:      "Building",
 	Beacons:       "Beacons",
 	ClassRoomTags: "ClassRoomTags",
 	UserPositions: "UserPositions",
@@ -75,6 +77,7 @@ var ClassRoomRels = struct {
 
 // classRoomR is where relationships are stored.
 type classRoomR struct {
+	Building      *Building
 	Beacons       BeaconSlice
 	ClassRoomTags ClassRoomTagSlice
 	UserPositions UserPositionSlice
@@ -331,6 +334,20 @@ func (q classRoomQuery) Exists(ctx context.Context, exec boil.ContextExecutor) (
 	return count > 0, nil
 }
 
+// Building pointed to by the foreign key.
+func (o *ClassRoom) Building(mods ...qm.QueryMod) buildingQuery {
+	queryMods := []qm.QueryMod{
+		qm.Where("id=?", o.BuildingID),
+	}
+
+	queryMods = append(queryMods, mods...)
+
+	query := Buildings(queryMods...)
+	queries.SetFrom(query.Query, "\"buildings\"")
+
+	return query
+}
+
 // Beacons retrieves all the beacon's Beacons with an executor.
 func (o *ClassRoom) Beacons(mods ...qm.QueryMod) beaconQuery {
 	var queryMods []qm.QueryMod
@@ -392,6 +409,107 @@ func (o *ClassRoom) UserPositions(mods ...qm.QueryMod) userPositionQuery {
 	}
 
 	return query
+}
+
+// LoadBuilding allows an eager lookup of values, cached into the
+// loaded structs of the objects. This is for an N-1 relationship.
+func (classRoomL) LoadBuilding(ctx context.Context, e boil.ContextExecutor, singular bool, maybeClassRoom interface{}, mods queries.Applicator) error {
+	var slice []*ClassRoom
+	var object *ClassRoom
+
+	if singular {
+		object = maybeClassRoom.(*ClassRoom)
+	} else {
+		slice = *maybeClassRoom.(*[]*ClassRoom)
+	}
+
+	args := make([]interface{}, 0, 1)
+	if singular {
+		if object.R == nil {
+			object.R = &classRoomR{}
+		}
+		if !queries.IsNil(object.BuildingID) {
+			args = append(args, object.BuildingID)
+		}
+
+	} else {
+	Outer:
+		for _, obj := range slice {
+			if obj.R == nil {
+				obj.R = &classRoomR{}
+			}
+
+			for _, a := range args {
+				if queries.Equal(a, obj.BuildingID) {
+					continue Outer
+				}
+			}
+
+			if !queries.IsNil(obj.BuildingID) {
+				args = append(args, obj.BuildingID)
+			}
+
+		}
+	}
+
+	query := NewQuery(qm.From(`buildings`), qm.WhereIn(`id in ?`, args...))
+	if mods != nil {
+		mods.Apply(query)
+	}
+
+	results, err := query.QueryContext(ctx, e)
+	if err != nil {
+		return errors.Wrap(err, "failed to eager load Building")
+	}
+
+	var resultSlice []*Building
+	if err = queries.Bind(results, &resultSlice); err != nil {
+		return errors.Wrap(err, "failed to bind eager loaded slice Building")
+	}
+
+	if err = results.Close(); err != nil {
+		return errors.Wrap(err, "failed to close results of eager load for buildings")
+	}
+	if err = results.Err(); err != nil {
+		return errors.Wrap(err, "error occurred during iteration of eager loaded relations for buildings")
+	}
+
+	if len(classRoomAfterSelectHooks) != 0 {
+		for _, obj := range resultSlice {
+			if err := obj.doAfterSelectHooks(ctx, e); err != nil {
+				return err
+			}
+		}
+	}
+
+	if len(resultSlice) == 0 {
+		return nil
+	}
+
+	if singular {
+		foreign := resultSlice[0]
+		object.R.Building = foreign
+		if foreign.R == nil {
+			foreign.R = &buildingR{}
+		}
+		foreign.R.ClassRooms = append(foreign.R.ClassRooms, object)
+		return nil
+	}
+
+	for _, local := range slice {
+		for _, foreign := range resultSlice {
+			if queries.Equal(local.BuildingID, foreign.ID) {
+				local.R.Building = foreign
+				if foreign.R == nil {
+					foreign.R = &buildingR{}
+				}
+				foreign.R.ClassRooms = append(foreign.R.ClassRooms, local)
+				break
+			}
+		}
+	}
+
+	return nil
 }
 
 // LoadBeacons allows an eager lookup of values, cached into the
@@ -664,6 +782,84 @@ func (classRoomL) LoadUserPositions(ctx context.Context, e boil.ContextExecutor,
 		}
 	}
 
+	return nil
+}
+
+// SetBuilding of the classRoom to the related item.
+// Sets o.R.Building to related.
+// Adds o to related.R.ClassRooms.
+func (o *ClassRoom) SetBuilding(ctx context.Context, exec boil.ContextExecutor, insert bool, related *Building) error {
+	var err error
+	if insert {
+		if err = related.Insert(ctx, exec, boil.Infer()); err != nil {
+			return errors.Wrap(err, "failed to insert into foreign table")
+		}
+	}
+
+	updateQuery := fmt.Sprintf(
+		"UPDATE \"class_rooms\" SET %s WHERE %s",
+		strmangle.SetParamNames("\"", "\"", 1, []string{"building_id"}),
+		strmangle.WhereClause("\"", "\"", 2, classRoomPrimaryKeyColumns),
+	)
+	values := []interface{}{related.ID, o.ID}
+
+	if boil.DebugMode {
+		fmt.Fprintln(boil.DebugWriter, updateQuery)
+		fmt.Fprintln(boil.DebugWriter, values)
+	}
+
+	if _, err = exec.ExecContext(ctx, updateQuery, values...); err != nil {
+		return errors.Wrap(err, "failed to update local table")
+	}
+
+	queries.Assign(&o.BuildingID, related.ID)
+	if o.R == nil {
+		o.R = &classRoomR{
+			Building: related,
+		}
+	} else {
+		o.R.Building = related
+	}
+
+	if related.R == nil {
+		related.R = &buildingR{
+			ClassRooms: ClassRoomSlice{o},
+		}
+	} else {
+		related.R.ClassRooms = append(related.R.ClassRooms, o)
+	}
+
+	return nil
+}
+
+// RemoveBuilding relationship.
+// Sets o.R.Building to nil.
+// Removes o from all passed in related items' relationships struct (Optional).
+func (o *ClassRoom) RemoveBuilding(ctx context.Context, exec boil.ContextExecutor, related *Building) error {
+	var err error
+
+	queries.SetScanner(&o.BuildingID, nil)
+	if _, err = o.Update(ctx, exec, boil.Whitelist("building_id")); err != nil {
+		return errors.Wrap(err, "failed to update local table")
+	}
+
+	o.R.Building = nil
+	if related == nil || related.R == nil {
+		return nil
+	}
+
+	for i, ri := range related.R.ClassRooms {
+		if queries.Equal(o.BuildingID, ri.BuildingID) {
+			continue
+		}
+
+		ln := len(related.R.ClassRooms)
+		if ln > 1 && i < ln-1 {
+			related.R.ClassRooms[i] = related.R.ClassRooms[ln-1]
+		}
+		related.R.ClassRooms = related.R.ClassRooms[:ln-1]
+		break
+	}
 	return nil
 }
 

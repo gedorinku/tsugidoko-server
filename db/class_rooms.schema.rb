@@ -8,3 +8,6 @@ create_table :class_rooms, force: :cascade do |t|
   t.float :local_y, null: false, default: 0.0
   t.timestamps
 end
+
+# foreign_key: trueとしても外部キー制約がつかなくて謎
+add_foreign_key :class_rooms, :buildings

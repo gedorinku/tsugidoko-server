@@ -170,6 +170,7 @@ func TestToOne(t *testing.T) {
 	t.Run("BeaconToClassRoomUsingClassRoom", testBeaconToOneClassRoomUsingClassRoom)
 	t.Run("ClassRoomTagToClassRoomUsingClassRoom", testClassRoomTagToOneClassRoomUsingClassRoom)
 	t.Run("ClassRoomTagToTagUsingTag", testClassRoomTagToOneTagUsingTag)
+	t.Run("ClassRoomToBuildingUsingBuilding", testClassRoomToOneBuildingUsingBuilding)
 	t.Run("SessionToUserUsingUser", testSessionToOneUserUsingUser)
 	t.Run("UserPositionToClassRoomUsingClassRoom", testUserPositionToOneClassRoomUsingClassRoom)
 	t.Run("UserPositionToUserUsingUser", testUserPositionToOneUserUsingUser)
@@ -186,6 +187,7 @@ func TestOneToOne(t *testing.T) {
 // TestToMany tests cannot be run in parallel
 // or deadlocks can occur.
 func TestToMany(t *testing.T) {
+	t.Run("BuildingToClassRooms", testBuildingToManyClassRooms)
 	t.Run("ClassRoomToBeacons", testClassRoomToManyBeacons)
 	t.Run("ClassRoomToClassRoomTags", testClassRoomToManyClassRoomTags)
 	t.Run("ClassRoomToUserPositions", testClassRoomToManyUserPositions)
@@ -201,6 +203,7 @@ func TestToOneSet(t *testing.T) {
 	t.Run("BeaconToClassRoomUsingBeacons", testBeaconToOneSetOpClassRoomUsingClassRoom)
 	t.Run("ClassRoomTagToClassRoomUsingClassRoomTags", testClassRoomTagToOneSetOpClassRoomUsingClassRoom)
 	t.Run("ClassRoomTagToTagUsingClassRoomTags", testClassRoomTagToOneSetOpTagUsingTag)
+	t.Run("ClassRoomToBuildingUsingClassRooms", testClassRoomToOneSetOpBuildingUsingBuilding)
 	t.Run("SessionToUserUsingSessions", testSessionToOneSetOpUserUsingUser)
 	t.Run("UserPositionToClassRoomUsingUserPositions", testUserPositionToOneSetOpClassRoomUsingClassRoom)
 	t.Run("UserPositionToUserUsingUserPosition", testUserPositionToOneSetOpUserUsingUser)
@@ -210,7 +213,9 @@ func TestToOneSet(t *testing.T) {
 
 // TestToOneRemove tests cannot be run in parallel
 // or deadlocks can occur.
-func TestToOneRemove(t *testing.T) {}
+func TestToOneRemove(t *testing.T) {
+	t.Run("ClassRoomToBuildingUsingClassRooms", testClassRoomToOneRemoveOpBuildingUsingBuilding)
+}
 
 // TestOneToOneSet tests cannot be run in parallel
 // or deadlocks can occur.
@@ -225,6 +230,7 @@ func TestOneToOneRemove(t *testing.T) {}
 // TestToManyAdd tests cannot be run in parallel
 // or deadlocks can occur.
 func TestToManyAdd(t *testing.T) {
+	t.Run("BuildingToClassRooms", testBuildingToManyAddOpClassRooms)
 	t.Run("ClassRoomToBeacons", testClassRoomToManyAddOpBeacons)
 	t.Run("ClassRoomToClassRoomTags", testClassRoomToManyAddOpClassRoomTags)
 	t.Run("ClassRoomToUserPositions", testClassRoomToManyAddOpUserPositions)
@@ -236,11 +242,15 @@ func TestToManyAdd(t *testing.T) {
 
 // TestToManySet tests cannot be run in parallel
 // or deadlocks can occur.
-func TestToManySet(t *testing.T) {}
+func TestToManySet(t *testing.T) {
+	t.Run("BuildingToClassRooms", testBuildingToManySetOpClassRooms)
+}
 
 // TestToManyRemove tests cannot be run in parallel
 // or deadlocks can occur.
-func TestToManyRemove(t *testing.T) {}
+func TestToManyRemove(t *testing.T) {
+	t.Run("BuildingToClassRooms", testBuildingToManyRemoveOpClassRooms)
+}
 
 func TestReload(t *testing.T) {
 	t.Run("Beacons", testBeaconsReload)

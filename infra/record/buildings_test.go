@@ -494,6 +494,334 @@ func testBuildingsInsertWhitelist(t *testing.T) {
 	}
 }
 
+func testBuildingToManyClassRooms(t *testing.T) {
+	var err error
+	ctx := context.Background()
+	tx := MustTx(boil.BeginTx(ctx, nil))
+	defer func() { _ = tx.Rollback() }()
+
+	var a Building
+	var b, c ClassRoom
+
+	seed := randomize.NewSeed()
+	if err = randomize.Struct(seed, &a, buildingDBTypes, true, buildingColumnsWithDefault...); err != nil {
+		t.Errorf("Unable to randomize Building struct: %s", err)
+	}
+
+	if err := a.Insert(ctx, tx, boil.Infer()); err != nil {
+		t.Fatal(err)
+	}
+
+	if err = randomize.Struct(seed, &b, classRoomDBTypes, false, classRoomColumnsWithDefault...); err != nil {
+		t.Fatal(err)
+	}
+	if err = randomize.Struct(seed, &c, classRoomDBTypes, false, classRoomColumnsWithDefault...); err != nil {
+		t.Fatal(err)
+	}
+
+	queries.Assign(&b.BuildingID, a.ID)
+	queries.Assign(&c.BuildingID, a.ID)
+	if err = b.Insert(ctx, tx, boil.Infer()); err != nil {
+		t.Fatal(err)
+	}
+	if err = c.Insert(ctx, tx, boil.Infer()); err != nil {
+		t.Fatal(err)
+	}
+
+	classRoom, err := a.ClassRooms().All(ctx, tx)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	bFound, cFound := false, false
+	for _, v := range classRoom {
+		if queries.Equal(v.BuildingID, b.BuildingID) {
+			bFound = true
+		}
+		if queries.Equal(v.BuildingID, c.BuildingID) {
+			cFound = true
+		}
+	}
+
+	if !bFound {
+		t.Error("expected to find b")
+	}
+	if !cFound {
+		t.Error("expected to find c")
+	}
+
+	slice := BuildingSlice{&a}
+	if err = a.L.LoadClassRooms(ctx, tx, false, (*[]*Building)(&slice), nil); err != nil {
+		t.Fatal(err)
+	}
+	if got := len(a.R.ClassRooms); got != 2 {
+		t.Error("number of eager loaded records wrong, got:", got)
+	}
+
+	a.R.ClassRooms = nil
+	if err = a.L.LoadClassRooms(ctx, tx, true, &a, nil); err != nil {
+		t.Fatal(err)
+	}
+	if got := len(a.R.ClassRooms); got != 2 {
+		t.Error("number of eager loaded records wrong, got:", got)
+	}
+
+	if t.Failed() {
+		t.Logf("%#v", classRoom)
+	}
+}
+
+func testBuildingToManyAddOpClassRooms(t *testing.T) {
+	var err error
+
+	ctx := context.Background()
+	tx := MustTx(boil.BeginTx(ctx, nil))
+	defer func() { _ = tx.Rollback() }()
+
+	var a Building
+	var b, c, d, e ClassRoom
+
+	seed := randomize.NewSeed()
+	if err = randomize.Struct(seed, &a, buildingDBTypes, false, strmangle.SetComplement(buildingPrimaryKeyColumns, buildingColumnsWithoutDefault)...); err != nil {
+		t.Fatal(err)
+	}
+	foreigners := []*ClassRoom{&b, &c, &d, &e}
+	for _, x := range foreigners {
+		if err = randomize.Struct(seed, x, classRoomDBTypes, false, strmangle.SetComplement(classRoomPrimaryKeyColumns, classRoomColumnsWithoutDefault)...); err != nil {
+			t.Fatal(err)
+		}
+	}
+
+	if err := a.Insert(ctx, tx, boil.Infer()); err != nil {
+		t.Fatal(err)
+	}
+	if err = b.Insert(ctx, tx, boil.Infer()); err != nil {
+		t.Fatal(err)
+	}
+	if err = c.Insert(ctx, tx, boil.Infer()); err != nil {
+		t.Fatal(err)
+	}
+
+	foreignersSplitByInsertion := [][]*ClassRoom{
+		{&b, &c},
+		{&d, &e},
+	}
+
+	for i, x := range foreignersSplitByInsertion {
+		err = a.AddClassRooms(ctx, tx, i != 0, x...)
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		first := x[0]
+		second := x[1]
+
+		if !queries.Equal(a.ID, first.BuildingID) {
+			t.Error("foreign key was wrong value", a.ID, first.BuildingID)
+		}
+		if !queries.Equal(a.ID, second.BuildingID) {
+			t.Error("foreign key was wrong value", a.ID, second.BuildingID)
+		}
+
+		if first.R.Building != &a {
+			t.Error("relationship was not added properly to the foreign slice")
+		}
+		if second.R.Building != &a {
+			t.Error("relationship was not added properly to the foreign slice")
+		}
+
+		if a.R.ClassRooms[i*2] != first {
+			t.Error("relationship struct slice not set to correct value")
+		}
+		if a.R.ClassRooms[i*2+1] != second {
+			t.Error("relationship struct slice not set to correct value")
+		}
+
+		count, err := a.ClassRooms().Count(ctx, tx)
+		if err != nil {
+			t.Fatal(err)
+		}
+		if want := int64((i + 1) * 2); count != want {
+			t.Error("want", want, "got", count)
+		}
+	}
+}
+
+func testBuildingToManySetOpClassRooms(t *testing.T) {
+	var err error
+
+	ctx := context.Background()
+	tx := MustTx(boil.BeginTx(ctx, nil))
+	defer func() { _ = tx.Rollback() }()
+
+	var a Building
+	var b, c, d, e ClassRoom
+
+	seed := randomize.NewSeed()
+	if err = randomize.Struct(seed, &a, buildingDBTypes, false, strmangle.SetComplement(buildingPrimaryKeyColumns, buildingColumnsWithoutDefault)...); err != nil {
+		t.Fatal(err)
+	}
+	foreigners := []*ClassRoom{&b, &c, &d, &e}
+	for _, x := range foreigners {
+		if err = randomize.Struct(seed, x, classRoomDBTypes, false, strmangle.SetComplement(classRoomPrimaryKeyColumns, classRoomColumnsWithoutDefault)...); err != nil {
+			t.Fatal(err)
+		}
+	}
+
+	if err = a.Insert(ctx, tx, boil.Infer()); err != nil {
+		t.Fatal(err)
+	}
+	if err = b.Insert(ctx, tx, boil.Infer()); err != nil {
+		t.Fatal(err)
+	}
+	if err = c.Insert(ctx, tx, boil.Infer()); err != nil {
+		t.Fatal(err)
+	}
+
+	err = a.SetClassRooms(ctx, tx, false, &b, &c)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	count, err := a.ClassRooms().Count(ctx, tx)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if count != 2 {
+		t.Error("count was wrong:", count)
+	}
+
+	err = a.SetClassRooms(ctx, tx, true, &d, &e)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	count, err = a.ClassRooms().Count(ctx, tx)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if count != 2 {
+		t.Error("count was wrong:", count)
+	}
+
+	if !queries.IsValuerNil(b.BuildingID) {
+		t.Error("want b's foreign key value to be nil")
+	}
+	if !queries.IsValuerNil(c.BuildingID) {
+		t.Error("want c's foreign key value to be nil")
+	}
+	if !queries.Equal(a.ID, d.BuildingID) {
+		t.Error("foreign key was wrong value", a.ID, d.BuildingID)
+	}
+	if !queries.Equal(a.ID, e.BuildingID) {
+		t.Error("foreign key was wrong value", a.ID, e.BuildingID)
+	}
+
+	if b.R.Building != nil {
+		t.Error("relationship was not removed properly from the foreign struct")
+	}
+	if c.R.Building != nil {
+		t.Error("relationship was not removed properly from the foreign struct")
+	}
+	if d.R.Building != &a {
+		t.Error("relationship was not added properly to the foreign struct")
+	}
+	if e.R.Building != &a {
+		t.Error("relationship was not added properly to the foreign struct")
+	}
+
+	if a.R.ClassRooms[0] != &d {
+		t.Error("relationship struct slice not set to correct value")
+	}
+	if a.R.ClassRooms[1] != &e {
+		t.Error("relationship struct slice not set to correct value")
+	}
+}
+
+func testBuildingToManyRemoveOpClassRooms(t *testing.T) {
+	var err error
+
+	ctx := context.Background()
+	tx := MustTx(boil.BeginTx(ctx, nil))
+	defer func() { _ = tx.Rollback() }()
+
+	var a Building
+	var b, c, d, e ClassRoom
+
+	seed := randomize.NewSeed()
+	if err = randomize.Struct(seed, &a, buildingDBTypes, false, strmangle.SetComplement(buildingPrimaryKeyColumns, buildingColumnsWithoutDefault)...); err != nil {
+		t.Fatal(err)
+	}
+	foreigners := []*ClassRoom{&b, &c, &d, &e}
+	for _, x := range foreigners {
+		if err = randomize.Struct(seed, x, classRoomDBTypes, false, strmangle.SetComplement(classRoomPrimaryKeyColumns, classRoomColumnsWithoutDefault)...); err != nil {
+			t.Fatal(err)
+		}
+	}
+
+	if err := a.Insert(ctx, tx, boil.Infer()); err != nil {
+		t.Fatal(err)
+	}
+
+	err = a.AddClassRooms(ctx, tx, true, foreigners...)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	count, err := a.ClassRooms().Count(ctx, tx)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if count != 4 {
+		t.Error("count was wrong:", count)
+	}
+
+	err = a.RemoveClassRooms(ctx, tx, foreigners[:2]...)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	count, err = a.ClassRooms().Count(ctx, tx)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if count != 2 {
+		t.Error("count was wrong:", count)
+	}
+
+	if !queries.IsValuerNil(b.BuildingID) {
+		t.Error("want b's foreign key value to be nil")
+	}
+	if !queries.IsValuerNil(c.BuildingID) {
+		t.Error("want c's foreign key value to be nil")
+	}
+
+	if b.R.Building != nil {
+		t.Error("relationship was not removed properly from the foreign struct")
+	}
+	if c.R.Building != nil {
+		t.Error("relationship was not removed properly from the foreign struct")
+	}
+	if d.R.Building != &a {
+		t.Error("relationship to a should have been preserved")
+	}
+	if e.R.Building != &a {
+		t.Error("relationship to a should have been preserved")
+	}
+
+	if len(a.R.ClassRooms) != 2 {
+		t.Error("should have preserved two relationships")
+	}
+
+	// Removal doesn't do a stable deletion for performance so we have to flip the order
+	if a.R.ClassRooms[1] != &d {
+		t.Error("relationship to d should have been preserved")
+	}
+	if a.R.ClassRooms[0] != &e {
+		t.Error("relationship to e should have been preserved")
+	}
+}
+
 func testBuildingsReload(t *testing.T) {
 	t.Parallel()
 
