@@ -1,0 +1,82 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "user_tags.proto",
+    "version": "version not set"
+  },
+  "schemes": [
+    "http",
+    "https"
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/user/tags": {
+      "patch": {
+        "operationId": "UpdateUserTag",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/tsugidoko_serverUpdateUserTagResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/tsugidoko_serverUpdateUserTagRequest"
+            }
+          }
+        ],
+        "tags": [
+          "UserTagService"
+        ]
+      }
+    }
+  },
+  "definitions": {
+    "tsugidoko_serverTag": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "name": {
+          "type": "string"
+        }
+      }
+    },
+    "tsugidoko_serverUpdateUserTagRequest": {
+      "type": "object",
+      "properties": {
+        "tag_ids": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      }
+    },
+    "tsugidoko_serverUpdateUserTagResponse": {
+      "type": "object",
+      "properties": {
+        "tags": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/tsugidoko_serverTag"
+          }
+        }
+      }
+    }
+  }
+}
