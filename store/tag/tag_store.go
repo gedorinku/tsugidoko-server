@@ -28,7 +28,7 @@ func NewTagStore(ctx context.Context, db *sql.DB) store.TagStore {
 func (s *tagStoreImpl) ListValidTags() ([]*record.Tag, error) {
 	m := []qm.QueryMod{
 		qm.Load(record.ClassRoomTagRels.Tag),
-		qm.Select(record.ClassRoomTagColumns.ID),
+		qm.Select(record.ClassRoomTagColumns.TagID),
 		qm.Where("0 < count"),
 	}
 	cts, err := record.ClassRoomTags(m...).All(s.ctx, s.db)
