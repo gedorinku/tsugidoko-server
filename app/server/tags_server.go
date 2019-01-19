@@ -4,11 +4,10 @@ import (
 	"context"
 	"database/sql"
 
-	"google.golang.org/grpc/grpclog"
-
 	"github.com/izumin5210/grapi/pkg/grapiserver"
 	"github.com/pkg/errors"
 	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/grpclog"
 	"google.golang.org/grpc/status"
 
 	api_pb "github.com/gedorinku/tsugidoko-server/api"
@@ -48,8 +47,17 @@ func (s *tagServiceServerImpl) ListTags(ctx context.Context, req *api_pb.ListTag
 }
 
 func (s *tagServiceServerImpl) GetTag(ctx context.Context, req *api_pb.GetTagRequest) (*api_pb.Tag, error) {
-	// TODO: Not yet implemented.
-	return nil, status.Error(codes.Unimplemented, "TODO: You should implement it!")
+	ts := s.TagStore(ctx)
+	t, err := ts.GetTag(int64(req.TagId))
+	if err != nil {
+		if errors.Cause(err) == sql.ErrNoRows {
+			return nil, status.Error(codes.NotFound, "tag not found")
+		}
+		grpclog.Error(err)
+		return nil, err
+	}
+
+	return tagToResponse(t), nil
 }
 
 func (s *tagServiceServerImpl) CreateTag(ctx context.Context, req *api_pb.CreateTagRequest) (*api_pb.Tag, error) {
