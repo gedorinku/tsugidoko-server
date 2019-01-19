@@ -9,13 +9,13 @@ import (
 	api_pb "github.com/gedorinku/tsugidoko-server/api"
 )
 
-func Test_BeaconServiceServer_ListBeacons(t *testing.T) {
-	svr := NewBeaconServiceServer()
+func Test_TagServiceServer_ListTags(t *testing.T) {
+	svr := NewTagServiceServer()
 
 	ctx := context.Background()
-	req := &api_pb.ListBeaconsRequest{}
+	req := &api_pb.ListTagsRequest{}
 
-	resp, err := svr.ListBeacons(ctx, req)
+	resp, err := svr.ListTags(ctx, req)
 
 	if err != nil {
 		t.Errorf("returned an error %v", err)
@@ -26,13 +26,13 @@ func Test_BeaconServiceServer_ListBeacons(t *testing.T) {
 	}
 }
 
-func Test_BeaconServiceServer_GetBeacon(t *testing.T) {
-	svr := NewBeaconServiceServer()
+func Test_TagServiceServer_GetTag(t *testing.T) {
+	svr := NewTagServiceServer()
 
 	ctx := context.Background()
-	req := &api_pb.GetBeaconRequest{}
+	req := &api_pb.GetTagRequest{}
 
-	resp, err := svr.GetBeacon(ctx, req)
+	resp, err := svr.GetTag(ctx, req)
 
 	if err != nil {
 		t.Errorf("returned an error %v", err)
@@ -43,13 +43,13 @@ func Test_BeaconServiceServer_GetBeacon(t *testing.T) {
 	}
 }
 
-func Test_BeaconServiceServer_CreateBeacon(t *testing.T) {
-	svr := NewBeaconServiceServer()
+func Test_TagServiceServer_CreateTag(t *testing.T) {
+	svr := NewTagServiceServer()
 
 	ctx := context.Background()
-	req := &api_pb.CreateBeaconRequest{}
+	req := &api_pb.CreateTagRequest{}
 
-	resp, err := svr.CreateBeacon(ctx, req)
+	resp, err := svr.CreateTag(ctx, req)
 
 	if err != nil {
 		t.Errorf("returned an error %v", err)
@@ -60,13 +60,13 @@ func Test_BeaconServiceServer_CreateBeacon(t *testing.T) {
 	}
 }
 
-func Test_BeaconServiceServer_UpdateBeacon(t *testing.T) {
-	svr := NewBeaconServiceServer()
+func Test_TagServiceServer_UpdateTag(t *testing.T) {
+	svr := NewTagServiceServer()
 
 	ctx := context.Background()
-	req := &api_pb.UpdateBeaconRequest{}
+	req := &api_pb.UpdateTagRequest{}
 
-	resp, err := svr.UpdateBeacon(ctx, req)
+	resp, err := svr.UpdateTag(ctx, req)
 
 	if err != nil {
 		t.Errorf("returned an error %v", err)
@@ -77,13 +77,13 @@ func Test_BeaconServiceServer_UpdateBeacon(t *testing.T) {
 	}
 }
 
-func Test_BeaconServiceServer_DeleteBeacon(t *testing.T) {
-	svr := NewBeaconServiceServer()
+func Test_TagServiceServer_DeleteTag(t *testing.T) {
+	svr := NewTagServiceServer()
 
 	ctx := context.Background()
-	req := &api_pb.DeleteBeaconRequest{}
+	req := &api_pb.DeleteTagRequest{}
 
-	resp, err := svr.DeleteBeacon(ctx, req)
+	resp, err := svr.DeleteTag(ctx, req)
 
 	if err != nil {
 		t.Errorf("returned an error %v", err)

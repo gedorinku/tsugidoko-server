@@ -132,13 +132,13 @@ func beaconToResponse(beacon *record.Beacon) *type_pb.Beacon {
 	}
 }
 
-func classRoomTagsToResponse(roomTags []*record.ClassRoomTag) []*type_pb.TagCount {
-	resp := make([]*type_pb.TagCount, 0, len(roomTags))
+func classRoomTagsToResponse(roomTags []*record.ClassRoomTag) []*api_pb.TagCount {
+	resp := make([]*api_pb.TagCount, 0, len(roomTags))
 	for _, rt := range roomTags {
 		if rt.R == nil || rt.R.Tag == nil {
 			continue
 		}
-		tc := &type_pb.TagCount{
+		tc := &api_pb.TagCount{
 			Tag:   tagToResponse(rt.R.Tag),
 			Count: int32(rt.Count),
 		}

@@ -8,9 +8,9 @@ option go_package = "github.com/gedorinku/tsugidoko-server/api;api_pb";
 import "google/api/annotations.proto";
 import "google/protobuf/empty.proto";
 
+import "tags.proto";
 import "type/beacon.proto";
 import "type/building.proto";
-import "type/tag_count.proto";
 
 service ClassRoomService {
   rpc ListClassRooms (ListClassRoomsRequest) returns (ListClassRoomsResponse) {
@@ -45,7 +45,7 @@ service ClassRoomService {
 message ClassRoom {
   int32 class_room_id = 1;
   string name = 2;
-  repeated type.TagCount tag_counts = 5;
+  repeated TagCount tag_counts = 5;
   repeated type.Beacon beacons = 7;
   int32 floor = 8;
   double local_x = 9;
