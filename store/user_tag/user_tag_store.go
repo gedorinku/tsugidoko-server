@@ -59,12 +59,14 @@ func (s *userTagStoreImpl) UpdateUserTag(userID model.UserID, tagIDs []int64) ([
 	if 0 < len(tagIDs) {
 		tags, err = record.Tags(qm.WhereIn("id in ?", toInterfaceSlice(tagIDs)...)).All(s.ctx, tx)
 		if err != nil {
+			tx.Rollback()
 			return nil, errors.WithStack(err)
 		}
 	}
 
 	err = tx.Commit()
 	if err != nil {
+		tx.Rollback()
 		return nil, errors.WithStack(err)
 	}
 	return tags, nil
