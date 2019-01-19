@@ -1,0 +1,13 @@
+syntax = "proto3";
+
+package gedorinku.tsugidoko_server.type;
+
+option go_package = "github.com/gedorinku/tsugidoko-server/api/type;type_pb";
+
+
+import "google/api/annotations.proto";
+import "google/protobuf/empty.proto";
+
+message Beacon {
+  string bssid = 1;
+}
