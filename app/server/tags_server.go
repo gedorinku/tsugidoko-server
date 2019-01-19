@@ -61,8 +61,17 @@ func (s *tagServiceServerImpl) GetTag(ctx context.Context, req *api_pb.GetTagReq
 }
 
 func (s *tagServiceServerImpl) CreateTag(ctx context.Context, req *api_pb.CreateTagRequest) (*api_pb.Tag, error) {
-	// TODO: Not yet implemented.
-	return nil, status.Error(codes.Unimplemented, "TODO: You should implement it!")
+	ts := s.TagStore(ctx)
+	t := &record.Tag{
+		Name: req.Tag.Name,
+	}
+	err := ts.CreateTag(t)
+	if err != nil {
+		grpclog.Error(err)
+		return nil, err
+	}
+
+	return tagToResponse(t), nil
 }
 
 func tagsToResponse(tags []*record.Tag) []*api_pb.Tag {
