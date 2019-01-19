@@ -48,6 +48,8 @@ func Run() error {
 			server.NewSessionServiceServer(store),
 			server.NewClassRoomServiceServer(store),
 			server.NewUserPositionServiceServer(store),
+			server.NewTagServiceServer(store),
+			server.NewUserTagServiceServer(store),
 		),
 		grapiserver.WithGrpcAddr("tcp", ":4000"),
 	)

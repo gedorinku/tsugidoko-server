@@ -10,7 +10,6 @@ import (
 	"google.golang.org/grpc/status"
 
 	api_pb "github.com/gedorinku/tsugidoko-server/api"
-	type_pb "github.com/gedorinku/tsugidoko-server/api/type"
 	"github.com/gedorinku/tsugidoko-server/app/di"
 	"github.com/gedorinku/tsugidoko-server/app/interceptor"
 	"github.com/gedorinku/tsugidoko-server/infra/record"
@@ -76,7 +75,7 @@ func (s *userServiceServerImpl) CreateUser(ctx context.Context, req *api_pb.Crea
 }
 
 func userToResponse(user *record.User) *api_pb.User {
-	var tags []*type_pb.Tag
+	var tags []*api_pb.Tag
 	if user.R != nil {
 		tags = userTagsToResponse(user.R.UserTags)
 	}
@@ -87,17 +86,17 @@ func userToResponse(user *record.User) *api_pb.User {
 	}
 }
 
-func userTagsToResponse(userTags []*record.UserTag) []*type_pb.Tag {
-	resp := make([]*type_pb.Tag, 0, len(userTags))
+func userTagsToResponse(userTags []*record.UserTag) []*api_pb.Tag {
+	resp := make([]*api_pb.Tag, 0, len(userTags))
 	for _, t := range userTags {
 		resp = append(resp, userTagToResponse(t))
 	}
 	return resp
 }
 
-func userTagToResponse(userTag *record.UserTag) *type_pb.Tag {
+func userTagToResponse(userTag *record.UserTag) *api_pb.Tag {
 	t := userTag.R.Tag
-	return &type_pb.Tag{
+	return &api_pb.Tag{
 		Id:   int32(t.ID),
 		Name: t.Name,
 	}

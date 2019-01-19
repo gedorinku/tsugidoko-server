@@ -1,0 +1,53 @@
+syntax = "proto3";
+
+package gedorinku.tsugidoko_server;
+
+option go_package = "github.com/gedorinku/tsugidoko-server/api;api_pb";
+
+
+import "google/api/annotations.proto";
+import "google/protobuf/empty.proto";
+
+service TagService {
+  rpc ListTags (ListTagsRequest) returns (ListTagsResponse) {
+    option (google.api.http) = {
+      get: "/tags"
+    };
+  }
+  rpc GetTag (GetTagRequest) returns (Tag) {
+    option (google.api.http) = {
+      get: "/tags/{tag_id}"
+    };
+  }
+  rpc CreateTag (CreateTagRequest) returns (Tag) {
+    option (google.api.http) = {
+      post: "/tags"
+      body: "tag"
+    };
+  }
+}
+
+message Tag {
+  int32 id = 1;
+  string name = 2;
+}
+
+message TagCount {
+  Tag tag = 1;
+  int32 count = 2;
+}
+
+message ListTagsRequest {
+}
+
+message ListTagsResponse {
+  repeated Tag tags = 1;
+}
+
+message GetTagRequest {
+  int32 tag_id = 1;
+}
+
+message CreateTagRequest {
+  Tag tag = 1;
+}

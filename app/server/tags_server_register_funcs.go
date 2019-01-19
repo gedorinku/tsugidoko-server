@@ -12,11 +12,11 @@ import (
 )
 
 // RegisterWithServer implements grapiserver.Server.RegisterWithServer.
-func (s *beaconServiceServerImpl) RegisterWithServer(grpcSvr *grpc.Server) {
-	api_pb.RegisterBeaconServiceServer(grpcSvr, s)
+func (s *tagServiceServerImpl) RegisterWithServer(grpcSvr *grpc.Server) {
+	api_pb.RegisterTagServiceServer(grpcSvr, s)
 }
 
 // RegisterWithHandler implements grapiserver.Server.RegisterWithHandler.
-func (s *beaconServiceServerImpl) RegisterWithHandler(ctx context.Context, mux *runtime.ServeMux, conn *grpc.ClientConn) error {
-	return api_pb.RegisterBeaconServiceHandler(ctx, mux, conn)
+func (s *tagServiceServerImpl) RegisterWithHandler(ctx context.Context, mux *runtime.ServeMux, conn *grpc.ClientConn) error {
+	return api_pb.RegisterTagServiceHandler(ctx, mux, conn)
 }

@@ -1,0 +1,27 @@
+syntax = "proto3";
+
+package gedorinku.tsugidoko_server;
+
+option go_package = "github.com/gedorinku/tsugidoko-server/api;api_pb";
+
+
+import "google/api/annotations.proto";
+
+import "tags.proto";
+
+service UserTagService {
+  rpc UpdateUserTag (UpdateUserTagRequest) returns (UpdateUserTagResponse) {
+    option (google.api.http) = {
+      patch: "/user/tags"
+      body: "*"
+    };
+  }
+}
+
+message UpdateUserTagRequest {
+  repeated int32 tag_ids = 1;
+}
+
+message UpdateUserTagResponse {
+  repeated Tag tags = 1;
+}
