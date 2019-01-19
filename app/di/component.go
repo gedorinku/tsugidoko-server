@@ -11,6 +11,7 @@ import (
 	"github.com/gedorinku/tsugidoko-server/store"
 	classroomstore "github.com/gedorinku/tsugidoko-server/store/class_room"
 	sessionstore "github.com/gedorinku/tsugidoko-server/store/session"
+	tagstore "github.com/gedorinku/tsugidoko-server/store/tag"
 	userstore "github.com/gedorinku/tsugidoko-server/store/user"
 	userpositionstore "github.com/gedorinku/tsugidoko-server/store/user_position"
 )
@@ -21,6 +22,7 @@ type StoreComponent interface {
 	SessionStore(ctx context.Context) store.SessionStore
 	ClassRoomStore(ctx context.Context) store.ClassRoomStore
 	UserPositionStore(ctx context.Context) store.UserPositionStore
+	TagStore(ctx context.Context) store.TagStore
 }
 
 // NewStoreComponent creates new store component
@@ -53,6 +55,10 @@ func (s *storeComponentImpl) ClassRoomStore(ctx context.Context) store.ClassRoom
 
 func (s *storeComponentImpl) UserPositionStore(ctx context.Context) store.UserPositionStore {
 	return userpositionstore.NewUserPositionStore(ctx, s.db)
+}
+
+func (s *storeComponentImpl) TagStore(ctx context.Context) store.TagStore {
+	return tagstore.NewTagStore(ctx, s.db)
 }
 
 func connectRDB(cfg *config.Config) (*sql.DB, error) {
