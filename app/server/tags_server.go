@@ -12,7 +12,9 @@ import (
 
 	api_pb "github.com/gedorinku/tsugidoko-server/api"
 	"github.com/gedorinku/tsugidoko-server/app/di"
+	"github.com/gedorinku/tsugidoko-server/app/interceptor"
 	"github.com/gedorinku/tsugidoko-server/infra/record"
+	"github.com/gedorinku/tsugidoko-server/model"
 )
 
 // TagServiceServer is a composite interface of api_pb.TagServiceServer and grapiserver.Server.
@@ -61,11 +63,23 @@ func (s *tagServiceServerImpl) GetTag(ctx context.Context, req *api_pb.GetTagReq
 }
 
 func (s *tagServiceServerImpl) CreateTag(ctx context.Context, req *api_pb.CreateTagRequest) (*api_pb.Tag, error) {
+	session := interceptor.GetCurrentSession(ctx)
+	if session == nil {
+		return nil, ErrInvalidSession
+	}
+
 	ts := s.TagStore(ctx)
 	t := &record.Tag{
 		Name: req.Tag.Name,
 	}
-	err := ts.CreateTag(t)
+	t, err := ts.CreateTag(t)
+	if err != nil {
+		grpclog.Error(err)
+		return nil, err
+	}
+
+	uts := s.UserTagStore(ctx)
+	err = uts.AddUserTag(model.UserID(session.UserID), t.ID)
 	if err != nil {
 		grpclog.Error(err)
 		return nil, err

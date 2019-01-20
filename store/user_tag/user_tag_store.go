@@ -72,6 +72,37 @@ func (s *userTagStoreImpl) UpdateUserTag(userID model.UserID, tagIDs []int64) ([
 	return tags, nil
 }
 
+func (s *userTagStoreImpl) AddUserTag(userID model.UserID, tagID int64) error {
+	tx, err := s.db.Begin()
+	if err != nil {
+		return errors.WithStack(err)
+	}
+
+	mods := []qm.QueryMod{
+		qm.Where("user_id = ?", userID),
+		qm.Where("tag_id = ?", tagID),
+	}
+	exists, err := record.UserTags(mods...).Exists(s.ctx, tx)
+	if err != nil {
+		tx.Rollback()
+		return errors.WithStack(err)
+	}
+
+	if !exists {
+		ut := &record.UserTag{
+			UserID: int64(userID),
+			TagID:  tagID,
+		}
+		err = ut.Insert(s.ctx, tx, boil.Infer())
+		if err != nil {
+			tx.Rollback()
+			return errors.WithStack(err)
+		}
+	}
+
+	return errors.WithStack(tx.Commit())
+}
+
 func (s *userTagStoreImpl) bulkInsertQuery(tags []*record.Tag) (string, error) {
 	b := strings.Builder{}
 	b.WriteString(`INSERT INTO user_tags ("user_id", "tag_id", "created_at", "updated_at") VALUES`)

@@ -3,6 +3,7 @@ package tagstore
 import (
 	"context"
 	"database/sql"
+	"sort"
 
 	"github.com/pkg/errors"
 	"github.com/volatiletech/sqlboiler/boil"
@@ -27,19 +28,23 @@ func NewTagStore(ctx context.Context, db *sql.DB) store.TagStore {
 
 func (s *tagStoreImpl) ListValidTags() ([]*record.Tag, error) {
 	m := []qm.QueryMod{
-		qm.Load(record.ClassRoomTagRels.Tag),
-		qm.Select(record.ClassRoomTagColumns.TagID),
-		qm.Where("0 < count"),
+		qm.Load(record.UserTagRels.Tag),
+		qm.GroupBy(record.UserTagColumns.TagID),
+		qm.Select(record.UserTagColumns.TagID),
 	}
-	cts, err := record.ClassRoomTags(m...).All(s.ctx, s.db)
+	uts, err := record.UserTags(m...).All(s.ctx, s.db)
 	if err != nil {
 		return nil, errors.WithStack(err)
 	}
 
-	tags := make([]*record.Tag, 0, len(cts))
-	for _, ct := range cts {
+	tags := make([]*record.Tag, 0, len(uts))
+	for _, ct := range uts {
 		tags = append(tags, ct.R.Tag)
 	}
+
+	sort.Slice(tags, func(i, j int) bool {
+		return tags[i].Name < tags[j].Name
+	})
 
 	return tags, nil
 }
@@ -53,7 +58,35 @@ func (s *tagStoreImpl) GetTag(tagID int64) (*record.Tag, error) {
 	return t, nil
 }
 
-func (s *tagStoreImpl) CreateTag(tag *record.Tag) error {
-	err := tag.Insert(s.ctx, s.db, boil.Infer())
-	return errors.WithStack(err)
+func (s *tagStoreImpl) CreateTag(tag *record.Tag) (*record.Tag, error) {
+	tx, err := s.db.Begin()
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+
+	mods := []qm.QueryMod{
+		qm.Where("name = ?", tag.Name),
+	}
+	et, err := record.Tags(mods...).One(s.ctx, tx)
+	if err != nil {
+		if err != sql.ErrNoRows {
+			tx.Rollback()
+			return nil, errors.WithStack(err)
+		}
+
+		err = tag.Insert(s.ctx, tx, boil.Infer())
+		if err != nil {
+			tx.Rollback()
+			return nil, errors.WithStack(err)
+		}
+	} else {
+		tag = et
+	}
+
+	err = tx.Commit()
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+
+	return tag, nil
 }
