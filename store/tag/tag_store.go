@@ -53,7 +53,35 @@ func (s *tagStoreImpl) GetTag(tagID int64) (*record.Tag, error) {
 	return t, nil
 }
 
-func (s *tagStoreImpl) CreateTag(tag *record.Tag) error {
-	err := tag.Insert(s.ctx, s.db, boil.Infer())
-	return errors.WithStack(err)
+func (s *tagStoreImpl) CreateTag(tag *record.Tag) (*record.Tag, error) {
+	tx, err := s.db.Begin()
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+
+	mods := []qm.QueryMod{
+		qm.Where("name = ?", tag.Name),
+	}
+	et, err := record.Tags(mods...).One(s.ctx, tx)
+	if err != nil {
+		if err != sql.ErrNoRows {
+			tx.Rollback()
+			return nil, errors.WithStack(err)
+		}
+
+		err = tag.Insert(s.ctx, tx, boil.Infer())
+		if err != nil {
+			tx.Rollback()
+			return nil, errors.WithStack(err)
+		}
+	} else {
+		tag = et
+	}
+
+	err = tx.Commit()
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+
+	return tag, nil
 }
