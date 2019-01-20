@@ -3,6 +3,7 @@ package tagstore
 import (
 	"context"
 	"database/sql"
+	"sort"
 
 	"github.com/pkg/errors"
 	"github.com/volatiletech/sqlboiler/boil"
@@ -40,6 +41,10 @@ func (s *tagStoreImpl) ListValidTags() ([]*record.Tag, error) {
 	for _, ct := range uts {
 		tags = append(tags, ct.R.Tag)
 	}
+
+	sort.Slice(tags, func(i, j int) bool {
+		return tags[i].Name < tags[j].Name
+	})
 
 	return tags, nil
 }
