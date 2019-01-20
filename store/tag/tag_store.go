@@ -27,17 +27,17 @@ func NewTagStore(ctx context.Context, db *sql.DB) store.TagStore {
 
 func (s *tagStoreImpl) ListValidTags() ([]*record.Tag, error) {
 	m := []qm.QueryMod{
-		qm.Load(record.ClassRoomTagRels.Tag),
-		qm.Select(record.ClassRoomTagColumns.TagID),
-		qm.Where("0 < count"),
+		qm.Load(record.UserTagRels.Tag),
+		qm.GroupBy(record.UserTagColumns.TagID),
+		qm.Select(record.UserTagColumns.TagID),
 	}
-	cts, err := record.ClassRoomTags(m...).All(s.ctx, s.db)
+	uts, err := record.UserTags(m...).All(s.ctx, s.db)
 	if err != nil {
 		return nil, errors.WithStack(err)
 	}
 
-	tags := make([]*record.Tag, 0, len(cts))
-	for _, ct := range cts {
+	tags := make([]*record.Tag, 0, len(uts))
+	for _, ct := range uts {
 		tags = append(tags, ct.R.Tag)
 	}
 
