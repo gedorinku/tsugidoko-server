@@ -55,7 +55,7 @@ func Run() error {
 			server.NewUserPositionServiceServer(store),
 			server.NewTagServiceServer(store),
 			server.NewUserTagServiceServer(store),
-			server.NewAdminServiceServer(store, cli),
+			server.NewAdminServiceServer(cfg, store, cli),
 		),
 		grapiserver.WithGrpcAddr("tcp", ":4000"),
 	)
