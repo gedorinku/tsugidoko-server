@@ -10,6 +10,7 @@ import (
 type Config struct {
 	DataSourceName string `envconfig:"data_source_name" required:"true"`
 	DebugLog       bool   `envconfig:"debug_log"`
+	GASURL         string `envconfig:"gas_url"`
 }
 
 // LoadConfig loads config

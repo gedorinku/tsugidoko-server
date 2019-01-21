@@ -18,14 +18,16 @@ type AdminServiceServer interface {
 }
 
 // NewAdminServiceServer creates a new AdminServiceServer instance.
-func NewAdminServiceServer(store di.StoreComponent) AdminServiceServer {
+func NewAdminServiceServer(store di.StoreComponent, cli di.ClientComponent) AdminServiceServer {
 	return &adminServiceServerImpl{
-		StoreComponent: store,
+		StoreComponent:  store,
+		ClientComponent: cli,
 	}
 }
 
 type adminServiceServerImpl struct {
 	di.StoreComponent
+	di.ClientComponent
 }
 
 func (s *adminServiceServerImpl) ImportBuildings(ctx context.Context, req *api_pb.ImportBuildingsRequest) (*api_pb.ImportBuildingsResponse, error) {
