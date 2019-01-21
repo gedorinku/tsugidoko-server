@@ -27,6 +27,11 @@ func Run() error {
 		return err
 	}
 
+	cli, err := di.NewClientComponent(cfg)
+	if err != nil {
+		return err
+	}
+
 	err = store.UserPositionStore(context.Background()).ResetUserPosition()
 	if err != nil {
 		return err
@@ -50,6 +55,7 @@ func Run() error {
 			server.NewUserPositionServiceServer(store),
 			server.NewTagServiceServer(store),
 			server.NewUserTagServiceServer(store),
+			server.NewAdminServiceServer(cfg, store, cli),
 		),
 		grapiserver.WithGrpcAddr("tcp", ":4000"),
 	)

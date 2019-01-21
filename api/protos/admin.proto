@@ -1,0 +1,24 @@
+syntax = "proto3";
+
+package gedorinku.tsugidoko_server;
+
+option go_package = "github.com/gedorinku/tsugidoko-server/api;api_pb";
+
+
+import "google/api/annotations.proto";
+
+service AdminService {
+  rpc ImportBuildings (ImportBuildingsRequest) returns (ImportBuildingsResponse) {
+    option (google.api.http) = {
+      get: "/admin/import"
+    };
+  }
+}
+
+message ImportBuildingsRequest {
+  string key = 1;
+}
+
+message ImportBuildingsResponse {
+  string message = 1;
+}
