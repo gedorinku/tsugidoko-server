@@ -41,7 +41,7 @@ func (s *userPositionServiceServerImpl) GetUserPosition(ctx context.Context, req
 	}
 
 	us := s.UserPositionStore(ctx)
-	pos, err := us.GetUserPosition(model.UserID(session.ID))
+	pos, err := us.GetUserPosition(model.UserID(session.UserID))
 	if err != nil {
 		if errors.Cause(err) == sql.ErrNoRows {
 			return userPositionToResponse(nil), nil
@@ -60,7 +60,7 @@ func (s *userPositionServiceServerImpl) UpdateUserPosition(ctx context.Context, 
 	}
 
 	us := s.UserPositionStore(ctx)
-	pos, err := us.UpdateUserPosition(model.UserID(session.ID), req.Bssid, req.GetIsValid())
+	pos, err := us.UpdateUserPosition(model.UserID(session.UserID), req.Bssid, req.GetIsValid())
 	if err != nil {
 		if errors.Cause(err) == sql.ErrNoRows {
 			return userPositionToResponse(nil), status.Error(codes.NotFound, err.Error())
