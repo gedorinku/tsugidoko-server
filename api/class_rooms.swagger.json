@@ -224,6 +224,10 @@
         },
         "name": {
           "type": "string"
+        },
+        "total": {
+          "type": "integer",
+          "format": "int32"
         }
       }
     },
