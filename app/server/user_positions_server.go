@@ -44,13 +44,20 @@ func (s *userPositionServiceServerImpl) GetUserPosition(ctx context.Context, req
 	pos, err := us.GetUserPosition(model.UserID(session.UserID))
 	if err != nil {
 		if errors.Cause(err) == sql.ErrNoRows {
-			return userPositionToResponse(nil), nil
+			return userPositionToResponse(nil, nil), nil
 		}
 		grpclog.Error(err)
 		return nil, err
 	}
 
-	return userPositionToResponse(pos), nil
+	ts := s.TagStore(ctx)
+	tags, err := ts.TagsMap()
+	if err != nil {
+		grpclog.Error(err)
+		return nil, err
+	}
+
+	return userPositionToResponse(pos, tags), nil
 }
 
 func (s *userPositionServiceServerImpl) UpdateUserPosition(ctx context.Context, req *api_pb.UpdateUserPositionRequest) (*api_pb.UserPosition, error) {
@@ -63,19 +70,26 @@ func (s *userPositionServiceServerImpl) UpdateUserPosition(ctx context.Context, 
 	pos, err := us.UpdateUserPosition(model.UserID(session.UserID), req.Bssid, req.GetIsValid())
 	if err != nil {
 		if errors.Cause(err) == sql.ErrNoRows {
-			return userPositionToResponse(nil), status.Error(codes.NotFound, err.Error())
+			return userPositionToResponse(nil, nil), status.Error(codes.NotFound, err.Error())
 		}
 		grpclog.Errorf("%+v", err)
 		return nil, err
 	}
 
-	return userPositionToResponse(pos), nil
+	ts := s.TagStore(ctx)
+	tags, err := ts.TagsMap()
+	if err != nil {
+		grpclog.Error(err)
+		return nil, err
+	}
+
+	return userPositionToResponse(pos, tags), nil
 }
 
-func userPositionToResponse(pos *record.UserPosition) *api_pb.UserPosition {
+func userPositionToResponse(pos *record.UserPosition, tags map[int64]*model.Tag) *api_pb.UserPosition {
 	var room *api_pb.ClassRoom
 	if pos != nil && pos.R.ClassRoom != nil {
-		room = classRoomToResponse(pos.R.ClassRoom)
+		room = classRoomToResponse(pos.R.ClassRoom, tags)
 	}
 	resp := &api_pb.UserPosition{
 		ClassRoom: room,

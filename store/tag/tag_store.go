@@ -111,6 +111,20 @@ func (s *tagStoreImpl) CreateTag(name string) (*model.Tag, error) {
 	return res, nil
 }
 
+func (s *tagStoreImpl) TagsMap() (map[int64]*model.Tag, error) {
+	tags, err := s.ListValidTags()
+	if err != nil {
+		return nil, err
+	}
+
+	mp := make(map[int64]*model.Tag, len(tags))
+	for _, t := range tags {
+		mp[t.ID] = t
+	}
+
+	return mp, nil
+}
+
 func (s *tagStoreImpl) tagTotalUsers(tagID int64, exec boil.ContextExecutor) (int64, error) {
 	mods := []qm.QueryMod{
 		qm.Where("tag_id = ?", tagID),

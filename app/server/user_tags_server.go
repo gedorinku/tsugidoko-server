@@ -38,14 +38,13 @@ func (s *userTagServiceServerImpl) UpdateUserTag(ctx context.Context, req *api_p
 	}
 
 	us := s.UserTagStore(ctx)
-	_, err := us.UpdateUserTag(model.UserID(session.UserID), conv.Int32SliceToInt64Slice(req.GetTagIds()))
+	tags, err := us.UpdateUserTag(model.UserID(session.UserID), conv.Int32SliceToInt64Slice(req.GetTagIds()))
 	if err != nil {
 		return nil, errors.WithStack(err)
 	}
 
 	resp := &api_pb.UpdateUserTagResponse{
-		// TODO
-		// Tags: tagsToResponse(tags),
+		Tags: tagsToResponse(tags),
 	}
 	return resp, nil
 }

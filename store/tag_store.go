@@ -9,4 +9,5 @@ type TagStore interface {
 	ListValidTags() ([]*model.Tag, error)
 	GetTag(tagID int64) (*model.Tag, error)
 	CreateTag(name string) (*model.Tag, error)
+	TagsMap() (map[int64]*model.Tag, error)
 }
