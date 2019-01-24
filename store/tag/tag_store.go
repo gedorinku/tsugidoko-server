@@ -30,9 +30,9 @@ func NewTagStore(ctx context.Context, db *sql.DB) store.TagStore {
 func (s *tagStoreImpl) ListValidTags() ([]*model.Tag, error) {
 	tags := []*model.Tag{}
 	m := []qm.QueryMod{
-		qm.Select("t.*, count(ut.*)"),
-		qm.InnerJoin("user_tags as ut on t.id = ut.tag_id"),
-		qm.GroupBy("t.id"),
+		qm.Select("tags.*, count(ut.*) as total"),
+		qm.InnerJoin("user_tags as ut on tags.id = ut.tag_id"),
+		qm.GroupBy("tags.id"),
 		qm.Having("0 < count(ut.*)"),
 	}
 	err := record.Tags(m...).Bind(s.ctx, s.db, &tags)
@@ -47,12 +47,11 @@ func (s *tagStoreImpl) ListValidTags() ([]*model.Tag, error) {
 	return tags, nil
 }
 
-//select t.*, count(ut.*) from tags as t inner join user_tags as ut on t.id = ut.tag_id group by t.id;
 func (s *tagStoreImpl) GetTag(tagID int64) (*model.Tag, error) {
 	mods := []qm.QueryMod{
-		qm.Select("t.*, count(ut.*)"),
-		qm.InnerJoin("user_tags as ut on t.id = ut.tag_id and t.id = ?", tagID),
-		qm.GroupBy("t.id"),
+		qm.Select("tags.*, count(ut.*) as total"),
+		qm.InnerJoin("user_tags as ut on tags.id = ut.tag_id and tags.id = ?", tagID),
+		qm.GroupBy("tags.id"),
 		qm.Limit(1),
 	}
 	t := &model.Tag{}
@@ -63,12 +62,15 @@ func (s *tagStoreImpl) GetTag(tagID int64) (*model.Tag, error) {
 	return t, nil
 }
 
-func (s *tagStoreImpl) CreateTag(tag *record.Tag) (*record.Tag, error) {
+func (s *tagStoreImpl) CreateTag(name string) (*model.Tag, error) {
 	tx, err := s.db.Begin()
 	if err != nil {
 		return nil, errors.WithStack(err)
 	}
 
+	tag := &record.Tag{
+		Name: name,
+	}
 	mods := []qm.QueryMod{
 		qm.Where("name = ?", tag.Name),
 	}
@@ -88,10 +90,34 @@ func (s *tagStoreImpl) CreateTag(tag *record.Tag) (*record.Tag, error) {
 		tag = et
 	}
 
+	total, err := s.tagTotalUsers(tag.ID, tx)
+	if err != nil {
+		return nil, err
+	}
+
 	err = tx.Commit()
 	if err != nil {
 		return nil, errors.WithStack(err)
 	}
 
-	return tag, nil
+	res := &model.Tag{
+		ID:        tag.ID,
+		Name:      tag.Name,
+		CreatedAt: tag.CreatedAt,
+		UpdatedAt: tag.UpdatedAt,
+		Total:     int(total),
+	}
+	return res, nil
+}
+
+func (s *tagStoreImpl) tagTotalUsers(tagID int64, exec boil.ContextExecutor) (int64, error) {
+	mods := []qm.QueryMod{
+		qm.Where("tag_id = ?", tagID),
+		qm.GroupBy("tag_id"),
+	}
+	cnt, err := record.UserTags(mods...).Count(s.ctx, exec)
+	if err != nil {
+		return 0, errors.WithStack(err)
+	}
+	return cnt, nil
 }

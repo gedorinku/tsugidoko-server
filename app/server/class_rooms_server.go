@@ -15,6 +15,7 @@ import (
 	"github.com/gedorinku/tsugidoko-server/app/conv"
 	"github.com/gedorinku/tsugidoko-server/app/di"
 	"github.com/gedorinku/tsugidoko-server/infra/record"
+	"github.com/gedorinku/tsugidoko-server/model"
 )
 
 // ClassRoomServiceServer is a composite interface of api_pb.ClassRoomServiceServer and grapiserver.Server.
@@ -138,8 +139,16 @@ func classRoomTagsToResponse(roomTags []*record.ClassRoomTag) []*api_pb.TagCount
 		if rt.R == nil || rt.R.Tag == nil {
 			continue
 		}
+		r := rt.R
+		t := &model.Tag{
+			ID:        r.Tag.ID,
+			Name:      r.Tag.Name,
+			CreatedAt: r.Tag.CreatedAt,
+			UpdatedAt: r.Tag.UpdatedAt,
+			Total:     0, // TODO
+		}
 		tc := &api_pb.TagCount{
-			Tag:   tagToResponse(rt.R.Tag),
+			Tag:   tagToResponse(t),
 			Count: int32(rt.Count),
 		}
 		resp = append(resp, tc)
