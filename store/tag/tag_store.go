@@ -92,6 +92,7 @@ func (s *tagStoreImpl) CreateTag(name string) (*model.Tag, error) {
 
 	total, err := s.tagTotalUsers(tag.ID, tx)
 	if err != nil {
+		tx.Rollback()
 		return nil, err
 	}
 
@@ -116,7 +117,7 @@ func (s *tagStoreImpl) tagTotalUsers(tagID int64, exec boil.ContextExecutor) (in
 		qm.GroupBy("tag_id"),
 	}
 	cnt, err := record.UserTags(mods...).Count(s.ctx, exec)
-	if err != nil {
+	if err != nil && errors.Cause(err) != sql.ErrNoRows {
 		return 0, errors.WithStack(err)
 	}
 	return cnt, nil
