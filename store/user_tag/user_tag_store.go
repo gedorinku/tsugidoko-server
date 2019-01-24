@@ -27,7 +27,7 @@ func NewUserTagStore(ctx context.Context, db *sql.DB) store.UserTagStore {
 	}
 }
 
-func (s *userTagStoreImpl) UpdateUserTag(userID model.UserID, tagIDs []int64) ([]*record.Tag, error) {
+func (s *userTagStoreImpl) UpdateUserTag(userID model.UserID, tagIDs []int64) ([]*model.Tag, error) {
 	tx, err := s.db.Begin()
 	if err != nil {
 		return nil, errors.WithStack(err)
@@ -55,9 +55,15 @@ func (s *userTagStoreImpl) UpdateUserTag(userID model.UserID, tagIDs []int64) ([
 		}
 	}
 
-	var tags []*record.Tag
+	tags := []*model.Tag{}
 	if 0 < len(tagIDs) {
-		tags, err = record.Tags(qm.WhereIn("id in ?", toInterfaceSlice(tagIDs)...)).All(s.ctx, tx)
+		mods := []qm.QueryMod{
+			qm.Select("tags.*, count(ut.*) as total"),
+			qm.InnerJoin("user_tags as ut on tags.id = ut.tag_id"),
+			qm.WhereIn("tags.id in ?", toInterfaceSlice(tagIDs)...),
+			qm.GroupBy("tags.id"),
+		}
+		err = record.Tags(mods...).Bind(s.ctx, tx, &tags)
 		if err != nil {
 			tx.Rollback()
 			return nil, errors.WithStack(err)

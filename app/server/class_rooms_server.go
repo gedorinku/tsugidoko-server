@@ -15,6 +15,7 @@ import (
 	"github.com/gedorinku/tsugidoko-server/app/conv"
 	"github.com/gedorinku/tsugidoko-server/app/di"
 	"github.com/gedorinku/tsugidoko-server/infra/record"
+	"github.com/gedorinku/tsugidoko-server/model"
 )
 
 // ClassRoomServiceServer is a composite interface of api_pb.ClassRoomServiceServer and grapiserver.Server.
@@ -39,13 +40,20 @@ func (s *classRoomServiceServerImpl) ListClassRooms(ctx context.Context, req *ap
 	rooms, err := cs.ListClassRoom(conv.Int32SliceToInt64Slice(req.GetTagIds()))
 	if err != nil {
 		if err == sql.ErrNoRows {
-			return classRoomsToResponse(nil), nil
+			return classRoomsToResponse(nil, nil), nil
 		}
 		grpclog.Error(err)
 		return nil, err
 	}
 
-	return classRoomsToResponse(rooms), nil
+	ts := s.TagStore(ctx)
+	tags, err := ts.TagsMap()
+	if err != nil {
+		grpclog.Error(err)
+		return nil, err
+	}
+
+	return classRoomsToResponse(rooms, tags), nil
 }
 
 func (s *classRoomServiceServerImpl) GetClassRoom(ctx context.Context, req *api_pb.GetClassRoomRequest) (*api_pb.ClassRoom, error) {
@@ -59,7 +67,14 @@ func (s *classRoomServiceServerImpl) GetClassRoom(ctx context.Context, req *api_
 		return nil, err
 	}
 
-	return classRoomToResponse(room), nil
+	ts := s.TagStore(ctx)
+	tags, err := ts.TagsMap()
+	if err != nil {
+		grpclog.Error(err)
+		return nil, err
+	}
+
+	return classRoomToResponse(room, tags), nil
 }
 
 func (s *classRoomServiceServerImpl) CreateClassRoom(ctx context.Context, req *api_pb.CreateClassRoomRequest) (*api_pb.ClassRoom, error) {
@@ -77,10 +92,10 @@ func (s *classRoomServiceServerImpl) DeleteClassRoom(ctx context.Context, req *a
 	return nil, status.Error(codes.Unimplemented, "TODO: You should implement it!")
 }
 
-func classRoomsToResponse(rooms []*record.ClassRoom) *api_pb.ListClassRoomsResponse {
+func classRoomsToResponse(rooms []*record.ClassRoom, tags map[int64]*model.Tag) *api_pb.ListClassRoomsResponse {
 	resp := make([]*api_pb.ClassRoom, 0, len(rooms))
 	for _, r := range rooms {
-		resp = append(resp, classRoomToResponse(r))
+		resp = append(resp, classRoomToResponse(r, tags))
 	}
 
 	return &api_pb.ListClassRoomsResponse{
@@ -88,7 +103,7 @@ func classRoomsToResponse(rooms []*record.ClassRoom) *api_pb.ListClassRoomsRespo
 	}
 }
 
-func classRoomToResponse(room *record.ClassRoom) *api_pb.ClassRoom {
+func classRoomToResponse(room *record.ClassRoom, tags map[int64]*model.Tag) *api_pb.ClassRoom {
 	resp := &api_pb.ClassRoom{
 		ClassRoomId: int32(room.ID),
 		Name:        room.Name,
@@ -97,7 +112,7 @@ func classRoomToResponse(room *record.ClassRoom) *api_pb.ClassRoom {
 		LocalY:      room.LocalY,
 	}
 	if r := room.R; r != nil {
-		resp.TagCounts = classRoomTagsToResponse(r.ClassRoomTags)
+		resp.TagCounts = classRoomTagsToResponse(r.ClassRoomTags, tags)
 		resp.Beacons = beaconsToResponse(r.Beacons)
 		resp.Building = buildingToResponse(r.Building)
 	}
@@ -132,14 +147,15 @@ func beaconToResponse(beacon *record.Beacon) *type_pb.Beacon {
 	}
 }
 
-func classRoomTagsToResponse(roomTags []*record.ClassRoomTag) []*api_pb.TagCount {
+func classRoomTagsToResponse(roomTags []*record.ClassRoomTag, tags map[int64]*model.Tag) []*api_pb.TagCount {
 	resp := make([]*api_pb.TagCount, 0, len(roomTags))
 	for _, rt := range roomTags {
 		if rt.R == nil || rt.R.Tag == nil {
 			continue
 		}
+		r := rt.R
 		tc := &api_pb.TagCount{
-			Tag:   tagToResponse(rt.R.Tag),
+			Tag:   tagToResponse(tags[r.Tag.ID]),
 			Count: int32(rt.Count),
 		}
 		resp = append(resp, tc)

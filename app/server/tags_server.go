@@ -13,7 +13,6 @@ import (
 	api_pb "github.com/gedorinku/tsugidoko-server/api"
 	"github.com/gedorinku/tsugidoko-server/app/di"
 	"github.com/gedorinku/tsugidoko-server/app/interceptor"
-	"github.com/gedorinku/tsugidoko-server/infra/record"
 	"github.com/gedorinku/tsugidoko-server/model"
 )
 
@@ -69,10 +68,7 @@ func (s *tagServiceServerImpl) CreateTag(ctx context.Context, req *api_pb.Create
 	}
 
 	ts := s.TagStore(ctx)
-	t := &record.Tag{
-		Name: req.Tag.Name,
-	}
-	t, err := ts.CreateTag(t)
+	t, err := ts.CreateTag(req.GetTag().GetName())
 	if err != nil {
 		grpclog.Error(err)
 		return nil, err
@@ -88,7 +84,7 @@ func (s *tagServiceServerImpl) CreateTag(ctx context.Context, req *api_pb.Create
 	return tagToResponse(t), nil
 }
 
-func tagsToResponse(tags []*record.Tag) []*api_pb.Tag {
+func tagsToResponse(tags []*model.Tag) []*api_pb.Tag {
 	res := make([]*api_pb.Tag, 0, len(tags))
 	for _, t := range tags {
 		res = append(res, tagToResponse(t))
@@ -96,9 +92,10 @@ func tagsToResponse(tags []*record.Tag) []*api_pb.Tag {
 	return res
 }
 
-func tagToResponse(tag *record.Tag) *api_pb.Tag {
+func tagToResponse(tag *model.Tag) *api_pb.Tag {
 	return &api_pb.Tag{
-		Id:   int32(tag.ID),
-		Name: tag.Name,
+		Id:    int32(tag.ID),
+		Name:  tag.Name,
+		Total: int32(tag.Total),
 	}
 }

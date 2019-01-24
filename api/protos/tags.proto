@@ -30,6 +30,7 @@ service TagService {
 message Tag {
   int32 id = 1;
   string name = 2;
+  int32 total = 3;
 }
 
 message TagCount {
