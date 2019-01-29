@@ -45,17 +45,14 @@ var TagColumns = struct {
 
 // TagRels is where relationship names are stored.
 var TagRels = struct {
-	ClassRoomTags string
-	UserTags      string
+	UserTags string
 }{
-	ClassRoomTags: "ClassRoomTags",
-	UserTags:      "UserTags",
+	UserTags: "UserTags",
 }
 
 // tagR is where relationships are stored.
 type tagR struct {
-	ClassRoomTags ClassRoomTagSlice
-	UserTags      UserTagSlice
+	UserTags UserTagSlice
 }
 
 // NewStruct creates a new relationship struct
@@ -309,27 +306,6 @@ func (q tagQuery) Exists(ctx context.Context, exec boil.ContextExecutor) (bool, 
 	return count > 0, nil
 }
 
-// ClassRoomTags retrieves all the class_room_tag's ClassRoomTags with an executor.
-func (o *Tag) ClassRoomTags(mods ...qm.QueryMod) classRoomTagQuery {
-	var queryMods []qm.QueryMod
-	if len(mods) != 0 {
-		queryMods = append(queryMods, mods...)
-	}
-
-	queryMods = append(queryMods,
-		qm.Where("\"class_room_tags\".\"tag_id\"=?", o.ID),
-	)
-
-	query := ClassRoomTags(queryMods...)
-	queries.SetFrom(query.Query, "\"class_room_tags\"")
-
-	if len(queries.GetSelect(query.Query)) == 0 {
-		queries.SetSelect(query.Query, []string{"\"class_room_tags\".*"})
-	}
-
-	return query
-}
-
 // UserTags retrieves all the user_tag's UserTags with an executor.
 func (o *Tag) UserTags(mods ...qm.QueryMod) userTagQuery {
 	var queryMods []qm.QueryMod
@@ -349,97 +325,6 @@ func (o *Tag) UserTags(mods ...qm.QueryMod) userTagQuery {
 	}
 
 	return query
-}
-
-// LoadClassRoomTags allows an eager lookup of values, cached into the
-// loaded structs of the objects. This is for a 1-M or N-M relationship.
-func (tagL) LoadClassRoomTags(ctx context.Context, e boil.ContextExecutor, singular bool, maybeTag interface{}, mods queries.Applicator) error {
-	var slice []*Tag
-	var object *Tag
-
-	if singular {
-		object = maybeTag.(*Tag)
-	} else {
-		slice = *maybeTag.(*[]*Tag)
-	}
-
-	args := make([]interface{}, 0, 1)
-	if singular {
-		if object.R == nil {
-			object.R = &tagR{}
-		}
-		args = append(args, object.ID)
-	} else {
-	Outer:
-		for _, obj := range slice {
-			if obj.R == nil {
-				obj.R = &tagR{}
-			}
-
-			for _, a := range args {
-				if a == obj.ID {
-					continue Outer
-				}
-			}
-
-			args = append(args, obj.ID)
-		}
-	}
-
-	query := NewQuery(qm.From(`class_room_tags`), qm.WhereIn(`tag_id in ?`, args...))
-	if mods != nil {
-		mods.Apply(query)
-	}
-
-	results, err := query.QueryContext(ctx, e)
-	if err != nil {
-		return errors.Wrap(err, "failed to eager load class_room_tags")
-	}
-
-	var resultSlice []*ClassRoomTag
-	if err = queries.Bind(results, &resultSlice); err != nil {
-		return errors.Wrap(err, "failed to bind eager loaded slice class_room_tags")
-	}
-
-	if err = results.Close(); err != nil {
-		return errors.Wrap(err, "failed to close results in eager load on class_room_tags")
-	}
-	if err = results.Err(); err != nil {
-		return errors.Wrap(err, "error occurred during iteration of eager loaded relations for class_room_tags")
-	}
-
-	if len(classRoomTagAfterSelectHooks) != 0 {
-		for _, obj := range resultSlice {
-			if err := obj.doAfterSelectHooks(ctx, e); err != nil {
-				return err
-			}
-		}
-	}
-	if singular {
-		object.R.ClassRoomTags = resultSlice
-		for _, foreign := range resultSlice {
-			if foreign.R == nil {
-				foreign.R = &classRoomTagR{}
-			}
-			foreign.R.Tag = object
-		}
-		return nil
-	}
-
-	for _, foreign := range resultSlice {
-		for _, local := range slice {
-			if local.ID == foreign.TagID {
-				local.R.ClassRoomTags = append(local.R.ClassRoomTags, foreign)
-				if foreign.R == nil {
-					foreign.R = &classRoomTagR{}
-				}
-				foreign.R.Tag = local
-				break
-			}
-		}
-	}
-
-	return nil
 }
 
 // LoadUserTags allows an eager lookup of values, cached into the
@@ -530,59 +415,6 @@ func (tagL) LoadUserTags(ctx context.Context, e boil.ContextExecutor, singular b
 		}
 	}
 
-	return nil
-}
-
-// AddClassRoomTags adds the given related objects to the existing relationships
-// of the tag, optionally inserting them as new records.
-// Appends related to o.R.ClassRoomTags.
-// Sets related.R.Tag appropriately.
-func (o *Tag) AddClassRoomTags(ctx context.Context, exec boil.ContextExecutor, insert bool, related ...*ClassRoomTag) error {
-	var err error
-	for _, rel := range related {
-		if insert {
-			rel.TagID = o.ID
-			if err = rel.Insert(ctx, exec, boil.Infer()); err != nil {
-				return errors.Wrap(err, "failed to insert into foreign table")
-			}
-		} else {
-			updateQuery := fmt.Sprintf(
-				"UPDATE \"class_room_tags\" SET %s WHERE %s",
-				strmangle.SetParamNames("\"", "\"", 1, []string{"tag_id"}),
-				strmangle.WhereClause("\"", "\"", 2, classRoomTagPrimaryKeyColumns),
-			)
-			values := []interface{}{o.ID, rel.ID}
-
-			if boil.DebugMode {
-				fmt.Fprintln(boil.DebugWriter, updateQuery)
-				fmt.Fprintln(boil.DebugWriter, values)
-			}
-
-			if _, err = exec.ExecContext(ctx, updateQuery, values...); err != nil {
-				return errors.Wrap(err, "failed to update foreign table")
-			}
-
-			rel.TagID = o.ID
-		}
-	}
-
-	if o.R == nil {
-		o.R = &tagR{
-			ClassRoomTags: related,
-		}
-	} else {
-		o.R.ClassRoomTags = append(o.R.ClassRoomTags, related...)
-	}
-
-	for _, rel := range related {
-		if rel.R == nil {
-			rel.R = &classRoomTagR{
-				Tag: o,
-			}
-		} else {
-			rel.R.Tag = o
-		}
-	}
 	return nil
 }
 

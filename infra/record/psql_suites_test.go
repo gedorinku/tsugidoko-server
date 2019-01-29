@@ -10,8 +10,6 @@ func TestUpsert(t *testing.T) {
 
 	t.Run("Buildings", testBuildingsUpsert)
 
-	t.Run("ClassRoomTags", testClassRoomTagsUpsert)
-
 	t.Run("ClassRooms", testClassRoomsUpsert)
 
 	t.Run("Sessions", testSessionsUpsert)
