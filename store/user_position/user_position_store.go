@@ -136,8 +136,11 @@ type classRoomTag struct {
 
 func (s *userPositionStoreImpl) Expire(lifeTime time.Duration) (int, error) {
 	old := time.Now().Add(-lifeTime)
-	grpclog.Infof("%v %v\n", time.Now(), old)
 	tx, err := s.db.Begin()
+	if err != nil {
+		tx.Rollback()
+		return 0, errors.WithStack(err)
+	}
 	defer func() {
 		if err := recover(); err != nil {
 			grpclog.Error(err)
