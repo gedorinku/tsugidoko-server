@@ -11,7 +11,9 @@ import (
 	"github.com/volatiletech/sqlboiler/boil"
 	"github.com/volatiletech/sqlboiler/queries"
 	"github.com/volatiletech/sqlboiler/queries/qm"
+	"google.golang.org/grpc/grpclog"
 
+	"github.com/gedorinku/tsugidoko-server/app/conv"
 	"github.com/gedorinku/tsugidoko-server/infra/record"
 	"github.com/gedorinku/tsugidoko-server/model"
 	"github.com/gedorinku/tsugidoko-server/store"
@@ -119,6 +121,84 @@ func (s *userPositionStoreImpl) UpdateUserPosition(userID model.UserID, bssid st
 		return nil, errors.WithStack(err)
 	}
 	return newPos, nil
+}
+
+type userPositionRes struct {
+	ID          int64 `boil:"id"`
+	ClassRoomID int64 `boil:"class_room_id"`
+	TagID       int64 `boil:"tag_id"`
+}
+
+type classRoomTag struct {
+	ClassRoomID int64
+	TagID       int64
+}
+
+func (s *userPositionStoreImpl) Expire(lifeTime time.Duration) (int, error) {
+	old := time.Now().Add(-lifeTime)
+	tx, err := s.db.Begin()
+	if err != nil {
+		tx.Rollback()
+		return 0, errors.WithStack(err)
+	}
+	defer func() {
+		if err := recover(); err != nil {
+			grpclog.Error(err)
+			tx.Rollback()
+		}
+	}()
+
+	mods := []qm.QueryMod{
+		qm.Select("user_positions.id as id, user_positions.class_room_id as class_room_id, ut.tag_id"),
+		qm.InnerJoin("user_tags as ut on user_positions.user_id = ut.user_id"),
+		qm.Where("user_positions.updated_at <= ?", old.In(boil.GetLocation())),
+	}
+
+	var ups []*userPositionRes
+	err = record.UserPositions(mods...).Bind(s.ctx, tx, &ups)
+	if err != nil {
+		tx.Rollback()
+		return 0, errors.WithStack(err)
+	}
+
+	diff := make(map[classRoomTag]int)
+	for _, up := range ups {
+		ct := classRoomTag{
+			ClassRoomID: up.ClassRoomID,
+			TagID:       up.TagID,
+		}
+		diff[ct]++
+	}
+
+	for ct, d := range diff {
+		q := `update class_room_tags
+			set count = count - $1
+			where class_room_id = $2 and tag_id = $3`
+		_, err := tx.ExecContext(s.ctx, q, d, ct.ClassRoomID, ct.TagID)
+		if err != nil {
+			tx.Rollback()
+			return 0, errors.WithStack(err)
+		}
+	}
+
+	if 0 < len(ups) {
+		ids := make([]int64, 0, len(ups))
+		for _, up := range ups {
+			ids = append(ids, up.ID)
+		}
+		_, err = record.UserPositions(qm.WhereIn("id in ?", conv.Int64SliceToAbstractSlice(ids)...)).DeleteAll(s.ctx, tx)
+		if err != nil {
+			tx.Rollback()
+			return 0, errors.WithStack(err)
+		}
+	}
+
+	err = tx.Commit()
+	if err != nil {
+		return 0, errors.WithStack(err)
+	}
+
+	return len(ups), nil
 }
 
 func (s *userPositionStoreImpl) userTagIDs(exec boil.ContextExecutor, userID model.UserID) ([]int64, error) {

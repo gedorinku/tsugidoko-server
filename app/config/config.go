@@ -8,10 +8,11 @@ import (
 
 // Config represents app config
 type Config struct {
-	DataSourceName string `envconfig:"data_source_name" required:"true"`
-	DebugLog       bool   `envconfig:"debug_log"`
-	GASURL         string `envconfig:"gas_url"`
-	AdminSecret    string `envconfig:"admin_secret" required:"true"`
+	DataSourceName         string `envconfig:"data_source_name" required:"true"`
+	DebugLog               bool   `envconfig:"debug_log"`
+	GASURL                 string `envconfig:"gas_url"`
+	AdminSecret            string `envconfig:"admin_secret" required:"true"`
+	UserPositionLifeSecond int    `envconfig:"user_position_life_second" required:"true"`
 }
 
 // LoadConfig loads config
