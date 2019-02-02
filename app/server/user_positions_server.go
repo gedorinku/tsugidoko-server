@@ -88,8 +88,14 @@ func (s *userPositionServiceServerImpl) UpdateUserPosition(ctx context.Context, 
 
 func userPositionToResponse(pos *record.UserPosition, tags map[int64]*model.Tag) *api_pb.UserPosition {
 	var room *api_pb.ClassRoom
-	if pos != nil && pos.R.ClassRoom != nil {
-		room = classRoomToResponse(pos.R.ClassRoom, tags)
+	if pos != nil && pos.R != nil && pos.R.ClassRoom != nil {
+		c := pos.R.ClassRoom
+		room = &api_pb.ClassRoom{
+			ClassRoomId: int32(c.ID),
+			Name:        c.Name,
+			LocalX:      c.LocalX,
+			LocalY:      c.LocalY,
+		}
 	}
 	resp := &api_pb.UserPosition{
 		ClassRoom: room,

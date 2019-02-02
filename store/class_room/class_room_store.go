@@ -42,7 +42,7 @@ type countRes struct {
 
 func (s *classRoomStoreImpl) ListClassRoom(tagIDs []int64) ([]*model.ClassRoom, error) {
 	mods := s.loadQueries()
-	if 0 < len(tagIDs) {
+	if 0 < len(tagIDs) && false {
 		/*
 			select c.id, ut.tag_id, count(up.*) from class_rooms as c
 				inner join user_positions as up on up.class_room_id = c.id
