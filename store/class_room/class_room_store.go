@@ -11,6 +11,7 @@ import (
 	"github.com/gedorinku/tsugidoko-server/app/conv"
 	"github.com/gedorinku/tsugidoko-server/app/util"
 	"github.com/gedorinku/tsugidoko-server/infra/record"
+	"github.com/gedorinku/tsugidoko-server/model"
 	"github.com/gedorinku/tsugidoko-server/store"
 )
 
@@ -39,13 +40,27 @@ type countRes struct {
 	Total int   `boil:"total"`
 }
 
-func (s *classRoomStoreImpl) ListClassRoom(tagIDs []int64) ([]*record.ClassRoom, error) {
+func (s *classRoomStoreImpl) ListClassRoom(tagIDs []int64) ([]*model.ClassRoom, error) {
 	mods := s.loadQueries()
 	if 0 < len(tagIDs) {
-		q := qm.WhereIn("tags.id in ?", conv.Int64SliceToAbstractSlice(tagIDs)...)
-		mods = append(mods, qm.Load(record.ClassRoomRels.ClassRoomTags+"."+record.ClassRoomTagRels.Tag, q))
+		/*
+			select c.id, ut.tag_id, count(up.*) from class_rooms as c
+				inner join user_positions as up on up.class_room_id = c.id
+				inner join user_tags as ut on up.user_id = ut.user_id
+				group by c.id, ut.tag_id;
+		*/
+		pre := []qm.QueryMod{
+			qm.Select("c.id as class_room_id, ut.tag_id as tag_id, count(up.*) as count"),
+			qm.From("class_rooms as c"),
+			qm.InnerJoin("user_positions as up on up.class_room_id = c.id"),
+			qm.InnerJoin("user_tags as ut on up.user_id = ut.user_id"),
+			qm.GroupBy("c.id, ut.tag_id"),
+			qm.WhereIn("ut.tag_id in ?", conv.Int64SliceToAbstractSlice(tagIDs)...),
+		}
+		mods = append(mods, qm.Load("ClassRoomTags", pre...))
 	}
-	res, err := record.ClassRooms(mods...).All(s.ctx, s.db)
+	var res []*model.ClassRoom
+	err := record.ClassRooms(mods...).Bind(s.ctx, s.db, &res)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			return nil, nil
@@ -62,22 +77,25 @@ func (s *classRoomStoreImpl) ListClassRoom(tagIDs []int64) ([]*record.ClassRoom,
 	return res, nil
 }
 
-func (s *classRoomStoreImpl) GetClassRoom(classRoomID int64, tagIDs []int64) (*record.ClassRoom, error) {
-	mods := s.loadQueries()
-	mods = append(mods, qm.Where("id = ?", classRoomID))
-	if 0 < len(tagIDs) {
-		q := qm.WhereIn("tags.id in ?", conv.Int64SliceToAbstractSlice(tagIDs)...)
-		mods = append(mods, qm.Load(record.ClassRoomRels.ClassRoomTags+"."+record.ClassRoomTagRels.Tag, q))
-	}
-	res, err := record.ClassRooms(mods...).One(s.ctx, s.db)
-	if err != nil {
-		if err == sql.ErrNoRows {
-			return nil, err
+func (s *classRoomStoreImpl) GetClassRoom(classRoomID int64, tagIDs []int64) (*model.ClassRoom, error) {
+	/*
+		mods := s.loadQueries()
+		mods = append(mods, qm.Where("id = ?", classRoomID))
+		if 0 < len(tagIDs) {
+			//q := qm.WhereIn("tags.id in ?", conv.Int64SliceToAbstractSlice(tagIDs)...)
+			//mods = append(mods, qm.Load(record.ClassRoomRels.ClassRoomTags+"."+record.ClassRoomTagRels.Tag, q))
 		}
-		return nil, errors.WithStack(err)
-	}
+		res, err := record.ClassRooms(mods...).One(s.ctx, s.db)
+		if err != nil {
+			if err == sql.ErrNoRows {
+				return nil, err
+			}
+			return nil, errors.WithStack(err)
+		}
 
-	return res, nil
+		//return res, nil
+	*/
+	return nil, nil
 }
 
 func (s *classRoomStoreImpl) loadQueries() []qm.QueryMod {
@@ -106,18 +124,18 @@ func (s *classRoomStoreImpl) thresholds(exec boil.ContextExecutor) (map[int64]in
 	return res, nil
 }
 
-func (s *classRoomStoreImpl) filterClassRooms(rooms []*record.ClassRoom, thresholds map[int64]int) {
+func (s *classRoomStoreImpl) filterClassRooms(rooms []*model.ClassRoom, thresholds map[int64]int) {
 	for _, r := range rooms {
 		s.filterClassRoom(r, thresholds)
 	}
 }
 
-func (s *classRoomStoreImpl) filterClassRoom(room *record.ClassRoom, thresholds map[int64]int) {
-	if room.R == nil {
+func (s *classRoomStoreImpl) filterClassRoom(room *model.ClassRoom, thresholds map[int64]int) {
+	if room.ClassRoomTags == nil {
 		return
 	}
 
-	for _, t := range room.R.ClassRoomTags {
+	for _, t := range room.ClassRoomTags {
 		if thresholds[t.TagID] <= t.Count {
 			continue
 		}

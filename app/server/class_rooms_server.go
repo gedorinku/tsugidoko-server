@@ -92,7 +92,7 @@ func (s *classRoomServiceServerImpl) DeleteClassRoom(ctx context.Context, req *a
 	return nil, status.Error(codes.Unimplemented, "TODO: You should implement it!")
 }
 
-func classRoomsToResponse(rooms []*record.ClassRoom, tags map[int64]*model.Tag) *api_pb.ListClassRoomsResponse {
+func classRoomsToResponse(rooms []*model.ClassRoom, tags map[int64]*model.Tag) *api_pb.ListClassRoomsResponse {
 	resp := make([]*api_pb.ClassRoom, 0, len(rooms))
 	for _, r := range rooms {
 		resp = append(resp, classRoomToResponse(r, tags))
@@ -103,7 +103,7 @@ func classRoomsToResponse(rooms []*record.ClassRoom, tags map[int64]*model.Tag) 
 	}
 }
 
-func classRoomToResponse(room *record.ClassRoom, tags map[int64]*model.Tag) *api_pb.ClassRoom {
+func classRoomToResponse(room *model.ClassRoom, tags map[int64]*model.Tag) *api_pb.ClassRoom {
 	resp := &api_pb.ClassRoom{
 		ClassRoomId: int32(room.ID),
 		Name:        room.Name,
@@ -111,11 +111,9 @@ func classRoomToResponse(room *record.ClassRoom, tags map[int64]*model.Tag) *api
 		LocalX:      room.LocalX,
 		LocalY:      room.LocalY,
 	}
-	if r := room.R; r != nil {
-		resp.TagCounts = classRoomTagsToResponse(r.ClassRoomTags, tags)
-		resp.Beacons = beaconsToResponse(r.Beacons)
-		resp.Building = buildingToResponse(r.Building)
-	}
+	resp.TagCounts = classRoomTagsToResponse(room.ClassRoomTags, tags)
+	resp.Beacons = beaconsToResponse(room.Beacons)
+	resp.Building = buildingToResponse(room.Building)
 
 	return resp
 }
@@ -147,15 +145,11 @@ func beaconToResponse(beacon *record.Beacon) *type_pb.Beacon {
 	}
 }
 
-func classRoomTagsToResponse(roomTags []*record.ClassRoomTag, tags map[int64]*model.Tag) []*api_pb.TagCount {
+func classRoomTagsToResponse(roomTags []*model.ClassRoomTag, tags map[int64]*model.Tag) []*api_pb.TagCount {
 	resp := make([]*api_pb.TagCount, 0, len(roomTags))
 	for _, rt := range roomTags {
-		if rt.R == nil || rt.R.Tag == nil {
-			continue
-		}
-		r := rt.R
 		tc := &api_pb.TagCount{
-			Tag:   tagToResponse(tags[r.Tag.ID]),
+			Tag:   tagToResponse(tags[rt.Tag.ID]),
 			Count: int32(rt.Count),
 		}
 		resp = append(resp, tc)

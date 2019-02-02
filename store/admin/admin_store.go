@@ -61,11 +61,7 @@ func (s *adminStoreImpl) Overwrite(buildings []*record.Building, rooms []*record
 }
 
 func (s *adminStoreImpl) deleteOldRecords(tx *sql.Tx) error {
-	_, err := record.ClassRoomTags().DeleteAll(s.ctx, tx)
-	if err != nil {
-		return errors.WithStack(err)
-	}
-	_, err = record.UserPositions().DeleteAll(s.ctx, tx)
+	_, err := record.UserPositions().DeleteAll(s.ctx, tx)
 	if err != nil {
 		return errors.WithStack(err)
 	}
