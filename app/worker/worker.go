@@ -46,10 +46,9 @@ func Close() {
 }
 
 func expireUserPosition(store di.StoreComponent, lifeTime time.Duration) error {
-	updated, err := store.UserPositionStore(context.Background()).Expire(lifeTime)
+	_, err := store.UserPositionStore(context.Background()).Expire(lifeTime)
 	if err != nil {
 		return err
 	}
-	grpclog.Infof("%v class room tags are updated\n", updated)
 	return nil
 }
