@@ -11,6 +11,7 @@ import (
 	"github.com/gedorinku/tsugidoko-server/app/di"
 	"github.com/gedorinku/tsugidoko-server/app/interceptor"
 	"github.com/gedorinku/tsugidoko-server/app/server"
+	"github.com/gedorinku/tsugidoko-server/app/worker"
 )
 
 // Run starts the grapiserver.
@@ -36,6 +37,9 @@ func Run() error {
 	if err != nil {
 		return err
 	}
+
+	worker.Run(cfg, store)
+	defer worker.Close()
 
 	authorizator := interceptor.NewAuthorizator(store)
 
