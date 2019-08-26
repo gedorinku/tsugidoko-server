@@ -63,14 +63,6 @@
   version = "v1.2.0"
 
 [[projects]]
-  digest = "1:871a18c39bf1c4c18a2073663431e5c67dbfbc461b9c969e30dbe717871f6189"
-  name = "github.com/google/go-cloud"
-  packages = ["wire"]
-  pruneopts = ""
-  revision = "2152f209f3c907645f7ebdcacdb2c18cd89e6fa8"
-  version = "0.5.0"
-
-[[projects]]
   digest = "1:c5e3c78cae31c64ee8f2c4ad33f05083ccace2cd7b4d327fb9f7eb4a3528021d"
   name = "github.com/google/go-github"
   packages = ["github"]
@@ -85,6 +77,14 @@
   pruneopts = ""
   revision = "44c6ddd0a2342c386950e880b658017258da92fc"
   version = "v1.0.0"
+
+[[projects]]
+  digest = "1:d274ab8b0b6fb2c5882db01704404e0ad004c8f793cfd264e761639ba19d77ec"
+  name = "github.com/google/wire"
+  packages = ["."]
+  pruneopts = ""
+  revision = "89cb901fdf9dfcf4292cbfe0c9ac90d98213be68"
+  version = "v0.3.0"
 
 [[projects]]
   digest = "1:9a0b2dd1f882668a3d7fbcd424eed269c383a16f1faa3a03d14e0dd5fba571b1"
@@ -170,6 +170,14 @@
   version = "v1.0"
 
 [[projects]]
+  digest = "1:5a9f584f3d7355e0aa3c5fc93275f7da29a4c52cbac5baa3ed6a2fc164f223f7"
+  name = "github.com/izumin5210/clig"
+  packages = ["pkg/clib"]
+  pruneopts = ""
+  revision = "2e6c66ccd558d58f233f56f674a13642f9b55e2c"
+  version = "v0.2.0"
+
+[[projects]]
   digest = "1:eb68b1bae33b5d6957b0088291ad0ab19b0522f367a2b325b5438fc95af69871"
   name = "github.com/izumin5210/gex"
   packages = [
@@ -184,7 +192,7 @@
   version = "v0.4.4"
 
 [[projects]]
-  digest = "1:a66a4c6a198a57987c31aee28bbe542d6725914aeac7813e475129598fa2bdb3"
+  digest = "1:1032f125cbdc59b6a22f2e3a5c5d62fb59cb1eb88492581ccf42d3ae6800a774"
   name = "github.com/izumin5210/grapi"
   packages = [
     "cmd/grapi",
@@ -216,8 +224,8 @@
     "pkg/svcgen/template",
   ]
   pruneopts = ""
-  revision = "3048eeb0c63848b38fb602ed0e1742af49943d03"
-  version = "v0.3.0"
+  revision = "8f983379de0c8363d0ed2c62da0483ce6e896497"
+  version = "v0.4.1"
 
 [[projects]]
   branch = "master"
