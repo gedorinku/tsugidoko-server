@@ -63,14 +63,6 @@
   version = "v1.2.0"
 
 [[projects]]
-  digest = "1:871a18c39bf1c4c18a2073663431e5c67dbfbc461b9c969e30dbe717871f6189"
-  name = "github.com/google/go-cloud"
-  packages = ["wire"]
-  pruneopts = ""
-  revision = "2152f209f3c907645f7ebdcacdb2c18cd89e6fa8"
-  version = "0.5.0"
-
-[[projects]]
   digest = "1:c5e3c78cae31c64ee8f2c4ad33f05083ccace2cd7b4d327fb9f7eb4a3528021d"
   name = "github.com/google/go-github"
   packages = ["github"]
@@ -85,6 +77,14 @@
   pruneopts = ""
   revision = "44c6ddd0a2342c386950e880b658017258da92fc"
   version = "v1.0.0"
+
+[[projects]]
+  digest = "1:d274ab8b0b6fb2c5882db01704404e0ad004c8f793cfd264e761639ba19d77ec"
+  name = "github.com/google/wire"
+  packages = ["."]
+  pruneopts = ""
+  revision = "89cb901fdf9dfcf4292cbfe0c9ac90d98213be68"
+  version = "v0.3.0"
 
 [[projects]]
   digest = "1:9a0b2dd1f882668a3d7fbcd424eed269c383a16f1faa3a03d14e0dd5fba571b1"
@@ -170,6 +170,14 @@
   version = "v1.0"
 
 [[projects]]
+  digest = "1:d36566e7adc96cfe0bcddabe17dbb26aa20992a6c5d5ba8016810cf2c48becca"
+  name = "github.com/izumin5210/clig"
+  packages = ["pkg/clib"]
+  pruneopts = ""
+  revision = "f97e90b6bad78a1e4c9b824c8f68dd871e11d6dc"
+  version = "v0.3.1"
+
+[[projects]]
   digest = "1:eb68b1bae33b5d6957b0088291ad0ab19b0522f367a2b325b5438fc95af69871"
   name = "github.com/izumin5210/gex"
   packages = [
@@ -184,7 +192,7 @@
   version = "v0.4.4"
 
 [[projects]]
-  digest = "1:a66a4c6a198a57987c31aee28bbe542d6725914aeac7813e475129598fa2bdb3"
+  digest = "1:6ddcfdcfaae8c0665bd0251a4aaa74fa7869ee54fea43df76d0fc9aa09455eeb"
   name = "github.com/izumin5210/grapi"
   packages = [
     "cmd/grapi",
@@ -203,10 +211,9 @@
     "pkg/grapicmd/cmd",
     "pkg/grapicmd/di",
     "pkg/grapicmd/internal/module",
-    "pkg/grapicmd/internal/module/generator",
-    "pkg/grapicmd/internal/module/generator/template",
     "pkg/grapicmd/internal/module/script",
     "pkg/grapicmd/internal/usecase",
+    "pkg/grapicmd/internal/usecase/template",
     "pkg/grapicmd/util/fs",
     "pkg/grapiserver",
     "pkg/grapiserver/internal",
@@ -216,16 +223,8 @@
     "pkg/svcgen/template",
   ]
   pruneopts = ""
-  revision = "3048eeb0c63848b38fb602ed0e1742af49943d03"
-  version = "v0.3.0"
-
-[[projects]]
-  branch = "master"
-  digest = "1:860e1118ccf3d852a848b510624521344c0d4d0f35026ae2438fa96a0ec28740"
-  name = "github.com/jessevdk/go-assets"
-  packages = ["."]
-  pruneopts = ""
-  revision = "4f4301a06e153ff90e17793577ab6bf79f8dc5c5"
+  revision = "cf43ca2d33c2d5e3fca8bc6142eca7c706e650b7"
+  version = "v0.5.0"
 
 [[projects]]
   branch = "master"
@@ -327,28 +326,20 @@
   version = "v0.8.0"
 
 [[projects]]
+  digest = "1:79c3c0b8805e9331a87c459b37dd007d4389cc511dfa2beeae1d6f35986cd4a4"
+  name = "github.com/rakyll/statik"
+  packages = ["fs"]
+  pruneopts = ""
+  revision = "3bac566d30cdbeddef402a80f3d6305860e59f12"
+  version = "v0.1.6"
+
+[[projects]]
   branch = "master"
   digest = "1:2cca4fc02c8329dadfc6e831e6feb61845983b434fb3e8a034fe5753295a752d"
   name = "github.com/serenize/snaker"
   packages = ["."]
   pruneopts = ""
   revision = "a683aaf2d516deecd70cad0c72e3ca773ecfcef0"
-
-[[projects]]
-  branch = "master"
-  digest = "1:c9a564dcf640c2d7a5d50b84416e3e8200c77a4abbace41d4fc06b7a771db9c5"
-  name = "github.com/shurcooL/httpfs"
-  packages = ["vfsutil"]
-  pruneopts = ""
-  revision = "809beceb23714880abc4a382a00c05f89d13b1cc"
-
-[[projects]]
-  branch = "master"
-  digest = "1:516000eb63bb341737069fafcb705951091b713d2359f84eec58df4347461cd7"
-  name = "github.com/shurcooL/vfsgen"
-  packages = ["."]
-  pruneopts = ""
-  revision = "6a9ea43bcacdf716a5c1b38efff722c07adf0069"
 
 [[projects]]
   digest = "1:022a4e2a8c327eb46a99088a51c0dda5d5be86928ace2afd72145dc1d746a323"
